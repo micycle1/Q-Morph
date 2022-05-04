@@ -18,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 /** This class implements the graphical user interface. */
 public class GUI extends Constants implements ActionListener, ItemListener {
@@ -925,7 +926,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						}
 					}
 
-					ArrayList aeList = movingNode.adjElements();
+					List<Element> aeList = movingNode.adjElements();
 					Element elem;
 					for (Object element : aeList) {
 						elem = (Element) element;

@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Canvas class which paints the background grid, the nodes, the edges etc.
@@ -148,8 +149,8 @@ class GCanvas extends Canvas {
 	public void paint(Graphics g) {
 		Edge e;
 		Node n;
-		ArrayList nodeList = GeomBasics.getNodeList();
-		ArrayList edgeList = GeomBasics.getEdgeList();
+		List nodeList = GeomBasics.getNodeList();
+		List edgeList = GeomBasics.getEdgeList();
 		int halfGridIncr = gridIncr / 2;
 
 		g.clearRect(0, 0, getWidth(), getHeight());

@@ -1,6 +1,7 @@
 package meshditor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 // ==== ---- ==== ---- ==== ---- ==== ---- ==== ---- ==== ---- ==== ----
 /**
@@ -74,8 +75,8 @@ public class TopoCleanup extends GeomBasics {
 			}
 		}
 
-		deleteList = new ArrayList();
-		nodes = (ArrayList) nodeList.clone();
+		deleteList = new ArrayList<>();
+		nodes = new ArrayList<>(nodeList);
 		d = new Dart();
 	}
 
@@ -199,8 +200,8 @@ public class TopoCleanup extends GeomBasics {
 	}
 
 	int count = 0;
-	ArrayList deleteList;
-	ArrayList nodes;
+	List<Element> deleteList;
+	List<Node> nodes;
 
 	/** Initial pass to detect and cleanup chevrons. */
 	private void elimChevsStep() {
@@ -235,7 +236,7 @@ public class TopoCleanup extends GeomBasics {
 		}
 
 		for (i = 0; i < deleteList.size(); i++) {
-			elem = (Element) deleteList.get(i);
+			elem = deleteList.get(i);
 			elementList.remove(elementList.indexOf(elem));
 		}
 		deleteList.clear();
@@ -989,7 +990,7 @@ public class TopoCleanup extends GeomBasics {
 			}
 		}
 
-		nodes = (ArrayList) nodeList.clone();
+		nodes = new ArrayList<>(nodeList);
 		connCleanupFinished = true;
 		count = 0;
 		Msg.debug("Leaving TopoCleanup.connCleanupStep(), all is well");
@@ -1370,7 +1371,7 @@ public class TopoCleanup extends GeomBasics {
 			Msg.debug("Leaving boundaryCleanupStep(): Done removing diamonds.");
 			return;
 		} else {
-			nodes = (ArrayList) nodeList.clone();
+			nodes = new ArrayList<>(nodeList);
 			boundaryCleanupFinished = true;
 			count = 0;
 			Msg.debug("Leaving TopoCleanup.boundaryCleanupStep(), all is well.");
@@ -1558,7 +1559,7 @@ public class TopoCleanup extends GeomBasics {
 		}
 		deleteList.clear();
 
-		nodes = (ArrayList) nodeList.clone();
+		nodes = new ArrayList<>(nodeList);
 		shapeCleanupFinished = true;
 		count = 0;
 		Msg.debug("Leaving TopoCleanup.shapeCleanupStep(), all elements ok.");
@@ -1613,7 +1614,8 @@ public class TopoCleanup extends GeomBasics {
 		Node nKp1 = e1.otherNode(nK); // , nKm1= eKm1.otherNode(nK);
 		Edge e2 = q.neighborEdge(nKp1, e1), e4 = q.neighborEdge(nK, e1);
 
-		ArrayList lK = nK.adjElements(), lKOpp = nKOpp.adjElements();
+		List<Element> lK = nK.adjElements();
+		List<Element> lKOpp = nKOpp.adjElements();
 		Node n = null;
 		int i;
 

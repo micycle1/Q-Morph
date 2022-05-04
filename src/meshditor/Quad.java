@@ -1,6 +1,7 @@
 package meshditor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class holding information for quadrilaterals, and with methods for the
@@ -347,7 +348,7 @@ public class Quad extends Element {
 	 *         position held by node n. Node n must be located somewhere inside quad
 	 *         q.
 	 */
-	public boolean anyInvertedElementsWhenCollapsed(Node n, Node n1, Node n2, ArrayList list1, ArrayList list2) {
+	public boolean anyInvertedElementsWhenCollapsed(Node n, Node n1, Node n2, List list1, List list2) {
 		Msg.debug("Entering Quad.anyInvertedElementsWhenCollapsed(..)");
 		Element elem;
 		int i;
@@ -1869,16 +1870,16 @@ public class Quad extends Element {
 	 * @param first a triangle that is located inside the quad
 	 * @return a list of triangles contained within the four edges of this quad.
 	 */
-	public ArrayList trianglesContained(Triangle first) {
+	public ArrayList<Triangle> trianglesContained(Triangle first) {
 		Msg.debug("Entering trianglesContained(..)");
-		ArrayList tris = new ArrayList();
+		ArrayList<Triangle> tris = new ArrayList<>();
 		Element neighbor;
 		Triangle cur;
 		Edge e;
 
 		tris.add(first);
 		for (int j = 0; j < tris.size(); j++) {
-			cur = (Triangle) tris.get(j);
+			cur = tris.get(j);
 			Msg.debug("...parsing triangle " + cur.descr());
 
 			for (int i = 0; i < 3; i++) {
@@ -1886,7 +1887,7 @@ public class Quad extends Element {
 				if (!hasEdge(e)) {
 					neighbor = cur.neighbor(e);
 					if (neighbor != null && !tris.contains(neighbor)) {
-						tris.add(neighbor);
+						tris.add((Triangle)neighbor);
 					}
 				}
 			}

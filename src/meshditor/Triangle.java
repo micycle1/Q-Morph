@@ -1,11 +1,40 @@
 package meshditor;
 
 /**
- * A class holding information for triangles, and with methods for the handling
- * of issues regarding triangles.
+ * A class holding information for triangles, and with methods for handling issues regarding triangles.
  */
-
 public class Triangle extends Element {
+
+	public Triangle(Edge edge1, Edge edge2, Edge edge3) {
+		edgeList = new Edge[3];
+	
+		if (edge1 == null || edge2 == null || edge3 == null) {
+			Msg.error("Triangle: cannot create Triangle with null Edge.");
+		}
+	
+		edgeList[0] = edge1;
+		edgeList[1] = edge2;
+		edgeList[2] = edge3;
+	
+		// Make a pointer to the base node that is the origin of vector(edgeList[a])
+		// so that the cross product vector(edgeList[a]) x vector(edgeList[b]) >= 0
+		// where a,b in {1,2}
+		firstNode = edgeList[0].leftNode;
+		if (inverted()) {
+			firstNode = edgeList[0].rightNode;
+		}
+	
+		Edge temp;
+		if (firstNode == edgeList[0].commonNode(edgeList[2])) {
+			temp = edgeList[1];
+			edgeList[1] = edgeList[2];
+			edgeList[2] = temp;
+		}
+	
+		ang = new double[3];
+		updateAngles();
+	}
+
 	public Triangle(Edge edge1, Edge edge2, Edge edge3, double len1, double len2, double len3, double ang1, double ang2, double ang3,
 			boolean lengthsOpt, boolean anglesOpt) {
 		edgeList = new Edge[3];
@@ -44,36 +73,6 @@ public class Triangle extends Element {
 		if (!anglesOpt) {
 			updateAngles();
 		}
-	}
-
-	public Triangle(Edge edge1, Edge edge2, Edge edge3) {
-		edgeList = new Edge[3];
-
-		if (edge1 == null || edge2 == null || edge3 == null) {
-			Msg.error("Triangle: cannot create Triangle with null Edge.");
-		}
-
-		edgeList[0] = edge1;
-		edgeList[1] = edge2;
-		edgeList[2] = edge3;
-
-		// Make a pointer to the base node that is the origin of vector(edgeList[a])
-		// so that the cross product vector(edgeList[a]) x vector(edgeList[b]) >= 0
-		// where a,b in {1,2}
-		firstNode = edgeList[0].leftNode;
-		if (inverted()) {
-			firstNode = edgeList[0].rightNode;
-		}
-
-		Edge temp;
-		if (firstNode == edgeList[0].commonNode(edgeList[2])) {
-			temp = edgeList[1];
-			edgeList[1] = edgeList[2];
-			edgeList[2] = temp;
-		}
-
-		ang = new double[3];
-		updateAngles();
 	}
 
 	// Makes a copy of the given triangle

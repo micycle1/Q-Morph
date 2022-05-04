@@ -6,6 +6,7 @@ package meshditor;
  */
 
 public abstract class Element extends Constants {
+	
 	/** @return neighbor element sharing edge e */
 	public abstract Element neighbor(Edge e);
 

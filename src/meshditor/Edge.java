@@ -1,18 +1,14 @@
 package meshditor;
 
-/*
-import Triangle;
-import Constants;
-import Msg;
-*/
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class holds information for edges, and has methods for handling issues
  * involving edges.
  */
-
 public class Edge extends Constants {
+	
 	public Edge(Node node1, Node node2) {
 		if ((node1.x < node2.x) || (node1.x == node2.x && node1.y > node2.y)) {
 			leftNode = node1;
@@ -1014,7 +1010,7 @@ public class Edge extends Constants {
 		return true;
 	}
 
-	public Edge findLeftFrontNeighbor(ArrayList frontList) {
+	public Edge findLeftFrontNeighbor(List<Edge> frontList) {
 		ArrayList list = new ArrayList();
 		Edge leftEdge;
 		Edge candidate = null;
@@ -1051,7 +1047,7 @@ public class Edge extends Constants {
 		return null;
 	}
 
-	public Edge findRightFrontNeighbor(ArrayList frontList) {
+	public Edge findRightFrontNeighbor(List<Edge> frontList) {
 		ArrayList list = new ArrayList();
 		Edge rightEdge;
 		Edge candidate = null;
@@ -1101,7 +1097,7 @@ public class Edge extends Constants {
 	}
 
 	/** Returns true if the frontEdgeNeighbors are changed. */
-	public boolean setFrontNeighbors(ArrayList frontList) {
+	public boolean setFrontNeighbors(List<Edge> frontList) {
 		Edge lFront = findLeftFrontNeighbor(frontList);
 		Edge rFront = findRightFrontNeighbor(frontList);
 		boolean res = false;
@@ -1122,7 +1118,7 @@ public class Edge extends Constants {
 		return res;
 	}
 
-	public void promoteToFront(int level, ArrayList frontList) {
+	public void promoteToFront(int level, List<Edge> frontList) {
 		if (!frontEdge) {
 			frontList.add(this);
 			this.level = level;
@@ -1130,7 +1126,7 @@ public class Edge extends Constants {
 		}
 	}
 
-	public boolean removeFromFront(ArrayList frontList) {
+	public boolean removeFromFront(List<Edge> frontList) {
 		int i = frontList.indexOf(this);
 		frontEdge = false;
 		if (i != -1) {
@@ -1150,7 +1146,7 @@ public class Edge extends Constants {
 	 * 
 	 * @return the new Edge incident with Node ben.
 	 */
-	public Edge splitTrianglesAt(Node nN, Node ben, ArrayList triangleList, ArrayList edgeList, ArrayList nodeList) {
+	public Edge splitTrianglesAt(Node nN, Node ben, List<Triangle> triangleList, List<Edge> edgeList, List<Node> nodeList) {
 		Msg.debug("Entering Edge.splitTrianglesAt(..)");
 		Edge eK1 = new Edge(leftNode, nN);
 		Edge eK2 = new Edge(rightNode, nN);
@@ -1226,7 +1222,7 @@ public class Edge extends Constants {
 	 * @return the "lower" (the one incident with the baseEdge) of the two edges
 	 *         created from splitting this edge.
 	 */
-	public Edge splitTrianglesAtMyMidPoint(ArrayList triangleList, ArrayList edgeList, ArrayList nodeList, Edge baseEdge) {
+	public Edge splitTrianglesAtMyMidPoint(List<Triangle> triangleList, List<Edge> edgeList, List<Node> nodeList, Edge baseEdge) {
 		Msg.debug("Entering Edge.splitTrianglesAtMyMidPoint(..).");
 
 		Edge lowerEdge;

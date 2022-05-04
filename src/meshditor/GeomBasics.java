@@ -7,18 +7,18 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a basic geometry class with methods for reading and writing meshes,
  * sorting Node lists, printing lists, topology inspection, etc.
  */
-
 public class GeomBasics extends Constants {
 
-	protected static ArrayList elementList;
-	protected static ArrayList triangleList;
-	protected static ArrayList nodeList;
-	protected static ArrayList edgeList;
+	protected static List<Element> elementList;
+	protected static List<Triangle> triangleList;
+	protected static List<Node> nodeList;
+	protected static List<Edge> edgeList;
 
 	protected static Node leftmost = null, rightmost = null, uppermost = null, lowermost = null;
 
@@ -33,10 +33,10 @@ public class GeomBasics extends Constants {
 	static boolean meshAngOpt;
 
 	public static void createNewLists() {
-		elementList = new ArrayList();
-		triangleList = new ArrayList();
-		edgeList = new ArrayList();
-		nodeList = new ArrayList();
+		elementList = new ArrayList<>();
+		triangleList = new ArrayList<>();
+		edgeList = new ArrayList<>();
+		nodeList = new ArrayList<>();
 	}
 
 	public static void setParams(String filename, String dir, boolean len, boolean ang) {
@@ -47,22 +47,22 @@ public class GeomBasics extends Constants {
 	}
 
 	/** Return the edgeList */
-	public static ArrayList getEdgeList() {
+	public static List<Edge> getEdgeList() {
 		return edgeList;
 	}
 
 	/** Return the nodeList */
-	public static ArrayList getNodeList() {
+	public static List<Node> getNodeList() {
 		return nodeList;
 	}
 
 	/** Return the triangleList */
-	public static ArrayList getTriangleList() {
+	public static List<Triangle> getTriangleList() {
 		return triangleList;
 	}
 
 	/** Return the elementList */
-	public static ArrayList getElementList() {
+	public static List<Element> getElementList() {
 		return elementList;
 	}
 
@@ -112,22 +112,22 @@ public class GeomBasics extends Constants {
 		if (nodeList != null) {
 			nodeList.clear();
 		} else {
-			nodeList = new ArrayList();
+			nodeList = new ArrayList<Node>();
 		}
 		if (edgeList != null) {
 			edgeList.clear();
 		} else {
-			edgeList = new ArrayList();
+			edgeList = new ArrayList<Edge>();
 		}
 		if (triangleList != null) {
 			triangleList.clear();
 		} else {
-			triangleList = new ArrayList();
+			triangleList = new ArrayList<Triangle>();
 		}
 		if (elementList != null) {
 			elementList.clear();
 		} else {
-			elementList = new ArrayList();
+			elementList = new ArrayList<Element>();
 		}
 	}
 
@@ -437,17 +437,17 @@ public class GeomBasics extends Constants {
 	}
 
 	/** Load a mesh from a file. */
-	public static ArrayList loadMesh() {
+	public static List<Element> loadMesh() {
 		FileInputStream fis;
 		Node node1, node2, node3, node4;
 		Edge edge1, edge2, edge3, edge4;
 		Triangle t;
 		Quad q;
 
-		elementList = new ArrayList();
-		triangleList = new ArrayList();
-		edgeList = new ArrayList();
-		ArrayList usNodeList = new ArrayList();
+		elementList = new ArrayList<Element>();
+		triangleList = new ArrayList<Triangle>();
+		edgeList = new ArrayList<Edge>();
+		ArrayList<Node> usNodeList = new ArrayList<Node>();
 
 		try {
 			fis = new FileInputStream(meshDirectory + meshFilename);
@@ -559,15 +559,15 @@ public class GeomBasics extends Constants {
 	}
 
 	/** Load a triangle mesh from a file. */
-	public static ArrayList loadTriangleMesh() {
+	public static List<Triangle> loadTriangleMesh() {
 		FileInputStream fis;
 		Node node1, node2, node3;
 		Edge edge1, edge2, edge3;
 		Triangle t;
 
-		triangleList = new ArrayList();
-		edgeList = new ArrayList();
-		ArrayList usNodeList = new ArrayList();
+		triangleList = new ArrayList<Triangle>();
+		edgeList = new ArrayList<Edge>();
+		ArrayList<Node> usNodeList = new ArrayList<Node>();
 
 		try {
 			fis = new FileInputStream(meshDirectory + meshFilename);
@@ -661,10 +661,10 @@ public class GeomBasics extends Constants {
 	}
 
 	/** A method to read node files. */
-	public static ArrayList loadNodes() {
+	public static ArrayList<Node> loadNodes() {
 		FileInputStream fis;
 		Node node1, node2, node3, node4;
-		ArrayList usNodeList = new ArrayList();
+		ArrayList<Node> usNodeList = new ArrayList<Node>();
 
 		try {
 			fis = new FileInputStream(meshDirectory + meshFilename);
@@ -732,7 +732,7 @@ public class GeomBasics extends Constants {
 		Edge edge;
 		Node n;
 		int i;
-		ArrayList boundary = new ArrayList();
+		ArrayList<Edge> boundary = new ArrayList<Edge>();
 
 		findExtremeNodes();
 
@@ -827,9 +827,8 @@ public class GeomBasics extends Constants {
 	}
 
 	/** Write all elements in elementList to a file. */
-	public static boolean writeQuadMesh(String filename, ArrayList elementList) {
+	public static boolean writeQuadMesh(String filename, List<? extends Element> elementList) {
 		FileOutputStream fos;
-		Element elem;
 		Triangle t;
 		Quad q;
 
@@ -839,8 +838,7 @@ public class GeomBasics extends Constants {
 			double x1, x2, x3, x4, y1, y2, y3, y4;
 
 			try {
-				for (Object element : elementList) {
-					elem = (Element) element;
+				for (Element elem : elementList) {
 					if (elem instanceof Quad) {
 						q = (Quad) elem;
 						x1 = q.edgeList[base].leftNode.x;
@@ -1049,8 +1047,8 @@ public class GeomBasics extends Constants {
 	}
 
 	/** Sort nodes left to right. Higher y-values are preferred to lower ones. */
-	public static ArrayList sortNodes(ArrayList unsortedNodes) {
-		ArrayList sortedNodes = new ArrayList();
+	public static List<Node> sortNodes(List<Node> unsortedNodes) {
+		List<Node> sortedNodes = new ArrayList<>();
 		Node curNode, candNode;
 		while (unsortedNodes.size() > 0) {
 			curNode = (Node) unsortedNodes.get(0);
@@ -1065,13 +1063,13 @@ public class GeomBasics extends Constants {
 		}
 
 		// Find the leftmost, rightmost, uppermost, and lowermost nodes.
-		leftmost = (Node) sortedNodes.get(0);
-		rightmost = (Node) sortedNodes.get(sortedNodes.size() - 1);
+		leftmost = sortedNodes.get(0);
+		rightmost = sortedNodes.get(sortedNodes.size() - 1);
 		uppermost = leftmost;
 		lowermost = leftmost;
 
 		for (int i = 1; i < sortedNodes.size(); i++) {
-			curNode = (Node) sortedNodes.get(i);
+			curNode = sortedNodes.get(i);
 			if (curNode.y > uppermost.y) {
 				uppermost = curNode;
 			}
@@ -1107,7 +1105,7 @@ public class GeomBasics extends Constants {
 		return java.lang.Double.valueOf(ndouble).doubleValue();
 	}
 
-	public static void printVectors(ArrayList vectorList) {
+	public static void printVectors(List<?> vectorList) {
 		if (Msg.debugMode) {
 			MyVector v;
 			for (Object element : vectorList) {
@@ -1117,7 +1115,7 @@ public class GeomBasics extends Constants {
 		}
 	}
 
-	public static void printElements(ArrayList elemList) {
+	public static void printElements(List<?> elemList) {
 		if (Msg.debugMode) {
 			Element elem;
 			for (Object element : elemList) {
@@ -1127,17 +1125,17 @@ public class GeomBasics extends Constants {
 		}
 	}
 
-	public static void printTriangles(ArrayList triangleList) {
+	public static void printTriangles(List<Triangle> triangleList) {
 		Msg.debug("triangleList: (size== " + triangleList.size() + ")");
 		printElements(triangleList);
 	}
 
-	public static void printQuads(ArrayList quadList) {
+	public static void printQuads(List<?> quadList) {
 		Msg.debug("quadList: (size== " + quadList.size() + ")");
 		printElements(quadList);
 	}
 
-	public static void printEdgeList(ArrayList edgeList) {
+	public static void printEdgeList(List<Edge> edgeList) {
 		if (Msg.debugMode) {
 			for (Object element : edgeList) {
 				Edge edge = (Edge) element;
@@ -1146,7 +1144,7 @@ public class GeomBasics extends Constants {
 		}
 	}
 
-	public static void printNodes(ArrayList nodeList) {
+	public static void printNodes(ArrayList<?> nodeList) {
 		if (Msg.debugMode) {
 			Msg.debug("nodeList:");
 			for (Object element : nodeList) {
@@ -1206,19 +1204,15 @@ public class GeomBasics extends Constants {
 	 */
 	public static boolean inversionCheckAndRepair(Node newN, Node oldPos) {
 		Msg.debug("Entering inversionCheckAndRepair(..), node oldPos: " + oldPos.descr());
-		Element elem = null;
-		ArrayList elements = newN.adjElements();
+		List<Element> elements = newN.adjElements();
 		if (newN.invertedOrZeroAreaElements(elements)) {
 			if (!newN.incrAdjustUntilNotInvertedOrZeroArea(oldPos, elements)) {
-
-				for (Object element : elements) {
-					elem = (Element) element;
+				for (Element elem : elements) {
 					if (elem.invertedOrZeroArea()) {
 						break;
 					}
 				}
-
-				Msg.error("It seems that an element was inverted initially: " + elem.descr());
+				Msg.error("It seems that an element was inverted initially.");
 				return false;
 			}
 			Msg.debug("Leaving inversionCheckAndRepair(..)");
@@ -1253,7 +1247,7 @@ public class GeomBasics extends Constants {
 		double xstepn1 = back2n1.x / 50.0, ystepn1 = back2n1.y / 50.0, xstepn2 = back2n2.x / 50.0, ystepn2 = back2n2.y / 50.0;
 		double xincn1, yincn1, xincn2, yincn2;
 		int steps2n1, steps2n2, i;
-		ArrayList l1 = n1.adjElements(), l2 = n2.adjElements();
+		List<Element> l1 = n1.adjElements(), l2 = n2.adjElements();
 
 		if (!q.anyInvertedElementsWhenCollapsed(n, n1, n2, l1, l2)) {
 			Msg.debug("Leaving safeNewPosWhenCollapsingQuad(..): found");
@@ -1404,8 +1398,8 @@ public class GeomBasics extends Constants {
 					triangleList.set(triangleList.indexOf(old1), null);
 					triangleList.set(triangleList.indexOf(old2), null);
 
-					triangleList.add(eS.element1);
-					triangleList.add(eS.element2);
+					triangleList.add((Triangle) eS.element1);
+					triangleList.add((Triangle) eS.element2);
 
 					edgeList.remove(edgeList.indexOf(e));
 					edgeList.add(eS);

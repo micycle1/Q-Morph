@@ -4,8 +4,8 @@ package meshditor;
  * This class holds the program "constants". That is, they are given as
  * parameters to the Q-Morph implementation.
  */
-
 public class Constants {
+	
 	/** A boolean indicating whether the triangle to quad conversion should run. */
 	public static boolean doTri2QuadConversion = true;
 	/** A boolean indicating whether the topological cleanup should run. */

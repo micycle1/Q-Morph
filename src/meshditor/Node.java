@@ -2,6 +2,7 @@ package meshditor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class holds information for nodes, and has methods for the management of
@@ -9,6 +10,17 @@ import java.util.ArrayList;
  */
 
 public class Node extends Constants {
+
+	/** Boolean indicating whether the node has been moved by the OBS */
+	public boolean movedByOBS = false; // Used by the smoother
+	/** The coordinates */
+	public double x, y;
+	/** A valence pattern for this node */
+	public byte[] pattern;
+	// byte state= 0; // For front Nodes only
+	ArrayList<Edge> edgeList;
+	java.awt.Color color = java.awt.Color.cyan;
+
 	/** Create new node with position (x,y). */
 	public Node(double x, double y) {
 		this.x = x;
@@ -227,15 +239,15 @@ public class Node extends Constants {
 
 	// Rewrite of ccwSortedEdgeList().
 	// We use vector representations instead of the edges directly.
-	public ArrayList ccwSortedVectorList() {
+	public ArrayList<MyVector> ccwSortedVectorList() {
 		Element elem, start;
 		MyVector v, v0, v1;
 		Edge e;
-		ArrayList boundaryVectors = new ArrayList();
-		ArrayList vectors = new ArrayList();
+		ArrayList<MyVector> boundaryVectors = new ArrayList<MyVector>();
+		ArrayList<MyVector> vectors = new ArrayList<MyVector>();
 		double ang;
 		for (int i = 0; i < edgeList.size(); i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			v = e.getVector(this);
 			v.edge = e;
 
@@ -252,7 +264,7 @@ public class Node extends Constants {
 		// The selected vector is put into v0.
 		// Sets elem to the element that is ccw to v0 around this Node
 
-		if (boundaryVectors.size() > 0) { // this size is always 0 or 2
+		if (!boundaryVectors.isEmpty()) { // this size is always 0 or 2
 			Msg.debug("...boundaryVectors yeah!");
 			v0 = (MyVector) boundaryVectors.get(0);
 			v1 = (MyVector) boundaryVectors.get(1);
@@ -292,7 +304,7 @@ public class Node extends Constants {
 
 		// Sort vectors in ccw order starting with v0.
 		// Uses the fact that elem initially is the element ccw to v0 around this Node.
-		ArrayList VS = new ArrayList();
+		ArrayList<MyVector> VS = new ArrayList<>();
 		e = v0.edge;
 
 		start = elem;
@@ -524,13 +536,13 @@ public class Node extends Constants {
 	}
 
 	public int nrOfAdjElements() {
-		ArrayList list = adjElements();
+		List<Element> list = adjElements();
 		return list.size();
 	}
 
-	public ArrayList adjElements() {
+	public List<Element> adjElements() {
 		Edge e;
-		ArrayList list = new ArrayList();
+		List<Element> list = new ArrayList<>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
 			e = (Edge) edgeList.get(i);
@@ -545,13 +557,13 @@ public class Node extends Constants {
 	}
 
 	public int nrOfAdjQuads() {
-		ArrayList list = adjQuads();
+		ArrayList<Element> list = adjQuads();
 		return list.size();
 	}
 
-	public ArrayList adjQuads() {
+	public ArrayList<Element> adjQuads() {
 		Edge e;
-		ArrayList list = new ArrayList();
+		ArrayList<Element> list = new ArrayList<>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
 			e = (Edge) edgeList.get(i);
@@ -967,11 +979,8 @@ public class Node extends Constants {
 	 * @return true if the movement of a node has caused any of it's adjacent
 	 *         elements to become inverted or get an area of size zero.
 	 */
-	public boolean invertedOrZeroAreaElements(ArrayList elements) {
-		Element elem;
-
-		for (Object element : elements) {
-			elem = (Element) element;
+	public boolean invertedOrZeroAreaElements(List<Element> elements) {
+		for (Element elem : elements) {
 			if (elem.invertedOrZeroArea()) {
 				Msg.debug("Node.invertedOrZeroAreaElements(..): invertedOrZeroArea: " + elem.descr());
 				return true;
@@ -990,7 +999,7 @@ public class Node extends Constants {
 	 * 
 	 * @return true on success else false.
 	 */
-	public boolean incrAdjustUntilNotInvertedOrZeroArea(Node old, ArrayList elements) {
+	public boolean incrAdjustUntilNotInvertedOrZeroArea(Node old, List<Element> elements) {
 		Msg.debug("Entering incrAdjustUntilNotInvertedOrZeroArea(..)");
 		Msg.debug("..this: " + descr());
 		Msg.debug("..old: " + old.descr());
@@ -1960,14 +1969,4 @@ public class Node extends Constants {
 	public void printMe() {
 		System.out.println(descr());
 	}
-
-	/** Boolean indicating whether the node has been moved by the OBS */
-	public boolean movedByOBS = false; // Used by the smoother
-	/** The coordinates */
-	public double x, y;
-	/** A valence pattern for this node */
-	public byte[] pattern;
-	// byte state= 0; // For front Nodes only
-	ArrayList edgeList;
-	java.awt.Color color = java.awt.Color.cyan;
 }
