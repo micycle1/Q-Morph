@@ -446,6 +446,7 @@ public class GeomBasics extends Constants {
 		triangleList = new ArrayList<>();
 		edgeList = new ArrayList<>();
 		ArrayList<Vertex> usvertexList = new ArrayList<>();
+		ArrayList<double[]> triangles = new ArrayList<>();
 
 		try {
 			fis = new FileInputStream(meshDirectory + meshFilename);
@@ -466,6 +467,9 @@ public class GeomBasics extends Constants {
 					y3 = nextDouble(inputLine);
 					x4 = nextDouble(inputLine); // quad possible
 					y4 = nextDouble(inputLine); // quad possible
+
+					double[] triangle = new double[] { x1, y1, x2, y2, x3, y3 };
+					triangles.add(triangle);
 
 					Vertex1 = new Vertex(x1, y1);
 					if (!usvertexList.contains(Vertex1)) {
@@ -553,7 +557,96 @@ public class GeomBasics extends Constants {
 		}
 
 		vertexList = usvertexList; // sortVertexes(usvertexList);
+		double[][] ts = triangles.toArray(new double[triangles.size()][3]);
+		loadTriangleMesh(ts);
 		return elementList;
+	}
+
+	/**
+	 * 
+	 * @param triangles [t1=[x1,y1,x2,y2,x3,y3], t2=[x1,y1,x2,y2,x3,y3]...]
+	 * @return
+	 */
+	public static List<Triangle> loadTriangleMesh(double[][] triangles) {
+
+		Vertex Vertex1, Vertex2, Vertex3;
+		Edge edge1, edge2, edge3;
+		Triangle t;
+
+		elementList = new ArrayList<>();
+		triangleList = new ArrayList<>();
+		edgeList = new ArrayList<>();
+		ArrayList<Vertex> usvertexList = new ArrayList<>(); // unsorted
+
+		for (double[] triangle : triangles) {
+			double len1 = 0, len2 = 0, len3 = 0, ang1 = 0, ang2 = 0, ang3 = 0;
+			double x1 = triangle[0];
+			double y1 = triangle[1];
+			double x2 = triangle[2];
+			double y2 = triangle[3];
+			double x3 = triangle[4];
+			double y3 = triangle[5];
+
+			Vertex1 = new Vertex(x1, y1);
+			if (!usvertexList.contains(Vertex1)) {
+				usvertexList.add(Vertex1);
+			} else {
+				Vertex1 = usvertexList.get(usvertexList.indexOf(Vertex1));
+			}
+			Vertex2 = new Vertex(x2, y2);
+			if (!usvertexList.contains(Vertex2)) {
+				usvertexList.add(Vertex2);
+			} else {
+				Vertex2 = usvertexList.get(usvertexList.indexOf(Vertex2));
+			}
+			Vertex3 = new Vertex(x3, y3);
+			if (!usvertexList.contains(Vertex3)) {
+				usvertexList.add(Vertex3);
+			} else {
+				Vertex3 = usvertexList.get(usvertexList.indexOf(Vertex3));
+			}
+
+			edge1 = new Edge(Vertex1, Vertex2);
+			if (!edgeList.contains(edge1)) {
+				edgeList.add(edge1);
+			} else {
+				edge1 = (Edge) edgeList.get(edgeList.indexOf(edge1));
+			}
+			edge1.leftVertex.connectToEdge(edge1);
+			edge1.rightVertex.connectToEdge(edge1);
+
+			edge2 = new Edge(Vertex2, Vertex3);
+			if (!edgeList.contains(edge2)) {
+				edgeList.add(edge2);
+			} else {
+				edge2 = (Edge) edgeList.get(edgeList.indexOf(edge2));
+			}
+			edge2.leftVertex.connectToEdge(edge2);
+			edge2.rightVertex.connectToEdge(edge2);
+
+			edge3 = new Edge(Vertex1, Vertex3);
+			if (!edgeList.contains(edge3)) {
+				edgeList.add(edge3);
+			} else {
+				edge3 = (Edge) edgeList.get(edgeList.indexOf(edge3));
+			}
+			edge3.leftVertex.connectToEdge(edge3);
+			edge3.rightVertex.connectToEdge(edge3);
+
+			if (meshLenOpt) {
+			}
+
+			if (meshAngOpt) {
+			}
+
+			t = new Triangle(edge1, edge2, edge3, len1, len2, len3, ang1, ang2, ang3, meshLenOpt, meshAngOpt);
+			t.connectEdges();
+			triangleList.add(t);
+
+		}
+		vertexList = usvertexList;
+		
+		return triangleList;
 	}
 
 	/** Load a triangle mesh from a file. */
@@ -900,7 +993,8 @@ public class GeomBasics extends Constants {
 				y1 = t.edgeList[0].leftVertex.y;
 				x2 = t.edgeList[0].rightVertex.x;
 				y2 = t.edgeList[0].rightVertex.y;
-				if (!t.edgeList[1].leftVertex.equals(t.edgeList[0].leftVertex) && !t.edgeList[1].leftVertex.equals(t.edgeList[0].rightVertex)) {
+				if (!t.edgeList[1].leftVertex.equals(t.edgeList[0].leftVertex)
+						&& !t.edgeList[1].leftVertex.equals(t.edgeList[0].rightVertex)) {
 					x3 = t.edgeList[1].leftVertex.x;
 					y3 = t.edgeList[1].leftVertex.y;
 				} else {
@@ -952,7 +1046,8 @@ public class GeomBasics extends Constants {
 					y1 = t.edgeList[0].leftVertex.y;
 					x2 = t.edgeList[0].rightVertex.x;
 					y2 = t.edgeList[0].rightVertex.y;
-					if (!t.edgeList[1].leftVertex.equals(t.edgeList[0].leftVertex) && !t.edgeList[1].leftVertex.equals(t.edgeList[0].rightVertex)) {
+					if (!t.edgeList[1].leftVertex.equals(t.edgeList[0].leftVertex)
+							&& !t.edgeList[1].leftVertex.equals(t.edgeList[0].rightVertex)) {
 						x3 = t.edgeList[1].leftVertex.x;
 						y3 = t.edgeList[1].leftVertex.y;
 					} else {
@@ -988,7 +1083,7 @@ public class GeomBasics extends Constants {
 
 			try {
 				if (vertexList != null) {
-					for (Vertex n: vertexList) {
+					for (Vertex n : vertexList) {
 						x = n.x;
 						y = n.y;
 						out.write(x + ", " + y);
@@ -1159,7 +1254,7 @@ public class GeomBasics extends Constants {
 	/** */
 	public static void printValPatterns() {
 		Vertex[] neighbors;
-		for (Vertex n: vertexList) {
+		for (Vertex n : vertexList) {
 			if (!n.boundaryVertex()) {
 				neighbors = n.ccwSortedNeighbors();
 				n.createValencePattern(neighbors);
@@ -1172,7 +1267,7 @@ public class GeomBasics extends Constants {
 	public static void printAnglesAtSurrondingVertexes() {
 		Vertex[] neighbors;
 		double[] angles;
-		for (Vertex n: vertexList) {
+		for (Vertex n : vertexList) {
 			if (!n.boundaryVertex()) {
 				neighbors = n.ccwSortedNeighbors();
 				n.createValencePattern(neighbors);
@@ -1213,9 +1308,9 @@ public class GeomBasics extends Constants {
 	}
 
 	/**
-	 * Quad q is to be collapsed. Vertexes n1 and n2 are two opposite vertexs in q. This
-	 * method tries to find a location inside the current q to which n1 and n2 can
-	 * safely be relocated and joined without causing any adjacent elements to
+	 * Quad q is to be collapsed. Vertexes n1 and n2 are two opposite vertexs in q.
+	 * This method tries to find a location inside the current q to which n1 and n2
+	 * can safely be relocated and joined without causing any adjacent elements to
 	 * become inverted. The first candidate location is the centroid of the quad. If
 	 * that location is not suitable, the method tries locations on the vectors from
 	 * the centroid towards n1 and from the centroid towards n2. The first suitable

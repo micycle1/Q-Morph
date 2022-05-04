@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class holds information for vertexs, and has methods for the management of
- * issues regarding vertexs.
+ * This class holds information for vertexs, and has methods for the management
+ * of issues regarding vertexs.
  */
 public class Vertex extends Constants {
 
@@ -43,7 +43,7 @@ public class Vertex extends Constants {
 	/** @return a "real" copy of this Vertex with a shallow copy of its edgeList. */
 	public Vertex copy() {
 		Vertex n = new Vertex(x, y);
-		n.edgeList = new ArrayList(edgeList);
+		n.edgeList = new ArrayList<>(edgeList);
 		return n;
 	}
 
@@ -71,35 +71,30 @@ public class Vertex extends Constants {
 	}
 
 	public void updateLRinEdgeList() {
-		boolean btemp;
-		Edge e, temp;
-		Vertex vertex;
-		Quad q;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			if ((e.leftVertex.x > e.rightVertex.x) || (e.leftVertex.x == e.rightVertex.x && e.leftVertex.y < e.rightVertex.y)) {
-				vertex = e.leftVertex;
+				Vertex vertex = e.leftVertex;
 				e.leftVertex = e.rightVertex;
 				e.rightVertex = vertex;
 
 				if (e.frontEdge) {
-					temp = e.leftFrontNeighbor;
+					Edge temp = e.leftFrontNeighbor;
 					e.leftFrontNeighbor = e.rightFrontNeighbor;
 					e.rightFrontNeighbor = temp;
-					btemp = e.leftSide;
+					boolean btemp = e.leftSide;
 					e.leftSide = e.rightSide;
 					e.rightSide = btemp;
 				}
 
 				if (e.element1 instanceof Quad) {
-					q = (Quad) e.element1;
+					Quad q = (Quad) e.element1;
 					if (e == q.edgeList[base]) {
 						q.updateLR();
 					}
 				}
 
 				if (e.element2 instanceof Quad) {
-					q = (Quad) e.element2;
+					Quad q = (Quad) e.element2;
 					if (e == q.edgeList[base]) {
 						q.updateLR();
 					}
@@ -138,8 +133,8 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Update (almost) all angles in all elements adjacent to this Vertex. Note: still
-	 * experimental, not tested thoroughly.
+	 * Update (almost) all angles in all elements adjacent to this Vertex. Note:
+	 * still experimental, not tested thoroughly.
 	 */
 	public void updateAngles() {
 		Msg.debug("Entering Vertex.updateAngles()");
@@ -302,7 +297,8 @@ public class Vertex extends Constants {
 		Msg.debug("Vertex.ccwSortedVectorList(..): 0: " + v0.edge.descr());
 
 		// Sort vectors in ccw order starting with v0.
-		// Uses the fact that elem initially is the element ccw to v0 around this Vertex.
+		// Uses the fact that elem initially is the element ccw to v0 around this
+		// Vertex.
 		ArrayList<MyVector> VS = new ArrayList<>();
 		e = v0.edge;
 
@@ -436,8 +432,8 @@ public class Vertex extends Constants {
 	 * Note: *ALL* vertexs in a neighboring quad is regarded as neighbors, not only
 	 * those that are directly connected to this Vertex by edges.
 	 * 
-	 * @return a ccw sorted list of the neighboring vertexs to this, but returns null
-	 *         if this Vertex is part of any triangle.
+	 * @return a ccw sorted list of the neighboring vertexs to this, but returns
+	 *         null if this Vertex is part of any triangle.
 	 */
 	public Vertex[] ccwSortedNeighbors() {
 		Msg.debug("Entering Vertex.ccwSortedNeighbors(..)");
@@ -492,7 +488,8 @@ public class Vertex extends Constants {
 		}
 
 		// Sort vertexs in ccw order starting with otherVertex of v0 edge.
-		// Uses the fact that elem initially is the element ccw to v0 around this Vertex.
+		// Uses the fact that elem initially is the element ccw to v0 around this
+		// Vertex.
 		Vertex[] ccwvertexList = new Vertex[edgeList.size() * 2];
 		Element start = elem;
 		Quad q;
@@ -989,8 +986,8 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Incrementally adjust the location of the Vertex (along a vector) until none of
-	 * it's neighboring elements are inverted. Use increments of size vector
+	 * Incrementally adjust the location of the Vertex (along a vector) until none
+	 * of it's neighboring elements are inverted. Use increments of size vector
 	 * component divided by 50 in each direction, unless ONE of these increments is
 	 * less than a given lower limit. If so, the increments in the direction of the
 	 * shortest component should be equal to that limit, while the other direction
@@ -1163,7 +1160,8 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Determine if a Vertex is on the line (of infinite length) that e is a part of.
+	 * Determine if a Vertex is on the line (of infinite length) that e is a part
+	 * of.
 	 */
 	public boolean onLine(Edge e) {
 		BigDecimal x1 = new BigDecimal(e.leftVertex.x);
@@ -1191,9 +1189,9 @@ public class Vertex extends Constants {
 	 * Determine if a Vertex is in a given halfplane. The method is based on the
 	 * determinant as described in Schewchuk's paper.
 	 * 
-	 * @return 1 if this Vertex is in the halfplane defined by Triangle t and Edge e,
-	 *         0 if the Vertex is on Edge e, -1 if the Vertex is not in the halfplane
-	 *         defined by Triangle t and Edge e.
+	 * @return 1 if this Vertex is in the halfplane defined by Triangle t and Edge
+	 *         e, 0 if the Vertex is on Edge e, -1 if the Vertex is not in the
+	 *         halfplane defined by Triangle t and Edge e.
 	 */
 	public int inHalfplane(Triangle t, Edge e) {
 		return inHalfplane(e.leftVertex, e.rightVertex, t.oppositeOfEdge(e));
@@ -1206,7 +1204,8 @@ public class Vertex extends Constants {
 		return inHalfplane(e.leftVertex, e.rightVertex, n);
 	}
 
-	// @return 1 if this Vertex is on the same side of the line (l1, l2) as Vertex n is,
+	// @return 1 if this Vertex is on the same side of the line (l1, l2) as Vertex n
+	// is,
 	// 0 if this Vertex is on the line that extends line (l1, l2), and
 	// -1 if this Vertex is on the other side of line (l1, l2) than Vertex n is.
 	public int inHalfplane(Vertex l1, Vertex l2, Vertex n) {
@@ -1244,8 +1243,8 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Test to see if this Vertex lies in the plane bounded by the two parallel lines
-	 * intersecting the Vertexes of Edge e that are normal to Edge e.
+	 * Test to see if this Vertex lies in the plane bounded by the two parallel
+	 * lines intersecting the Vertexes of Edge e that are normal to Edge e.
 	 */
 	public boolean inBoundedPlane(Edge e) {
 		Edge normal1 = e.unitNormalAt(e.leftVertex);
@@ -1266,9 +1265,9 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Return true if the circle intersecting the Vertexes p1, p2, and p3 contains this
-	 * Vertex in its interior. p1, p2, p3, and p4 are ccw sorted. Note that testing
-	 * for convexity of the quad should not be necessary.
+	 * Return true if the circle intersecting the Vertexes p1, p2, and p3 contains
+	 * this Vertex in its interior. p1, p2, p3, and p4 are ccw sorted. Note that
+	 * testing for convexity of the quad should not be necessary.
 	 */
 	public boolean inCircle(Vertex p1, Vertex p2, Vertex p3) {
 		Msg.debug("Entering inCircle(..)");
@@ -1312,8 +1311,8 @@ public class Vertex extends Constants {
 
 	/**
 	 * Pretending this and n has the same location, copy the edges in n's edgelist
-	 * that this Vertex doesn't already have, and put them into this Vertex's edgeList.
-	 * If this and n have any common edges, these must be removed.
+	 * that this Vertex doesn't already have, and put them into this Vertex's
+	 * edgeList. If this and n have any common edges, these must be removed.
 	 */
 	public void merge(Vertex n) {
 		Vertex oldN = n.copyXY();
@@ -1421,8 +1420,9 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Return # of irregular vertexs in the valence pattern (vertexs whose valence!= 4)
-	 * Note that calcMyValencePattern() must be called before calling this method.
+	 * Return # of irregular vertexs in the valence pattern (vertexs whose valence!=
+	 * 4) Note that calcMyValencePattern() must be called before calling this
+	 * method.
 	 */
 	public int irregNeighborVertexes() {
 		int count = 0;
@@ -1435,8 +1435,8 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Compare the valence pattern of this Vertex to the special pattern in pattern2.
-	 * In pattern2, the following codes apply:<br>
+	 * Compare the valence pattern of this Vertex to the special pattern in
+	 * pattern2. In pattern2, the following codes apply:<br>
 	 * <ul>
 	 * 14 means 4- (4 or less)
 	 * <li>24 means 4+ (4 or more)
@@ -1551,10 +1551,10 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Compare the valence pattern of this Vertex to the special pattern in pattern2.
-	 * Also make sure that the tagged vertexs in vertexPat are vertices. (That is, the
-	 * interior angles must be greater than any other interior angles around this
-	 * Vertex.) In pattern2, the following codes apply:<br>
+	 * Compare the valence pattern of this Vertex to the special pattern in
+	 * pattern2. Also make sure that the tagged vertexs in vertexPat are vertices.
+	 * (That is, the interior angles must be greater than any other interior angles
+	 * around this Vertex.) In pattern2, the following codes apply:<br>
 	 * <ul>
 	 * 14 means 4- (4 or less)
 	 * <li>24 means 4+ (4 or more)
