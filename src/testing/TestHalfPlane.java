@@ -3,16 +3,16 @@ package testing;
 import meshditor.Edge;
 import meshditor.Msg;
 import meshditor.MyVector;
-import meshditor.Node;
+import meshditor.Vertex;
 import meshditor.Quad;
 import meshditor.Triangle;
 
 class TestHalfPlane {
 
 	public static void main(String[] args) {
-		Node pa = new Node(0.0, 0.0);
-		Node pb = new Node(0.0, 2.0);
-		Node pc = new Node(-1.0, 0.0);
+		Vertex pa = new Vertex(0.0, 0.0);
+		Vertex pb = new Vertex(0.0, 2.0);
+		Vertex pc = new Vertex(-1.0, 0.0);
 
 		Edge e1 = new Edge(pa, pb);
 		Edge e2 = new Edge(pb, pc);
@@ -21,10 +21,10 @@ class TestHalfPlane {
 		Triangle t = new Triangle(e1, e2, e3);
 
 		Msg.debug("*** First set of test Nodes (not in halfplane) ***");
-		Node p1 = new Node(7.2, 0.0);
-		Node p2 = new Node(0.2, -30.0);
-		Node p3 = new Node(48, 53.2);
-		Node p4 = new Node(0.01, 0.0);
+		Vertex p1 = new Vertex(7.2, 0.0);
+		Vertex p2 = new Vertex(0.2, -30.0);
+		Vertex p3 = new Vertex(48, 53.2);
+		Vertex p4 = new Vertex(0.01, 0.0);
 
 		if (p1.inHalfplane(t, e1) == 1) {
 			Msg.error("p1 incorrectly detected to belong to halfplane left of Edge " + e1.descr());
@@ -51,10 +51,10 @@ class TestHalfPlane {
 		}
 
 		Msg.debug("*** Second set of test Nodes (in halfplane) ***");
-		p1 = new Node(-0.1, 0.0);
-		p2 = new Node(-21.3, -123.2);
-		p3 = new Node(-0.01, 100.0);
-		p4 = new Node(-2.0, 12.3);
+		p1 = new Vertex(-0.1, 0.0);
+		p2 = new Vertex(-21.3, -123.2);
+		p3 = new Vertex(-0.01, 100.0);
+		p4 = new Vertex(-2.0, 12.3);
 
 		if (p1.inHalfplane(t, e1) == 1) {
 			Msg.debug("p1 correctly detected to belong to halfplane left of Edge " + e1.descr());
@@ -81,11 +81,11 @@ class TestHalfPlane {
 		}
 
 		Msg.debug("*** A 'real life' test (in halfplane) ***");
-		Node a = new Node(-1.3, 4.8);
-		Node b = new Node(-8.8, 0.7);
-		Node c = new Node(-2.3, -2.7);
+		Vertex a = new Vertex(-1.3, 4.8);
+		Vertex b = new Vertex(-8.8, 0.7);
+		Vertex c = new Vertex(-2.3, -2.7);
 
-		Node p = new Node(-2.4, 0.7);
+		Vertex p = new Vertex(-2.4, 0.7);
 
 		Edge ab = new Edge(a, b);
 		Edge bc = new Edge(b, c);
@@ -103,10 +103,10 @@ class TestHalfPlane {
 	}
 
 	public static void testConvexity() {
-		Node n1 = new Node(0.0, 0.0);
-		Node n2 = new Node(0.0, 1.4);
-		Node n3 = new Node(-0.4, 2.9);
-		Node n4 = new Node(3.8, 0.9);
+		Vertex n1 = new Vertex(0.0, 0.0);
+		Vertex n2 = new Vertex(0.0, 1.4);
+		Vertex n3 = new Vertex(-0.4, 2.9);
+		Vertex n4 = new Vertex(3.8, 0.9);
 
 		Edge baseEdge = new Edge(n1, n2);
 		Edge leftEdge = new Edge(n2, n3);
@@ -122,8 +122,8 @@ class TestHalfPlane {
 		}
 
 		// Run a test on the intersects method of MyVector:
-		Node n5 = new Node(0.0, 0.2);
-		Node n6 = new Node(0.0, 1.1);
+		Vertex n5 = new Vertex(0.0, 0.2);
+		Vertex n6 = new Vertex(0.0, 1.1);
 
 		MyVector v0 = new MyVector(n1, n2);
 		MyVector v1 = new MyVector(n5, n6);

@@ -11,16 +11,16 @@ import java.util.List;
 
 /**
  * This is a basic geometry class with methods for reading and writing meshes,
- * sorting Node lists, printing lists, topology inspection, etc.
+ * sorting Vertex lists, printing lists, topology inspection, etc.
  */
 public class GeomBasics extends Constants {
 
 	protected static List<Element> elementList;
 	protected static List<Triangle> triangleList;
-	protected static List<Node> nodeList;
+	protected static List<Vertex> nodeList;
 	protected static List<Edge> edgeList;
 
-	protected static Node leftmost = null, rightmost = null, uppermost = null, lowermost = null;
+	protected static Vertex leftmost = null, rightmost = null, uppermost = null, lowermost = null;
 
 	protected static boolean step = false;
 
@@ -52,7 +52,7 @@ public class GeomBasics extends Constants {
 	}
 
 	/** Return the nodeList */
-	public static List<Node> getNodeList() {
+	public static List<Vertex> getNodeList() {
 		return nodeList;
 	}
 
@@ -94,9 +94,9 @@ public class GeomBasics extends Constants {
 			curEdge.disconnectNodes();
 		}
 
-		Node curNode;
+		Vertex curNode;
 		for (int i = 0; i < nodeList.size(); i++) {
-			curNode = (Node) nodeList.get(i);
+			curNode = (Vertex) nodeList.get(i);
 			curNode.edgeList.clear();
 		}
 
@@ -112,7 +112,7 @@ public class GeomBasics extends Constants {
 		if (nodeList != null) {
 			nodeList.clear();
 		} else {
-			nodeList = new ArrayList<Node>();
+			nodeList = new ArrayList<>();
 		}
 		if (edgeList != null) {
 			edgeList.clear();
@@ -157,7 +157,7 @@ public class GeomBasics extends Constants {
 		Triangle tri;
 		Quad q;
 		Element elem;
-		Node n;
+		Vertex n;
 		double sumMetric = 0.0, minDM = java.lang.Double.MAX_VALUE;
 		int size = 0, nTris = 0, nQuads = 0;
 		String s;
@@ -208,7 +208,7 @@ public class GeomBasics extends Constants {
 		s = "Average distortion metric: " + (sumMetric / size) + "\n" + "Minimum distortion metric: " + minDM + "\n";
 
 		for (Object element : nodeList) {
-			n = (Node) element;
+			n = (Vertex) element;
 
 			temp = n.valence();
 			if (temp == 2) {
@@ -227,26 +227,26 @@ public class GeomBasics extends Constants {
 		}
 
 		if (no2valents > 0) {
-			s = s + "Number of 2-valent nodes: " + no2valents + "\n";
+			s = s + "Number of 2-valent vertexs: " + no2valents + "\n";
 		}
 		if (no3valents > 0) {
-			s = s + "Number of 3-valent nodes: " + no3valents + "\n";
+			s = s + "Number of 3-valent vertexs: " + no3valents + "\n";
 		}
 		if (no4valents > 0) {
-			s = s + "Number of 4-valent nodes: " + no4valents + "\n";
+			s = s + "Number of 4-valent vertexs: " + no4valents + "\n";
 		}
 		if (no5valents > 0) {
-			s = s + "Number of 5-valent nodes: " + no5valents + "\n";
+			s = s + "Number of 5-valent vertexs: " + no5valents + "\n";
 		}
 		if (no6valents > 0) {
-			s = s + "Number of 6-valent nodes: " + no6valents + "\n";
+			s = s + "Number of 6-valent vertexs: " + no6valents + "\n";
 		}
 		if (noXvalents > 0) {
-			s = s + "Number of nodes with valence > 6: " + noXvalents + "\n";
+			s = s + "Number of vertexs with valence > 6: " + noXvalents + "\n";
 		}
 
 		s = s + "Number of quadrilateral elements: " + nQuads + "\n" + "Number of triangular elements: " + nTris + "\n"
-				+ "Number of edges: " + edgeList.size() + "\n" + "Number of nodes: " + nodeList.size();
+				+ "Number of edges: " + edgeList.size() + "\n" + "Number of vertexs: " + nodeList.size();
 
 		return s;
 	}
@@ -296,9 +296,9 @@ public class GeomBasics extends Constants {
 	/** Output warnings if mesh is not consistent. */
 	public static void consistencyCheck() {
 		Msg.debug("Entering consistencyCheck()");
-		Node n;
+		Vertex n;
 		for (int i = 0; i < nodeList.size(); i++) {
-			n = (Node) nodeList.get(i);
+			n = (Vertex) nodeList.get(i);
 
 			Edge e;
 			if (n.edgeList.size() == 0) {
@@ -308,9 +308,9 @@ public class GeomBasics extends Constants {
 			for (int j = 0; j < n.edgeList.size(); j++) {
 				e = (Edge) n.edgeList.get(j);
 				if (e == null) {
-					Msg.warning("Node " + n.descr() + " has a null in its edgeList.");
+					Msg.warning("Vertex " + n.descr() + " has a null in its edgeList.");
 				} else if (edgeList.indexOf(e) == -1) {
-					Msg.warning("Edge " + e.descr() + " found in the edgeList of Node " + n.descr() + ", but not in global edgeList");
+					Msg.warning("Edge " + e.descr() + " found in the edgeList of Vertex " + n.descr() + ", but not in global edgeList");
 				}
 			}
 		}
@@ -350,7 +350,7 @@ public class GeomBasics extends Constants {
 		}
 
 		Triangle t;
-		Node na, nb, nc;
+		Vertex na, nb, nc;
 		double cross1;
 
 		for (Object element : triangleList) {
@@ -368,13 +368,13 @@ public class GeomBasics extends Constants {
 			}
 
 			if (t.edgeList[0].commonNode(t.edgeList[1]) == null) {
-				Msg.warning("edgeList[0] and edgeList[1] of triangle " + t.descr() + " has no common Node");
+				Msg.warning("edgeList[0] and edgeList[1] of triangle " + t.descr() + " has no common Vertex");
 			}
 			if (t.edgeList[1].commonNode(t.edgeList[2]) == null) {
-				Msg.warning("edgeList[1] and edgeList[2] of triangle " + t.descr() + " has no common Node");
+				Msg.warning("edgeList[1] and edgeList[2] of triangle " + t.descr() + " has no common Vertex");
 			}
 			if (t.edgeList[2].commonNode(t.edgeList[0]) == null) {
-				Msg.warning("edgeList[2] and edgeList[0] of triangle " + t.descr() + " has no common Node");
+				Msg.warning("edgeList[2] and edgeList[0] of triangle " + t.descr() + " has no common Vertex");
 			}
 
 			na = t.edgeList[0].leftNode;
@@ -414,20 +414,20 @@ public class GeomBasics extends Constants {
 				}
 
 				if (q.edgeList[base].commonNode(q.edgeList[left]) == null) {
-					Msg.warning("edgeList[base] and edgeList[left] of quad " + q.descr() + " has no common Node");
+					Msg.warning("edgeList[base] and edgeList[left] of quad " + q.descr() + " has no common Vertex");
 				}
 				if (q.edgeList[base].commonNode(q.edgeList[right]) == null) {
-					Msg.warning("edgeList[base] and edgeList[right] of quad " + q.descr() + " has no common Node");
+					Msg.warning("edgeList[base] and edgeList[right] of quad " + q.descr() + " has no common Vertex");
 				}
 				if (!q.isFake && q.edgeList[left].commonNode(q.edgeList[top]) == null) {
-					Msg.warning("edgeList[left] and edgeList[top] of quad " + q.descr() + " has no common Node");
+					Msg.warning("edgeList[left] and edgeList[top] of quad " + q.descr() + " has no common Vertex");
 				}
 				if (!q.isFake && q.edgeList[right].commonNode(q.edgeList[top]) == null) {
-					Msg.warning("edgeList[right] and edgeList[top] of quad " + q.descr() + " has no common Node");
+					Msg.warning("edgeList[right] and edgeList[top] of quad " + q.descr() + " has no common Vertex");
 				}
 
 				if (q.isFake && q.edgeList[left].commonNode(q.edgeList[right]) == null) {
-					Msg.warning("edgeList[left] and edgeList[right] of fake quad " + q.descr() + " has no common Node");
+					Msg.warning("edgeList[left] and edgeList[right] of fake quad " + q.descr() + " has no common Vertex");
 				}
 			}
 		}
@@ -439,7 +439,7 @@ public class GeomBasics extends Constants {
 	/** Load a mesh from a file. */
 	public static List<Element> loadMesh() {
 		FileInputStream fis;
-		Node node1, node2, node3, node4;
+		Vertex node1, node2, node3, node4;
 		Edge edge1, edge2, edge3, edge4;
 		Triangle t;
 		Quad q;
@@ -447,7 +447,7 @@ public class GeomBasics extends Constants {
 		elementList = new ArrayList<Element>();
 		triangleList = new ArrayList<Triangle>();
 		edgeList = new ArrayList<Edge>();
-		ArrayList<Node> usNodeList = new ArrayList<Node>();
+		ArrayList<Vertex> usNodeList = new ArrayList<Vertex>();
 
 		try {
 			fis = new FileInputStream(meshDirectory + meshFilename);
@@ -466,26 +466,26 @@ public class GeomBasics extends Constants {
 					y2 = nextDouble(inputLine);
 					x3 = nextDouble(inputLine);
 					y3 = nextDouble(inputLine);
-					x4 = nextDouble(inputLine);
-					y4 = nextDouble(inputLine);
+					x4 = nextDouble(inputLine); // quad possible
+					y4 = nextDouble(inputLine); // quad possible
 
-					node1 = new Node(x1, y1);
+					node1 = new Vertex(x1, y1);
 					if (!usNodeList.contains(node1)) {
 						usNodeList.add(node1);
 					} else {
-						node1 = (Node) usNodeList.get(usNodeList.indexOf(node1));
+						node1 = (Vertex) usNodeList.get(usNodeList.indexOf(node1));
 					}
-					node2 = new Node(x2, y2);
+					node2 = new Vertex(x2, y2);
 					if (!usNodeList.contains(node2)) {
 						usNodeList.add(node2);
 					} else {
-						node2 = (Node) usNodeList.get(usNodeList.indexOf(node2));
+						node2 = (Vertex) usNodeList.get(usNodeList.indexOf(node2));
 					}
-					node3 = new Node(x3, y3);
+					node3 = new Vertex(x3, y3);
 					if (!usNodeList.contains(node3)) {
 						usNodeList.add(node3);
 					} else {
-						node3 = (Node) usNodeList.get(usNodeList.indexOf(node3));
+						node3 = (Vertex) usNodeList.get(usNodeList.indexOf(node3));
 					}
 
 					edge1 = new Edge(node1, node2);
@@ -505,11 +505,11 @@ public class GeomBasics extends Constants {
 					}
 
 					if (!Double.isNaN(x4) && !Double.isNaN(y4)) {
-						node4 = new Node(x4, y4);
+						node4 = new Vertex(x4, y4);
 						if (!usNodeList.contains(node4)) {
 							usNodeList.add(node4);
 						} else {
-							node4 = (Node) usNodeList.get(usNodeList.indexOf(node4));
+							node4 = (Vertex) usNodeList.get(usNodeList.indexOf(node4));
 						}
 
 						edge3 = new Edge(node2, node4);
@@ -561,13 +561,13 @@ public class GeomBasics extends Constants {
 	/** Load a triangle mesh from a file. */
 	public static List<Triangle> loadTriangleMesh() {
 		FileInputStream fis;
-		Node node1, node2, node3;
+		Vertex node1, node2, node3;
 		Edge edge1, edge2, edge3;
 		Triangle t;
 
 		triangleList = new ArrayList<Triangle>();
 		edgeList = new ArrayList<Edge>();
-		ArrayList<Node> usNodeList = new ArrayList<Node>();
+		ArrayList<Vertex> usNodeList = new ArrayList<Vertex>();
 
 		try {
 			fis = new FileInputStream(meshDirectory + meshFilename);
@@ -587,23 +587,23 @@ public class GeomBasics extends Constants {
 					x3 = nextDouble(inputLine);
 					y3 = nextDouble(inputLine);
 
-					node1 = new Node(x1, y1);
+					node1 = new Vertex(x1, y1);
 					if (!usNodeList.contains(node1)) {
 						usNodeList.add(node1);
 					} else {
-						node1 = (Node) usNodeList.get(usNodeList.indexOf(node1));
+						node1 = (Vertex) usNodeList.get(usNodeList.indexOf(node1));
 					}
-					node2 = new Node(x2, y2);
+					node2 = new Vertex(x2, y2);
 					if (!usNodeList.contains(node2)) {
 						usNodeList.add(node2);
 					} else {
-						node2 = (Node) usNodeList.get(usNodeList.indexOf(node2));
+						node2 = (Vertex) usNodeList.get(usNodeList.indexOf(node2));
 					}
-					node3 = new Node(x3, y3);
+					node3 = new Vertex(x3, y3);
 					if (!usNodeList.contains(node3)) {
 						usNodeList.add(node3);
 					} else {
-						node3 = (Node) usNodeList.get(usNodeList.indexOf(node3));
+						node3 = (Vertex) usNodeList.get(usNodeList.indexOf(node3));
 					}
 
 					edge1 = new Edge(node1, node2);
@@ -661,10 +661,10 @@ public class GeomBasics extends Constants {
 	}
 
 	/** A method to read node files. */
-	public static ArrayList<Node> loadNodes() {
+	public static ArrayList<Vertex> loadNodes() {
 		FileInputStream fis;
-		Node node1, node2, node3, node4;
-		ArrayList<Node> usNodeList = new ArrayList<Node>();
+		Vertex node1, node2, node3, node4;
+		ArrayList<Vertex> usNodeList = new ArrayList<Vertex>();
 
 		try {
 			fis = new FileInputStream(meshDirectory + meshFilename);
@@ -686,25 +686,25 @@ public class GeomBasics extends Constants {
 					y4 = nextDouble(inputLine);
 
 					if (!Double.isNaN(x1) && !Double.isNaN(y1)) {
-						node1 = new Node(x1, y1);
+						node1 = new Vertex(x1, y1);
 						if (!usNodeList.contains(node1)) {
 							usNodeList.add(node1);
 						}
 					}
 					if (!Double.isNaN(x2) && !Double.isNaN(y2)) {
-						node2 = new Node(x2, y2);
+						node2 = new Vertex(x2, y2);
 						if (!usNodeList.contains(node2)) {
 							usNodeList.add(node2);
 						}
 					}
 					if (!Double.isNaN(x3) && !Double.isNaN(y3)) {
-						node3 = new Node(x3, y3);
+						node3 = new Vertex(x3, y3);
 						if (!usNodeList.contains(node3)) {
 							usNodeList.add(node3);
 						}
 					}
 					if (!Double.isNaN(x4) && !Double.isNaN(y4)) {
-						node4 = new Node(x4, y4);
+						node4 = new Vertex(x4, y4);
 						if (!usNodeList.contains(node4)) {
 							usNodeList.add(node4);
 						}
@@ -730,7 +730,7 @@ public class GeomBasics extends Constants {
 	public static boolean exportMeshToLaTeX(String filename, int unitlength, double xcorr, double ycorr, boolean visibleNodes) {
 		FileOutputStream fos;
 		Edge edge;
-		Node n;
+		Vertex n;
 		int i;
 		ArrayList<Edge> boundary = new ArrayList<Edge>();
 
@@ -800,10 +800,10 @@ public class GeomBasics extends Constants {
 					}
 				}
 
-				// All nodes...
+				// All vertexs...
 				if (visibleNodes) {
 					for (i = 0; i < nodeList.size(); i++) {
-						n = (Node) nodeList.get(i);
+						n = (Vertex) nodeList.get(i);
 						out.write("\\put(" + (n.x + xcorr) + "," + (n.y + ycorr) + "){\\circle*{0.1}}");
 						out.newLine();
 					}
@@ -979,10 +979,10 @@ public class GeomBasics extends Constants {
 		return true;
 	}
 
-	/** Write all nodes in nodeList to a file. */
+	/** Write all vertexs in nodeList to a file. */
 	public static boolean writeNodes(String filename) {
 		FileOutputStream fos;
-		Node n;
+		Vertex n;
 
 		try {
 			fos = new FileOutputStream(filename);
@@ -992,7 +992,7 @@ public class GeomBasics extends Constants {
 			try {
 				if (nodeList != null) {
 					for (Object element : nodeList) {
-						n = (Node) element;
+						n = (Vertex) element;
 						x = n.x;
 						y = n.y;
 						out.write(x + ", " + y);
@@ -1009,7 +1009,7 @@ public class GeomBasics extends Constants {
 		return true;
 	}
 
-	/** Find the leftmost, rightmost, uppermost, and lowermost nodes. */
+	/** Find the leftmost, rightmost, uppermost, and lowermost vertexs. */
 	public static void findExtremeNodes() {
 		// nodeList= sortNodes(nodeList);
 		if (nodeList == null || nodeList.size() == 0) {
@@ -1020,14 +1020,14 @@ public class GeomBasics extends Constants {
 			return;
 		}
 
-		leftmost = (Node) nodeList.get(0);
+		leftmost = (Vertex) nodeList.get(0);
 		rightmost = leftmost;
 		uppermost = leftmost;
 		lowermost = leftmost;
 
-		Node curNode;
+		Vertex curNode;
 		for (int i = 1; i < nodeList.size(); i++) {
-			curNode = (Node) nodeList.get(i);
+			curNode = (Vertex) nodeList.get(i);
 
 			if ((curNode.x < leftmost.x) || (curNode.x == leftmost.x && curNode.y > leftmost.y)) {
 				leftmost = curNode;
@@ -1046,14 +1046,14 @@ public class GeomBasics extends Constants {
 
 	}
 
-	/** Sort nodes left to right. Higher y-values are preferred to lower ones. */
-	public static List<Node> sortNodes(List<Node> unsortedNodes) {
-		List<Node> sortedNodes = new ArrayList<>();
-		Node curNode, candNode;
+	/** Sort vertexs left to right. Higher y-values are preferred to lower ones. */
+	public static List<Vertex> sortNodes(List<Vertex> unsortedNodes) {
+		List<Vertex> sortedNodes = new ArrayList<>();
+		Vertex curNode, candNode;
 		while (unsortedNodes.size() > 0) {
-			curNode = (Node) unsortedNodes.get(0);
+			curNode = (Vertex) unsortedNodes.get(0);
 			for (int i = 1; i < unsortedNodes.size(); i++) {
-				candNode = (Node) unsortedNodes.get(i);
+				candNode = (Vertex) unsortedNodes.get(i);
 				if (candNode.x < curNode.x || (candNode.x == curNode.x && candNode.y < curNode.y)) {
 					curNode = candNode;
 				}
@@ -1062,7 +1062,7 @@ public class GeomBasics extends Constants {
 			unsortedNodes.remove(unsortedNodes.indexOf(curNode));
 		}
 
-		// Find the leftmost, rightmost, uppermost, and lowermost nodes.
+		// Find the leftmost, rightmost, uppermost, and lowermost vertexs.
 		leftmost = sortedNodes.get(0);
 		rightmost = sortedNodes.get(sortedNodes.size() - 1);
 		uppermost = leftmost;
@@ -1148,48 +1148,48 @@ public class GeomBasics extends Constants {
 		if (Msg.debugMode) {
 			Msg.debug("nodeList:");
 			for (Object element : nodeList) {
-				Node node = (Node) element;
-				node.printMe();
+				Vertex vertex = (Vertex) element;
+				vertex.printMe();
 			}
 		}
 	}
 
 	/** */
 	public static void printValences() {
-		Node n;
+		Vertex n;
 		for (Object element : nodeList) {
-			n = (Node) element;
-			Msg.debug("Node " + n.descr() + " has valence " + n.valence());
+			n = (Vertex) element;
+			Msg.debug("Vertex " + n.descr() + " has valence " + n.valence());
 		}
 	}
 
 	/** */
 	public static void printValPatterns() {
-		Node n;
-		Node[] neighbors;
+		Vertex n;
+		Vertex[] neighbors;
 		for (Object element : nodeList) {
-			n = (Node) element;
+			n = (Vertex) element;
 			if (!n.boundaryNode()) {
 				neighbors = n.ccwSortedNeighbors();
 				n.createValencePattern(neighbors);
-				Msg.debug("Node " + n.descr() + " has valence pattern " + n.valDescr());
+				Msg.debug("Vertex " + n.descr() + " has valence pattern " + n.valDescr());
 			}
 		}
 	}
 
 	/** */
 	public static void printAnglesAtSurrondingNodes() {
-		Node n;
-		Node[] neighbors;
+		Vertex n;
+		Vertex[] neighbors;
 		double[] angles;
 		for (Object element : nodeList) {
-			n = (Node) element;
+			n = (Vertex) element;
 			if (!n.boundaryNode()) {
 				neighbors = n.ccwSortedNeighbors();
 				n.createValencePattern(neighbors);
 				angles = n.surroundingAngles(neighbors, n.pattern[0] - 2);
 
-				Msg.debug("Angles at the nodes surrounding node " + n.descr() + ":");
+				Msg.debug("Angles at the vertexs surrounding node " + n.descr() + ":");
 				for (int j = 0; j < n.pattern[0] - 2; j++) {
 					Msg.debug("angles[" + j + "]== " + Math.toDegrees(angles[j]) + " (in degrees)");
 				}
@@ -1202,7 +1202,7 @@ public class GeomBasics extends Constants {
 	 * 
 	 * @return true if any repairing was neccessary, else return false.
 	 */
-	public static boolean inversionCheckAndRepair(Node newN, Node oldPos) {
+	public static boolean inversionCheckAndRepair(Vertex newN, Vertex oldPos) {
 		Msg.debug("Entering inversionCheckAndRepair(..), node oldPos: " + oldPos.descr());
 		List<Element> elements = newN.adjElements();
 		if (newN.invertedOrZeroAreaElements(elements)) {
@@ -1224,7 +1224,7 @@ public class GeomBasics extends Constants {
 	}
 
 	/**
-	 * Quad q is to be collapsed. Nodes n1 and n2 are two opposite nodes in q. This
+	 * Quad q is to be collapsed. Nodes n1 and n2 are two opposite vertexs in q. This
 	 * method tries to find a location inside the current q to which n1 and n2 can
 	 * safely be relocated and joined without causing any adjacent elements to
 	 * become inverted. The first candidate location is the centroid of the quad. If
@@ -1238,10 +1238,10 @@ public class GeomBasics extends Constants {
 	 * @return a position inside quad q to which both n1 and n2 can be relocated
 	 *         without inverting any of their adjacent elements.
 	 */
-	public static Node safeNewPosWhenCollapsingQuad(Quad q, Node n1, Node n2) {
+	public static Vertex safeNewPosWhenCollapsingQuad(Quad q, Vertex n1, Vertex n2) {
 		Msg.debug("Entering safeNewPosWhenCollapsingQuad(..)");
 
-		Node n = q.centroid();
+		Vertex n = q.centroid();
 		MyVector back2n1 = new MyVector(n, n1), back2n2 = new MyVector(n, n2);
 		double startX = n.x, startY = n.y;
 		double xstepn1 = back2n1.x / 50.0, ystepn1 = back2n1.y / 50.0, xstepn2 = back2n2.x / 50.0, ystepn2 = back2n2.y / 50.0;
@@ -1441,11 +1441,11 @@ public class GeomBasics extends Constants {
 	 * @param p2 endpoint of second vector
 	 * @return the cross product of the two vectors
 	 */
-	public static double cross(Node o1, Node p1, Node o2, Node p2) {
+	public static double cross(Vertex o1, Vertex p1, Vertex o2, Vertex p2) {
 		double x1 = p1.x - o1.x;
 		double x2 = p2.x - o2.x;
 		double y1 = p1.y - o1.y;
 		double y2 = p2.y - o2.y;
 		return x1 * y2 - x2 * y1;
 	}
-} // End of class GeomBasics
+}

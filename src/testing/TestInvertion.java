@@ -3,22 +3,22 @@ package testing;
 import meshditor.Constants;
 import meshditor.Edge;
 import meshditor.Msg;
-import meshditor.Node;
+import meshditor.Vertex;
 import meshditor.Quad;
 import meshditor.Triangle;
 
 public class TestInvertion extends Constants {
 
 	public static void main(String[] args) {
-		Node n1 = new Node(0.0, 0.0);
-		Node n2 = new Node(1.0, 0.0);
-		Node n3 = new Node(0.0, 1.0);
-		Node n4 = new Node(1.0, 1.0);
+		Vertex n1 = new Vertex(0.0, 0.0);
+		Vertex n2 = new Vertex(1.0, 0.0);
+		Vertex n3 = new Vertex(0.0, 1.0);
+		Vertex n4 = new Vertex(1.0, 1.0);
 
-		Node oldN3 = n3.copyXY();
-		Node oldN4 = n4.copyXY();
-		Node newN3 = new Node(0.0, 2.0);
-		Node newN4 = new Node(1.0, -1.0);
+		Vertex oldN3 = n3.copyXY();
+		Vertex oldN4 = n4.copyXY();
+		Vertex newN3 = new Vertex(0.0, 2.0);
+		Vertex newN4 = new Vertex(1.0, -1.0);
 
 		n3.setXY(newN3); // *Should not* invert quad...
 		n4.setXY(newN4); // *Should* invert quad...

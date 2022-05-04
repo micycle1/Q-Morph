@@ -31,7 +31,7 @@ public class GlobalSmooth extends GeomBasics {
 	 * @param n the node which is to be subjected to the smooth.
 	 * @return the smoothed position of node n.
 	 */
-	private Node constrainedLaplacianSmooth(Node n) {
+	private Vertex constrainedLaplacianSmooth(Vertex n) {
 		Msg.debug("Entering constrainedLaplacianSmooth(..)");
 		List<Element> elements = n.adjElements();
 		Element oElem, sElem;
@@ -39,7 +39,7 @@ public class GlobalSmooth extends GeomBasics {
 		double deltaMy = 0, theta = 0, temp;
 		int N = elements.size(), Nminus = 0, Nplus = 0, Nup = 0, Ndown = 0, Ninverted = 0;
 
-		Node nLPos = new Node(n.x + vL.x, n.y + vL.y);
+		Vertex nLPos = new Vertex(n.x + vL.x, n.y + vL.y);
 		nLPos.edgeList = n.edgeList;
 
 		for (int count = 0; count < 20; count++) {
@@ -90,12 +90,12 @@ public class GlobalSmooth extends GeomBasics {
 			deltaMy = deltaMy / N;
 
 			if (acceptable(N, Nminus, Nplus, Nup, Ndown, Ninverted, deltaMy, theta)) {
-				// Return the proposed new position for Node n
+				// Return the proposed new position for Vertex n
 				Msg.debug("Leaving constrainedLaplacianSmooth(..), successful");
 				return nLPos;
 			} else {
 				vL = vL.div(2.0);
-				nLPos = new Node(n.x + vL.x, n.y + vL.y);
+				nLPos = new Vertex(n.x + vL.x, n.y + vL.y);
 			}
 		}
 
@@ -137,11 +137,11 @@ public class GlobalSmooth extends GeomBasics {
 	 * @return a node with a position that is the optimaization-based smoothed
 	 *         position of node n.
 	 */
-	private Node optBasedSmooth(Node x, List<Element> elements) {
+	private Vertex optBasedSmooth(Vertex x, List<Element> elements) {
 		Msg.debug("Entering optBasedSmooth(..)");
 		Element sElem;
 		double delta = Constants.DELTAFACTOR * maxModDim;
-		Node xPX = new Node(x.x, x.y), xPY = new Node(x.x, x.y), xNew = new Node(x.x, x.y);
+		Vertex xPX = new Vertex(x.x, x.y), xPY = new Vertex(x.x, x.y), xNew = new Vertex(x.x, x.y);
 		double gX, gY;
 		double minDM, newMinDM = java.lang.Double.MAX_VALUE;
 		int iterations = 0;
@@ -251,7 +251,7 @@ public class GlobalSmooth extends GeomBasics {
 		Msg.debug("Leaving GlobalSmooth.init()");
 	}
 
-	/** Perform the smoothing of the nodes in a step-wise manner. */
+	/** Perform the smoothing of the vertexs in a step-wise manner. */
 	@Override
 	public void step() {
 		Msg.debug("Entering GlobalSmooth.step()");
@@ -265,18 +265,18 @@ public class GlobalSmooth extends GeomBasics {
 		Msg.debug("Entering GlobalSmooth.run()");
 		// Variables
 		int i, j;
-		List<Node> nodes = new ArrayList<>();
+		List<Vertex> vertexs = new ArrayList<>();
 		List<Element> elements = new ArrayList<>();
 		Element elem;
 		Triangle t;
 		double curLen, oldX, oldY;
-		Node v, v_moved, n;
+		Vertex v, v_moved, n;
 
-		// Get the internal nodes from nodeList.
+		// Get the internal vertexs from nodeList.
 		for (i = 0; i < nodeList.size(); i++) {
-			v = (Node) nodeList.get(i);
+			v = (Vertex) nodeList.get(i);
 			if (!v.boundaryNode()) {
-				nodes.add(v);
+				vertexs.add(v);
 			}
 		}
 
@@ -300,7 +300,7 @@ public class GlobalSmooth extends GeomBasics {
 			}
 		}
 
-		Msg.debug("...nodes.size(): " + nodes.size());
+		Msg.debug("...nodes.size(): " + vertexs.size());
 
 		Edge e;
 
@@ -309,8 +309,8 @@ public class GlobalSmooth extends GeomBasics {
 		boolean nodeMoved;
 		do {
 			nodeMoved = false;
-			for (i = 0; i < nodes.size(); i++) {
-				v = (Node) nodes.get(i);
+			for (i = 0; i < vertexs.size(); i++) {
+				v = (Vertex) vertexs.get(i);
 
 				if (v == null) {
 					Msg.debug("... no, node has been removed from list");
@@ -324,19 +324,19 @@ public class GlobalSmooth extends GeomBasics {
 					Msg.debug("...distance moved by CLS is " + distance);
 					if (distance < Constants.MOVETOLERANCE) {
 						Msg.debug("...removing node " + v.descr() + " from list");
-						nodes.set(i, null);
+						vertexs.set(i, null);
 					} else {
 						// Allow the move
 						v.setXY(v_moved);
 						v.update();
 						nodeMoved = true;
 						Msg.debug("...allowing CLS move of node " + v.descr());
-						// Put neighbor nodes back in list, if they are not already there
+						// Put neighbor vertexs back in list, if they are not already there
 						for (j = 0; j < v.edgeList.size(); j++) {
 							e = (Edge) v.edgeList.get(j);
 							n = e.otherNode(v);
-							if (!n.boundaryNode() && !nodes.contains(n)) {
-								nodes.add(n);
+							if (!n.boundaryNode() && !vertexs.contains(n)) {
+								vertexs.add(n);
 							}
 						}
 						// Keep track of the largest distance moved
@@ -369,12 +369,12 @@ public class GlobalSmooth extends GeomBasics {
 						oldY = v.y;
 						v_moved = optBasedSmooth(v, elements);
 						if (v_moved.x != oldX || v_moved.y != oldY) {
-							// Put neighbor nodes back in list, if they're not there
+							// Put neighbor vertexs back in list, if they're not there
 							for (j = 0; j < v.edgeList.size(); j++) {
 								e = (Edge) v.edgeList.get(j);
 								n = e.otherNode(v);
-								if (!n.boundaryNode() && !nodes.contains(n)) {
-									nodes.add(n);
+								if (!n.boundaryNode() && !vertexs.contains(n)) {
+									vertexs.add(n);
 								}
 							}
 							// Keep track of the largest distance moved

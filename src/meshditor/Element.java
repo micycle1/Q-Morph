@@ -10,17 +10,17 @@ public abstract class Element extends Constants {
 	/** @return neighbor element sharing edge e */
 	public abstract Element neighbor(Edge e);
 
-	/** @return local angle inside element at Node n */
-	public abstract double angle(Edge e, Node n);
+	/** @return local angle inside element at Vertex n */
+	public abstract double angle(Edge e, Vertex n);
 
-	/** Compute & set the angles at the nodes of the element. */
+	/** Compute & set the angles at the vertexs of the element. */
 	public abstract void updateAngles();
 
 	/**
-	 * Compute & set the angle at this particular Node incident with this Element
+	 * Compute & set the angle at this particular Vertex incident with this Element
 	 * Edge
 	 */
-	public abstract void updateAngle(Node n);
+	public abstract void updateAngle(Vertex n);
 
 	/** @return description string for element (list of node coordinates) */
 	public abstract String descr();
@@ -32,13 +32,13 @@ public abstract class Element extends Constants {
 	public abstract boolean hasEdge(Edge e);
 
 	/** Verify that the quad has the specified node. */
-	public abstract boolean hasNode(Node n);
+	public abstract boolean hasNode(Vertex n);
 
 	/** Verify that the area of the quad is greater than 0. */
 	public abstract boolean areaLargerThan0();
 
 	/** Return local neighboring edge at node n. */
-	public abstract Edge neighborEdge(Node n, Edge e);
+	public abstract Edge neighborEdge(Vertex n, Edge e);
 
 	/** Return the index to this edge in this element's edgeList */
 	public abstract int indexOf(Edge e);
@@ -46,7 +46,7 @@ public abstract class Element extends Constants {
 	/** Return the index to this angle in this element's ang array */
 	public abstract int angleIndex(Edge e1, Edge e2);
 
-	public abstract int angleIndex(Node n);
+	public abstract int angleIndex(Vertex n);
 
 	/** Return the angle between this Element's Edges e1 and e2. */
 	public abstract double angle(Edge e1, Edge e2);
@@ -57,8 +57,8 @@ public abstract class Element extends Constants {
 	/** @return true if the element has become inverted or its area is zero. */
 	public abstract boolean invertedOrZeroArea();
 
-	/** @return true if the element has a concavity at its Node n. */
-	public abstract boolean concavityAt(Node n);
+	/** @return true if the element has a concavity at its Vertex n. */
+	public abstract boolean concavityAt(Vertex n);
 
 	/** Replace one of the specified edges e with a replacement edge. */
 	public abstract void replaceEdge(Edge e, Edge replacement);
@@ -73,13 +73,13 @@ public abstract class Element extends Constants {
 	public abstract void disconnectEdges();
 
 	/** Create a simple element for testing purposes only. */
-	public abstract Element elementWithExchangedNodes(Node original, Node replacement);
+	public abstract Element elementWithExchangedNodes(Vertex original, Vertex replacement);
 
 	/**
 	 * @return true if the quad becomes inverted when node n1 is relocated to pos.
 	 *         n2. Else return false.
 	 */
-	public abstract boolean invertedWhenNodeRelocated(Node n1, Node n2);
+	public abstract boolean invertedWhenNodeRelocated(Vertex n1, Vertex n2);
 
 	/**
 	 * Update the distortion metric according to the article "An approach to
@@ -102,7 +102,7 @@ public abstract class Element extends Constants {
 	public abstract double largestAngle();
 
 	/** Return the node at the largest interior angle. */
-	public abstract Node nodeAtLargestAngle();
+	public abstract Vertex nodeAtLargestAngle();
 
 	/** Set the color of the edges to red. */
 	public abstract void markEdgesIllegal();
@@ -119,7 +119,7 @@ public abstract class Element extends Constants {
 	 * @param p2 endpoint of second vector
 	 * @return the cross product of the two vectors
 	 */
-	protected double cross(Node o1, Node p1, Node o2, Node p2) {
+	protected double cross(Vertex o1, Vertex p1, Vertex o2, Vertex p2) {
 		double x1 = p1.x - o1.x;
 		double x2 = p2.x - o2.x;
 		double y1 = p1.y - o1.y;
@@ -131,6 +131,6 @@ public abstract class Element extends Constants {
 	public double[] ang;
 	/** An array of edges */
 	Edge[] edgeList;
-	/** Node used for determining inversion, amonst other things. */
-	Node firstNode;
+	/** Vertex used for determining inversion, amonst other things. */
+	Vertex firstNode;
 }

@@ -13,7 +13,7 @@ public class Ray {
 	// origin: the point where the ray starts
 	// relEdge: an edge that the angle is relative to
 	// angle: the angle relative to relEdge
-	public Ray(Node origin, Edge relEdge, double angle) {
+	public Ray(Vertex origin, Edge relEdge, double angle) {
 		this.origin = origin;
 		double temp = relEdge.angleAt(origin);
 		Msg.debug("relEdge.angleAt(origin)==" + Math.toDegrees(temp) + " degrees");
@@ -27,7 +27,7 @@ public class Ray {
 	// origin: the point where the ray starts
 	// angle: the angle relative to relEdge
 	// angle is relative to the x-axis
-	public Ray(Node origin, double angle) {
+	public Ray(Vertex origin, double angle) {
 		this.origin = origin;
 		this.x = Math.cos(angle);
 		this.y = Math.sin(angle);
@@ -35,7 +35,7 @@ public class Ray {
 
 	// origin: the point where the ray starts
 	// passThrough: a point which the ray passes through
-	public Ray(Node origin, Node passThrough) {
+	public Ray(Vertex origin, Vertex passThrough) {
 		this.origin = origin;
 		double tempx = passThrough.x - origin.x;
 		double tempy = passThrough.y - origin.y;
@@ -49,8 +49,8 @@ public class Ray {
 		return x * v.y - v.x * y;
 	}
 
-	public Node pointIntersectsAt(MyVector d1) {
-		Node p0 = origin, p1 = d1.origin;
+	public Vertex pointIntersectsAt(MyVector d1) {
+		Vertex p0 = origin, p1 = d1.origin;
 		MyVector delta = new MyVector(p0, p1.x - p0.x, p1.y - p0.y);
 		Ray d0 = this;
 		double d0crossd1 = d0.cross(d1);
@@ -70,7 +70,7 @@ public class Ray {
 			} else {
 				double x = d1.origin.x + t * d1.x;
 				double y = d1.origin.y + t * d1.y;
-				return new Node(x, y); // Intersects at this ray point
+				return new Vertex(x, y); // Intersects at this ray point
 			}
 		}
 	}
@@ -88,5 +88,5 @@ public class Ray {
 	}
 
 	public double x, y; // hyp= 1= sqrt(x^2 + y^2)
-	public Node origin;
+	public Vertex origin;
 }

@@ -3,18 +3,18 @@ package testing;
 import meshditor.GeomBasics;
 import meshditor.Msg;
 import meshditor.MyVector;
-import meshditor.Node;
+import meshditor.Vertex;
 
 public class TestMyVector extends GeomBasics {
 
 	public static void main(String[] args) {
-		Node p0 = new Node(0, 0);
-		Node p1 = new Node(0, 1);
+		Vertex p0 = new Vertex(0, 0);
+		Vertex p1 = new Vertex(0, 1);
 
 		MyVector d0 = new MyVector(p0, 5, 5);
 		MyVector d1 = new MyVector(p1, 10, 0);
 
-		Node poi = d0.pointIntersectsAt(d1);
+		Vertex poi = d0.pointIntersectsAt(d1);
 		if (poi != null) {
 			poi.printMe();
 		} else {
@@ -87,10 +87,10 @@ public class TestMyVector extends GeomBasics {
 		}
 
 		Msg.debug("----- Special tests of isCWto(MyVector v) -----");
-		Node nC = new Node(-0.3, 1.2);
-		Node nD = new Node(-0.3, 0.3);
-		Node nK = new Node(-1.7538203106994033, 1.2016864852680453);
-		Node nKp1 = new Node(-0.2, 0.7);
+		Vertex nC = new Vertex(-0.3, 1.2);
+		Vertex nD = new Vertex(-0.3, 0.3);
+		Vertex nK = new Vertex(-1.7538203106994033, 1.2016864852680453);
+		Vertex nKp1 = new Vertex(-0.2, 0.7);
 
 		MyVector vS = new MyVector(nC, nD);
 		MyVector vK = new MyVector(nC, nK);
@@ -102,11 +102,11 @@ public class TestMyVector extends GeomBasics {
 			Msg.debug("isCWto test8: galt!");
 		}
 
-		nC = new Node(-0.4289644776132451, 1.2568646152466634);
-		nD = new Node(-0.3, 0.30000000000000004);
+		nC = new Vertex(-0.4289644776132451, 1.2568646152466634);
+		nD = new Vertex(-0.3, 0.30000000000000004);
 
-		nK = new Node(-0.5924654806651178, 0.8719787380936597);
-		nKp1 = new Node(0.8, 1.0);
+		nK = new Vertex(-0.5924654806651178, 0.8719787380936597);
+		nKp1 = new Vertex(0.8, 1.0);
 
 		vS = new MyVector(nC, nD);
 		vK = new MyVector(nC, nK);
@@ -118,10 +118,10 @@ public class TestMyVector extends GeomBasics {
 			Msg.debug("isCWto test9: galt!");
 		}
 
-		nC = new Node(-0.3, 1.2);
-		nD = new Node(-0.3, 0.30000000000000004);
-		nK = new Node(-1.3, 1.2);
-		nKp1 = new Node(-0.2, 0.7);
+		nC = new Vertex(-0.3, 1.2);
+		nD = new Vertex(-0.3, 0.30000000000000004);
+		nK = new Vertex(-1.3, 1.2);
+		nKp1 = new Vertex(-0.2, 0.7);
 		vS = new MyVector(nC, nD);
 		vK = new MyVector(nC, nK);
 		vKp1 = new MyVector(nC, nKp1);

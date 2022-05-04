@@ -94,5 +94,5 @@ public class Constants {
 	public static final int defaultMAXITER = 5;
 
 	/** The origin, only used as a reference. */
-	static final Node origin = new Node(0, 0);
+	static final Vertex origin = new Vertex(0, 0);
 }

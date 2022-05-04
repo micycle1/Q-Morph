@@ -9,7 +9,7 @@ public class Dart {
 		elem = null;
 	}
 
-	public Dart(Node n, Edge e, Element elem) {
+	public Dart(Vertex n, Edge e, Element elem) {
 		this.n = n;
 		this.e = e;
 		this.elem = elem;
@@ -19,7 +19,7 @@ public class Dart {
 		return "(elem: " + elem.descr() + ", e: " + e.descr() + ", n: " + n.descr() + ")";
 	}
 
-	public Node n;
+	public Vertex n;
 	public Edge e;
 	public Element elem;
 

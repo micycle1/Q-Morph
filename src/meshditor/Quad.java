@@ -13,7 +13,7 @@ public class Quad extends Element {
 	/** Create ordinary quad */
 	public Quad(Edge baseEdge, Edge leftEdge, Edge rightEdge, Edge topEdge) {
 		Edge e;
-		Node b, c;
+		Vertex b, c;
 		edgeList = new Edge[4];
 		ang = new double[4];
 
@@ -113,10 +113,10 @@ public class Quad extends Element {
 	}
 
 	/**
-	 * Create a fake quad with 3 different nodes and edgeList[top]==edgeList[right]
+	 * Create a fake quad with 3 different vertexs and edgeList[top]==edgeList[right]
 	 */
 	public Quad(Triangle t) {
-		Node n;
+		Vertex n;
 		isFake = true;
 		edgeList = new Edge[4];
 		ang = new double[4];
@@ -144,11 +144,11 @@ public class Quad extends Element {
 	 * isStrictlyconvex()). Not tested thoroughly!!!
 	 * 
 	 * @param e  is a diagonal edge
-	 * @param n1 the first or the other two nodes in the quad
-	 * @param n2 the second of the other two nodes in the quad
+	 * @param n1 the first or the other two vertexs in the quad
+	 * @param n2 the second of the other two vertexs in the quad
 	 */
-	public Quad(Edge e, Node n1, Node n2) {
-		Msg.debug("Entering Quad(Edge, Node, Node)");
+	public Quad(Edge e, Vertex n1, Vertex n2) {
+		Msg.debug("Entering Quad(Edge, Vertex, Vertex)");
 		Msg.debug("e= " + e.descr() + ", n1= " + n1.descr() + ", n2= " + n2.descr());
 		isFake = false;
 		edgeList = new Edge[4];
@@ -165,7 +165,7 @@ public class Quad extends Element {
 		}
 
 		Msg.debug("New quad is " + descr());
-		Msg.debug("Leaving Quad(Edge, Node, Node)");
+		Msg.debug("Leaving Quad(Edge, Vertex, Vertex)");
 
 		firstNode = edgeList[base].leftNode;
 		if (inverted()) {
@@ -175,9 +175,9 @@ public class Quad extends Element {
 
 	/**
 	 * Constructor to make life easier for elementWithExchangedNode(..) Create fake
-	 * quad with only three nodes
+	 * quad with only three vertexs
 	 */
-	private Quad(Node n1, Node n2, Node n3, Node f) {
+	private Quad(Vertex n1, Vertex n2, Vertex n3, Vertex f) {
 		isFake = true;
 		edgeList = new Edge[4];
 		ang = new double[4];
@@ -197,7 +197,7 @@ public class Quad extends Element {
 	}
 
 	/** Constructor to make life easier for elementWithExchangedNode(..) */
-	private Quad(Node n1, Node n2, Node n3, Node n4, Node f) {
+	private Quad(Vertex n1, Vertex n2, Vertex n3, Vertex n4, Vertex f) {
 		isFake = false;
 		edgeList = new Edge[4];
 		ang = new double[4];
@@ -221,10 +221,10 @@ public class Quad extends Element {
 	 * Not tested thoroughly!!!
 	 */
 	@Override
-	public Element elementWithExchangedNodes(Node original, Node replacement) {
-		Node node1 = edgeList[base].leftNode;
-		Node node2 = edgeList[base].rightNode;
-		Node node3 = edgeList[left].otherNode(edgeList[base].leftNode);
+	public Element elementWithExchangedNodes(Vertex original, Vertex replacement) {
+		Vertex node1 = edgeList[base].leftNode;
+		Vertex node2 = edgeList[base].rightNode;
+		Vertex node3 = edgeList[left].otherNode(edgeList[base].leftNode);
 
 		if (isFake) {
 			if (node1 == original) {
@@ -250,7 +250,7 @@ public class Quad extends Element {
 			}
 		}
 
-		Node node4 = edgeList[right].otherNode(edgeList[base].rightNode);
+		Vertex node4 = edgeList[right].otherNode(edgeList[base].rightNode);
 
 		if (node1 == original) {
 			if (original == firstNode) {
@@ -286,10 +286,10 @@ public class Quad extends Element {
 	 *         n2. Else return false.
 	 */
 	@Override
-	public boolean invertedWhenNodeRelocated(Node n1, Node n2) {
+	public boolean invertedWhenNodeRelocated(Vertex n1, Vertex n2) {
 		Msg.debug("Entering Quad.invertedWhenNodeRelocated(..)");
-		Node thisFirstNode = firstNode;
-		Node a = edgeList[base].leftNode, b = edgeList[base].rightNode, c = edgeList[right].otherNode(b), d = edgeList[left].otherNode(a);
+		Vertex thisFirstNode = firstNode;
+		Vertex a = edgeList[base].leftNode, b = edgeList[base].rightNode, c = edgeList[right].otherNode(b), d = edgeList[left].otherNode(a);
 
 		if (a == n1) {
 			a = n2;
@@ -337,18 +337,18 @@ public class Quad extends Element {
 	 * collapsed in a particular manner.
 	 * 
 	 * @param q     the quad to be collapsed
-	 * @param n     a node holding the position for where the joined nodes are to be
+	 * @param n     a node holding the position for where the joined vertexs are to be
 	 *              located
 	 * @param n1    the node in quad q that is to be joined with opposite node n2
 	 * @param n2    the node in quad q that is to be joined with opposite node n1
 	 * @param list1 the list of elements adjacent n1
 	 * @param list2 the list of elements adjacent n2
 	 * @return true if any elements adjacent to quad q becomes inverted when
-	 *         collapsing quad q, joining its two opposite nodes n1 and n2 to the
-	 *         position held by node n. Node n must be located somewhere inside quad
+	 *         collapsing quad q, joining its two opposite vertexs n1 and n2 to the
+	 *         position held by node n. Vertex n must be located somewhere inside quad
 	 *         q.
 	 */
-	public boolean anyInvertedElementsWhenCollapsed(Node n, Node n1, Node n2, List list1, List list2) {
+	public boolean anyInvertedElementsWhenCollapsed(Vertex n, Vertex n1, Vertex n2, List list1, List list2) {
 		Msg.debug("Entering Quad.anyInvertedElementsWhenCollapsed(..)");
 		Element elem;
 		int i;
@@ -377,8 +377,8 @@ public class Quad extends Element {
 	public boolean equals(Object o) {
 		if (o instanceof Quad) {
 			Quad q = (Quad) o;
-			Node node1, node2, node3, node4;
-			Node qnode1, qnode2, qnode3, qnode4;
+			Vertex node1, node2, node3, node4;
+			Vertex qnode1, qnode2, qnode3, qnode4;
 			node1 = edgeList[base].leftNode;
 			node2 = edgeList[base].rightNode;
 			node3 = edgeList[left].otherNode(edgeList[base].leftNode);
@@ -428,8 +428,8 @@ public class Quad extends Element {
 	 */
 	public void closeQuad(Edge e1, Edge e2) {
 		Msg.debug("Entering Quad.closeQuad(..)");
-		Node nK = e1.commonNode(e2);
-		Node nKp1 = e1.otherNode(nK), nKm1 = e2.otherNode(nK), other;
+		Vertex nK = e1.commonNode(e2);
+		Vertex nKp1 = e1.otherNode(nK), nKm1 = e2.otherNode(nK), other;
 		Quad q;
 		boolean found = false;
 		Edge e, eI, eJ;
@@ -617,14 +617,14 @@ public class Quad extends Element {
 	 * @return the edge in this quad that is a neighbor of the given node and edge.
 	 */
 	@Override
-	public Edge neighborEdge(Node n, Edge e) {
+	public Edge neighborEdge(Vertex n, Edge e) {
 		if (edgeList[base].leftNode == n) {
 			if (edgeList[base] == e) {
 				return edgeList[left];
 			} else if (edgeList[left] == e) {
 				return edgeList[base];
 			} else {
-				Msg.warning("Quad.neighborEdge(Node n, Edge e): neighbor not found:");
+				Msg.warning("Quad.neighborEdge(Vertex n, Edge e): neighbor not found:");
 				Msg.error("quad: " + descr() + ", n: " + n.descr() + ", e: " + e.descr());
 				return null;
 			}
@@ -634,7 +634,7 @@ public class Quad extends Element {
 			} else if (edgeList[right] == e) {
 				return edgeList[base];
 			} else {
-				Msg.warning("Quad.neighborEdge(Node n, Edge e): neighbor not found:");
+				Msg.warning("Quad.neighborEdge(Vertex n, Edge e): neighbor not found:");
 				Msg.error("quad: " + descr() + ", n: " + n.descr() + ", e: " + e.descr());
 				return null;
 			}
@@ -645,7 +645,7 @@ public class Quad extends Element {
 				} else if (edgeList[left] == e) {
 					return edgeList[right];
 				} else {
-					Msg.warning("Quad.neighborEdge(Node n, Edge e): neighbor not found:");
+					Msg.warning("Quad.neighborEdge(Vertex n, Edge e): neighbor not found:");
 					Msg.error("quad: " + descr() + ", n: " + n.descr() + ", e: " + e.descr());
 					return null;
 				}
@@ -654,7 +654,7 @@ public class Quad extends Element {
 			} else if (edgeList[left] == e) {
 				return edgeList[top];
 			} else {
-				Msg.warning("Quad.neighborEdge(Node n, Edge e): neighbor not found:");
+				Msg.warning("Quad.neighborEdge(Vertex n, Edge e): neighbor not found:");
 				Msg.error("quad: " + descr() + ", n: " + n.descr() + ", e: " + e.descr());
 				return null;
 			}
@@ -664,19 +664,19 @@ public class Quad extends Element {
 			} else if (edgeList[right] == e) {
 				return edgeList[top];
 			} else {
-				Msg.warning("Quad.neighborEdge(Node n, Edge e): neighbor not found:");
+				Msg.warning("Quad.neighborEdge(Vertex n, Edge e): neighbor not found:");
 				Msg.error("quad: " + descr() + ", n: " + n.descr() + ", e: " + e.descr());
 				return null;
 			}
 		} else {
-			Msg.warning("Quad.neighborEdge(Node n, Edge e): neighbor not found:");
+			Msg.warning("Quad.neighborEdge(Vertex n, Edge e): neighbor not found:");
 			Msg.error("quad: " + descr() + ", n: " + n.descr() + ", e: " + e.descr());
 			return null;
 		}
 	}
 
 	/** @return an edge in this quad that is a neighbor of the given node. */
-	public Edge neighborEdge(Node n) {
+	public Edge neighborEdge(Vertex n) {
 		if (edgeList[base].leftNode == n) {
 			return edgeList[base];
 		} else if (edgeList[base].rightNode == n) {
@@ -686,13 +686,13 @@ public class Quad extends Element {
 		} else if (edgeList[right].otherNode(edgeList[base].rightNode) == n) {
 			return edgeList[top];
 		} else {
-			Msg.error("Quad.neighborEdge(Node n): neighbor not found.");
+			Msg.error("Quad.neighborEdge(Vertex n): neighbor not found.");
 			return null;
 		}
 	}
 
 	@Override
-	public double angle(Edge e, Node n) {
+	public double angle(Edge e, Vertex n) {
 		// Find this edge's index
 		int thisEdgeIndex = indexOf(e);
 
@@ -733,7 +733,7 @@ public class Quad extends Element {
 	}
 
 	@Override
-	public int angleIndex(Node n) {
+	public int angleIndex(Vertex n) {
 		if (edgeList[base].leftNode == n) {
 			return 0;
 		} else if (edgeList[base].rightNode == n) {
@@ -743,7 +743,7 @@ public class Quad extends Element {
 		} else if (edgeList[right].otherNode(edgeList[base].rightNode) == n) {
 			return 3;
 		} else {
-			Msg.error("Quad.angleIndex(Node): Node not found");
+			Msg.error("Quad.angleIndex(Vertex): Vertex not found");
 			return -1;
 		}
 	}
@@ -754,7 +754,7 @@ public class Quad extends Element {
 	}
 
 	@Override
-	public boolean hasNode(Node n) {
+	public boolean hasNode(Vertex n) {
 		if (edgeList[base].leftNode.equals(n) || edgeList[base].rightNode.equals(n) || edgeList[top].leftNode.equals(n)
 				|| edgeList[top].rightNode.equals(n)) {
 			return true;
@@ -808,7 +808,7 @@ public class Quad extends Element {
 	}
 
 	/** Get any node on the boundary that belongs to this quad. */
-	public Node getBoundaryNode() {
+	public Vertex getBoundaryNode() {
 		if (edgeList[base].leftNode.boundaryNode()) {
 			return edgeList[base].leftNode;
 		} else if (edgeList[base].rightNode.boundaryNode()) {
@@ -824,12 +824,12 @@ public class Quad extends Element {
 
 	/**
 	 * Method to verify that the quad has an area greater than 0. We simply check
-	 * that the nodes of the element are not colinear.
+	 * that the vertexs of the element are not colinear.
 	 */
 	@Override
 	public boolean areaLargerThan0() {
-		Node node3 = edgeList[top].leftNode;
-		Node node4 = edgeList[top].rightNode;
+		Vertex node3 = edgeList[top].leftNode;
+		Vertex node4 = edgeList[top].rightNode;
 
 		if (!node3.onLine(edgeList[base]) || !node4.onLine(edgeList[base])) {
 			return true;
@@ -839,10 +839,10 @@ public class Quad extends Element {
 
 	/** Method to verify that the quad is convex. */
 	public boolean isConvex() {
-		Node n1 = edgeList[base].leftNode;
-		Node n2 = edgeList[base].rightNode;
-		Node n3 = edgeList[left].otherNode(n1);
-		Node n4 = edgeList[right].otherNode(n2);
+		Vertex n1 = edgeList[base].leftNode;
+		Vertex n2 = edgeList[base].rightNode;
+		Vertex n3 = edgeList[left].otherNode(n1);
+		Vertex n4 = edgeList[right].otherNode(n2);
 
 		MyVector d1 = new MyVector(n1, n4);
 		MyVector d2 = new MyVector(n2, n3);
@@ -858,10 +858,10 @@ public class Quad extends Element {
 	 * common sense and in addition demanding that no three Nodes are colinear.
 	 */
 	public boolean isStrictlyConvex() {
-		Node n1 = edgeList[base].leftNode;
-		Node n2 = edgeList[base].rightNode;
-		Node n3 = edgeList[left].otherNode(n1);
-		Node n4 = edgeList[right].otherNode(n2);
+		Vertex n1 = edgeList[base].leftNode;
+		Vertex n2 = edgeList[base].rightNode;
+		Vertex n3 = edgeList[left].otherNode(n1);
+		Vertex n4 = edgeList[right].otherNode(n2);
 
 		MyVector d1 = new MyVector(n1, n4);
 		MyVector d2 = new MyVector(n2, n3);
@@ -877,10 +877,10 @@ public class Quad extends Element {
 	 *         edges that intersect.
 	 */
 	public boolean isBowtie() {
-		Node n1 = edgeList[base].leftNode;
-		Node n2 = edgeList[base].rightNode;
-		Node n3 = edgeList[left].otherNode(n1);
-		Node n4 = edgeList[right].otherNode(n2);
+		Vertex n1 = edgeList[base].leftNode;
+		Vertex n2 = edgeList[base].rightNode;
+		Vertex n3 = edgeList[left].otherNode(n1);
+		Vertex n4 = edgeList[right].otherNode(n2);
 
 		MyVector d1 = new MyVector(n1, n2);
 		MyVector d2 = new MyVector(n3, n4);
@@ -919,11 +919,11 @@ public class Quad extends Element {
 	/**
 	 * The quad should be (strictly?) convex for this method to work correctly.
 	 * 
-	 * @return the next ccw oriented Node of this Quad.
+	 * @return the next ccw oriented Vertex of this Quad.
 	 */
-	public Node nextCCWNodeOld(Node n) {
+	public Vertex nextCCWNodeOld(Vertex n) {
 		MyVector v0, v1;
-		Node n0, n1;
+		Vertex n0, n1;
 
 		if (n == edgeList[base].leftNode) {
 			n0 = edgeList[base].rightNode;
@@ -955,8 +955,8 @@ public class Quad extends Element {
 	 * 
 	 * @return the next node in the ccw direction around this quad.
 	 */
-	public Node nextCCWNode(Node n) {
-		Node n2, n3, n4;
+	public Vertex nextCCWNode(Vertex n) {
+		Vertex n2, n3, n4;
 		Edge e2, e3, e4;
 		if (n == firstNode) {
 			return edgeList[base].otherNode(firstNode); // n2
@@ -1043,7 +1043,7 @@ public class Quad extends Element {
 	}
 
 	/** Update the values in the ang array except at the specified node. */
-	public void updateAnglesExcept(Node n) {
+	public void updateAnglesExcept(Vertex n) {
 		int i = angleIndex(n);
 		if (isFake) {
 			if (firstNode == edgeList[base].leftNode) {
@@ -1097,7 +1097,7 @@ public class Quad extends Element {
 	}
 
 	@Override
-	public void updateAngle(Node n) {
+	public void updateAngle(Vertex n) {
 		int i = angleIndex(n);
 
 		if (isFake) {
@@ -1143,7 +1143,7 @@ public class Quad extends Element {
 		Msg.debug("Entering Quad.inverted()");
 		if (isFake) {
 
-			Node a, b, c;
+			Vertex a, b, c;
 			a = firstNode;
 			b = edgeList[base].otherNode(a);
 			if (a == edgeList[base].leftNode) {
@@ -1160,7 +1160,7 @@ public class Quad extends Element {
 			}
 		}
 
-		Node a = edgeList[base].leftNode, b = edgeList[base].rightNode, c = edgeList[right].otherNode(b), d = edgeList[left].otherNode(a);
+		Vertex a = edgeList[base].leftNode, b = edgeList[base].rightNode, c = edgeList[right].otherNode(b), d = edgeList[left].otherNode(a);
 
 		// We need at least 3 okays to be certain that this quad is not inverted
 		int okays = 0;
@@ -1195,7 +1195,7 @@ public class Quad extends Element {
 		Msg.debug("Entering Quad.invertedOrZeroArea()");
 		if (isFake) {
 
-			Node a, b, c;
+			Vertex a, b, c;
 			a = firstNode;
 			b = edgeList[base].otherNode(a);
 			if (a == edgeList[base].leftNode) {
@@ -1212,7 +1212,7 @@ public class Quad extends Element {
 			}
 		}
 
-		Node a = edgeList[base].leftNode, b = edgeList[base].rightNode, c = edgeList[right].otherNode(b), d = edgeList[left].otherNode(a);
+		Vertex a = edgeList[base].leftNode, b = edgeList[base].rightNode, c = edgeList[right].otherNode(b), d = edgeList[left].otherNode(a);
 
 		// We need at least 3 okays to be certain that this quad is not inverted
 		int okays = 0;
@@ -1249,7 +1249,7 @@ public class Quad extends Element {
 	 * @return true if the element has a concavity at the specified node.
 	 */
 	@Override
-	public boolean concavityAt(Node n) {
+	public boolean concavityAt(Vertex n) {
 		Msg.debug("Entering Quad.concavityAt(..)");
 		if (ang[angleIndex(n)] >= Math.PI) {
 			Msg.debug("Leaving Quad.concavityAt(..), returning true");
@@ -1264,15 +1264,15 @@ public class Quad extends Element {
 	 * @return the centroid of this quad.... or at least a point *inside* the
 	 *         quad... Assumes that the quad is not inverted.
 	 */
-	public Node centroid() {
+	public Vertex centroid() {
 		double x = 0, y = 0;
-		Node bL = edgeList[base].leftNode, bR = edgeList[base].rightNode;
-		Node uL = edgeList[left].otherNode(bL), uR = edgeList[right].otherNode(bR);
+		Vertex bL = edgeList[base].leftNode, bR = edgeList[base].rightNode;
+		Vertex uL = edgeList[left].otherNode(bL), uR = edgeList[right].otherNode(bR);
 
 		if (isFake) {
 			x = (bL.x + uL.x + bR.x) / 3.0;
 			y = (bL.y + uL.y + bR.y) / 3.0;
-			return new Node(x, y);
+			return new Vertex(x, y);
 		} else {
 			if (concavityAt(bL)) {
 				x = (bL.x + uR.x) / 2.0;
@@ -1291,7 +1291,7 @@ public class Quad extends Element {
 				y = (bL.y + uL.y + uR.y + bR.y) / 4.0;
 
 			}
-			return new Node(x, y);
+			return new Vertex(x, y);
 		}
 	}
 
@@ -1299,8 +1299,8 @@ public class Quad extends Element {
 	 * @param n a node in this quad
 	 * @return the node on the opposite side of node n in the quad
 	 */
-	public Node oppositeNode(Node n) {
-		// 2 out of 4 edges has Node n, so at least 1 out of 3 edge must have it, too:
+	public Vertex oppositeNode(Vertex n) {
+		// 2 out of 4 edges has Vertex n, so at least 1 out of 3 edge must have it, too:
 		Edge startEdge;
 		if (edgeList[0].hasNode(n)) {
 			startEdge = edgeList[0];
@@ -1309,16 +1309,16 @@ public class Quad extends Element {
 		} else if (edgeList[2].hasNode(n)) {
 			startEdge = edgeList[2];
 		} else {
-			return null; // Most likely, Node n is not part of this Quad.
+			return null; // Most likely, Vertex n is not part of this Quad.
 		}
 
-		Node n2 = startEdge.otherNode(n);
+		Vertex n2 = startEdge.otherNode(n);
 		Edge e = neighborEdge(n2, startEdge);
 		return e.otherNode(n2);
 	}
 
-	/** @return the opposite Edge of Node n that is cw to the other opposite Edge */
-	public Edge cwOppositeEdge(Node n) {
+	/** @return the opposite Edge of Vertex n that is cw to the other opposite Edge */
+	public Edge cwOppositeEdge(Vertex n) {
 		if (n == edgeList[base].leftNode) {
 			return edgeList[right];
 		} else if (n == edgeList[base].rightNode) {
@@ -1333,9 +1333,9 @@ public class Quad extends Element {
 	}
 
 	/**
-	 * @return the opposite Edge of Node n that is ccw to the other opposite Edge
+	 * @return the opposite Edge of Vertex n that is ccw to the other opposite Edge
 	 */
-	public Edge ccwOppositeEdge(Node n) {
+	public Edge ccwOppositeEdge(Vertex n) {
 		if (n == edgeList[base].leftNode) {
 			return edgeList[top];
 		} else if (n == edgeList[base].rightNode) {
@@ -1368,8 +1368,8 @@ public class Quad extends Element {
 	 * NOTE 1: I might not need to check those elements that lies behind the front.
 	 */
 	public boolean invertedNeighbors() {
-		Node uLNode = edgeList[left].otherNode(edgeList[base].leftNode);
-		Node uRNode = edgeList[right].otherNode(edgeList[base].rightNode);
+		Vertex uLNode = edgeList[left].otherNode(edgeList[base].leftNode);
+		Vertex uRNode = edgeList[right].otherNode(edgeList[base].rightNode);
 		Element curElem;
 		Edge curEdge;
 
@@ -1425,12 +1425,12 @@ public class Quad extends Element {
 	}
 
 	/** @return a list of all triangles adjacent to this quad. */
-	public ArrayList getAdjTriangles() {
-		ArrayList triangleList;
-		Node uLNode = edgeList[left].otherNode(edgeList[base].leftNode);
-		Node uRNode = edgeList[right].otherNode(edgeList[base].rightNode);
-		Node bLNode = edgeList[base].leftNode;
-		Node bRNode = edgeList[base].rightNode;
+	public List<Element> getAdjTriangles() {
+		List<Element> triangleList;
+		Vertex uLNode = edgeList[left].otherNode(edgeList[base].leftNode);
+		Vertex uRNode = edgeList[right].otherNode(edgeList[base].rightNode);
+		Vertex bLNode = edgeList[base].leftNode;
+		Vertex bRNode = edgeList[base].rightNode;
 
 		triangleList = bLNode.adjTriangles();
 
@@ -1467,14 +1467,14 @@ public class Quad extends Element {
 		return triangleList;
 	}
 
-	/** @return a list of all nodes adjacent to this quad. */
+	/** @return a list of all vertexs adjacent to this quad. */
 	public ArrayList getAdjNodes() {
 		ArrayList nodeList = new ArrayList();
 		Edge e;
-		Node n;
-		Node bLNode = edgeList[base].leftNode;
-		Node bRNode = edgeList[base].rightNode;
-		Node uLNode = edgeList[left].otherNode(bLNode);
+		Vertex n;
+		Vertex bLNode = edgeList[base].leftNode;
+		Vertex bRNode = edgeList[base].rightNode;
+		Vertex uLNode = edgeList[left].otherNode(bLNode);
 
 		int i;
 
@@ -1506,7 +1506,7 @@ public class Quad extends Element {
 		}
 
 		if (!isFake) {
-			Node uRNode = edgeList[right].otherNode(bRNode);
+			Vertex uRNode = edgeList[right].otherNode(bRNode);
 			for (i = 0; i < uRNode.edgeList.size(); i++) {
 				e = (Edge) uRNode.edgeList.get(i);
 				if (e != edgeList[base] && e != edgeList[left] && e != edgeList[right] && e != edgeList[top]) {
@@ -1554,10 +1554,10 @@ public class Quad extends Element {
 	}
 
 	/**
-	 * @return an Edge that is common to both this Quad and Quad q at Node n. Return
+	 * @return an Edge that is common to both this Quad and Quad q at Vertex n. Return
 	 *         null if none exists.
 	 */
-	public Edge commonEdgeAt(Node n, Quad q) {
+	public Edge commonEdgeAt(Vertex n, Quad q) {
 		Edge e;
 		for (Object element : n.edgeList) {
 			e = (Edge) element;
@@ -1591,7 +1591,7 @@ public class Quad extends Element {
 	 * @return true if at least one of the edges connected to node n is a front
 	 *         edge.
 	 */
-	public boolean hasFrontEdgeAt(Node n) {
+	public boolean hasFrontEdgeAt(Vertex n) {
 		if (edgeList[left].hasNode(n)) {
 			if (edgeList[base].hasNode(n)) {
 				if (edgeList[left].isFrontEdge() || edgeList[base].isFrontEdge()) {
@@ -1628,7 +1628,7 @@ public class Quad extends Element {
 	 * @return the number of quad neighbors sharing an edge with this quad at node
 	 *         n. This quad is not counted. Values are 0, 1, or 2.
 	 */
-	public int nrOfQuadsSharingAnEdgeAt(Node n) {
+	public int nrOfQuadsSharingAnEdgeAt(Vertex n) {
 		int count = 0;
 
 		if (edgeList[left].hasNode(n)) {
@@ -1669,7 +1669,7 @@ public class Quad extends Element {
 	 *         Equilateral quadrilaterals should return the maximum value of 1.
 	 */
 	//
-	// This is a simple sketch of the quadrilateral with nodes and divided
+	// This is a simple sketch of the quadrilateral with vertexs and divided
 	// into four triangles:
 	//
 	// n3__________n4
@@ -1703,7 +1703,7 @@ public class Quad extends Element {
 		if (isFake) {
 			double AB = edgeList[base].len, CB = edgeList[left].len, CA = edgeList[right].len;
 
-			Node a = edgeList[base].commonNode(edgeList[right]), b = edgeList[base].commonNode(edgeList[left]),
+			Vertex a = edgeList[base].commonNode(edgeList[right]), b = edgeList[base].commonNode(edgeList[left]),
 					c = edgeList[left].commonNode(edgeList[right]);
 			MyVector vCA = new MyVector(c, a), vCB = new MyVector(c, b);
 
@@ -1718,10 +1718,10 @@ public class Quad extends Element {
 			return;
 		}
 
-		Node n1 = edgeList[base].leftNode;
-		Node n2 = edgeList[base].rightNode;
-		Node n3 = edgeList[left].otherNode(n1);
-		Node n4 = edgeList[right].otherNode(n2);
+		Vertex n1 = edgeList[base].leftNode;
+		Vertex n2 = edgeList[base].rightNode;
+		Vertex n3 = edgeList[left].otherNode(n1);
+		Vertex n4 = edgeList[right].otherNode(n2);
 
 		// The two diagonals
 		Edge e1 = new Edge(n1, n4);
@@ -1787,8 +1787,8 @@ public class Quad extends Element {
 		Msg.debug("Leaving Quad.updateDistortionMetric(): " + distortionMetric);
 	}
 
-	/** Test whether any nodes of the quad are coincident. */
-	private boolean coincidentNodes(Node n1, Node n2, Node n3, Node n4) {
+	/** Test whether any vertexs of the quad are coincident. */
+	private boolean coincidentNodes(Vertex n1, Vertex n2, Vertex n3, Vertex n4) {
 		Msg.debug("Entering Quad.coincidentNodes(..)");
 		double x12diff = n2.x - n1.x;
 		double y12diff = n2.y - n1.y;
@@ -1840,8 +1840,8 @@ public class Quad extends Element {
 
 	/** @return the node at the largest interior angle */
 	@Override
-	public Node nodeAtLargestAngle() {
-		Node candNode = edgeList[base].leftNode;
+	public Vertex nodeAtLargestAngle() {
+		Vertex candNode = edgeList[base].leftNode;
 		double cand = ang[0];
 
 		if (ang[1] > cand) {
@@ -1945,7 +1945,7 @@ public class Quad extends Element {
 	 */
 	@Override
 	public String descr() {
-		Node node1, node2, node3, node4;
+		Vertex node1, node2, node3, node4;
 		node1 = edgeList[base].leftNode;
 		node2 = edgeList[base].rightNode;
 		node3 = edgeList[left].otherNode(node1);

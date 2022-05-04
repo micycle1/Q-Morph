@@ -10,13 +10,13 @@ package meshditor;
 public class MyLine {
 	// n1: A point that the line passes through
 	// n2: A point that the line passes through
-	public MyLine(Node n1, Node n2) {
+	public MyLine(Vertex n1, Vertex n2) {
 		ref = n1;
 		x = n2.x - n1.x;
 		y = n2.y - n1.y;
 	}
 
-	public MyLine(Node n1, double x, double y) {
+	public MyLine(Vertex n1, double x, double y) {
 		ref = n1;
 		this.x = x;
 		this.y = y;
@@ -26,9 +26,9 @@ public class MyLine {
 		return x * l.y - l.x * y;
 	}
 
-	public Node pointIntersectsAt(MyLine d1) {
+	public Vertex pointIntersectsAt(MyLine d1) {
 		Msg.debug("Entering MyLine.pointIntersectsAt(..)");
-		Node p0 = ref, p1 = d1.ref;
+		Vertex p0 = ref, p1 = d1.ref;
 		MyLine delta = new MyLine(p0, p1.x - p0.x, p1.y - p0.y);
 		MyLine d0 = this;
 		Msg.debug("... d0:" + d0.descr());
@@ -44,7 +44,7 @@ public class MyLine {
 			double x = d1.ref.x + t * d1.x;
 			double y = d1.ref.y + t * d1.y;
 			Msg.debug("Leaving MyLine.pointIntersectsAt(..), returns x: " + x + ", y:" + y);
-			return new Node(x, y); // Intersects at this line point
+			return new Vertex(x, y); // Intersects at this line point
 		}
 	}
 
@@ -52,6 +52,6 @@ public class MyLine {
 		return ref.descr() + ", (" + (x + ref.x) + ", " + (y + ref.y) + ")";
 	}
 
-	Node ref;
+	Vertex ref;
 	double x, y;
 }

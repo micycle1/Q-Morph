@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class holds information for nodes, and has methods for the management of
- * issues regarding nodes.
+ * This class holds information for vertexs, and has methods for the management of
+ * issues regarding vertexs.
  */
-
-public class Node extends Constants {
+public class Vertex extends Constants {
 
 	/** Boolean indicating whether the node has been moved by the OBS */
 	public boolean movedByOBS = false; // Used by the smoother
@@ -18,23 +17,23 @@ public class Node extends Constants {
 	/** A valence pattern for this node */
 	public byte[] pattern;
 	// byte state= 0; // For front Nodes only
-	ArrayList<Edge> edgeList;
+	List<Edge> edgeList;
 	java.awt.Color color = java.awt.Color.cyan;
 
 	/** Create new node with position (x,y). */
-	public Node(double x, double y) {
+	public Vertex(double x, double y) {
 		this.x = x;
 		this.y = y;
-		edgeList = new ArrayList();
+		edgeList = new ArrayList<>();
 	}
 
 	@Override
 	public boolean equals(Object elem) {
-		if (!(elem instanceof Node)) {
+		if (!(elem instanceof Vertex)) {
 			return false;
 		}
-		Node node = (Node) elem;
-		if (x == node.x && y == node.y) {
+		Vertex vertex = (Vertex) elem;
+		if (x == vertex.x && y == vertex.y) {
 			return true;
 		} else {
 			return false;
@@ -42,19 +41,19 @@ public class Node extends Constants {
 	}
 
 	/** @return a "real" copy of this node with a shallow copy of its edgeList. */
-	public Node copy() {
-		Node n = new Node(x, y);
-		n.edgeList = (ArrayList) edgeList.clone();
+	public Vertex copy() {
+		Vertex n = new Vertex(x, y);
+		n.edgeList = new ArrayList(edgeList);
 		return n;
 	}
 
 	/** @return a new node with the same position as this. */
-	public Node copyXY() {
-		return new Node(x, y);
+	public Vertex copyXY() {
+		return new Vertex(x, y);
 	}
 
 	/** Relocate this node to the same position as n. */
-	public void setXY(Node n) {
+	public void setXY(Vertex n) {
 		x = n.x;
 		y = n.y;
 	}
@@ -74,14 +73,14 @@ public class Node extends Constants {
 	public void updateLRinEdgeList() {
 		boolean btemp;
 		Edge e, temp;
-		Node node;
+		Vertex vertex;
 		Quad q;
 		for (Object element : edgeList) {
 			e = (Edge) element;
 			if ((e.leftNode.x > e.rightNode.x) || (e.leftNode.x == e.rightNode.x && e.leftNode.y < e.rightNode.y)) {
-				node = e.leftNode;
+				vertex = e.leftNode;
 				e.leftNode = e.rightNode;
-				e.rightNode = node;
+				e.rightNode = vertex;
 
 				if (e.frontEdge) {
 					temp = e.leftFrontNeighbor;
@@ -118,14 +117,14 @@ public class Node extends Constants {
 	}
 
 	/** Change the position of the node to the position of the specified node */
-	public void moveTo(Node n) {
+	public void moveTo(Vertex n) {
 		x = n.x;
 		y = n.y;
 
 		updateLRinEdgeList();
 	}
 
-	/** Update all lengths of edges around this Node */
+	/** Update all lengths of edges around this Vertex */
 	public void updateEdgeLengths() {
 		Edge e;
 		for (Object element : edgeList) {
@@ -139,15 +138,15 @@ public class Node extends Constants {
 	}
 
 	/**
-	 * Update (almost) all angles in all elements adjacent to this Node. Note: still
+	 * Update (almost) all angles in all elements adjacent to this Vertex. Note: still
 	 * experimental, not tested thoroughly.
 	 */
 	public void updateAngles() {
-		Msg.debug("Entering Node.updateAngles()");
+		Msg.debug("Entering Vertex.updateAngles()");
 		Edge e, ne;
-		Node other1, other2;
+		Vertex other1, other2;
 		Quad q;
-		ArrayList list = new ArrayList();
+		ArrayList<Element> list = new ArrayList<Element>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
 			e = (Edge) edgeList.get(i);
@@ -186,7 +185,7 @@ public class Node extends Constants {
 				}
 			}
 		}
-		Msg.debug("Leaving Node.updateAngles()");
+		Msg.debug("Leaving Vertex.updateAngles()");
 	}
 
 	/**
@@ -200,7 +199,7 @@ public class Node extends Constants {
 		Element curElem = curEdge.element1;
 		Edge nextEdge = curElem.neighborEdge(this, curEdge);
 		Edge otherEdge;
-		Node otherNode;
+		Vertex otherNode;
 
 		// Parse all edges connected to this node:
 		do {
@@ -227,7 +226,7 @@ public class Node extends Constants {
 		} while (curElem != null && curEdge != (Edge) edgeList.get(0));
 	}
 
-	public double cross(Node n) {
+	public double cross(Vertex n) {
 		return x * n.y - n.x * y;
 	}
 
@@ -239,7 +238,7 @@ public class Node extends Constants {
 
 	// Rewrite of ccwSortedEdgeList().
 	// We use vector representations instead of the edges directly.
-	public ArrayList<MyVector> ccwSortedVectorList() {
+	public List<MyVector> ccwSortedVectorList() {
 		Element elem, start;
 		MyVector v, v0, v1;
 		Edge e;
@@ -262,7 +261,7 @@ public class Node extends Constants {
 		// of these.
 		// Else select the vector of an arbitrary edge.
 		// The selected vector is put into v0.
-		// Sets elem to the element that is ccw to v0 around this Node
+		// Sets elem to the element that is ccw to v0 around this Vertex
 
 		if (!boundaryVectors.isEmpty()) { // this size is always 0 or 2
 			Msg.debug("...boundaryVectors yeah!");
@@ -300,10 +299,10 @@ public class Node extends Constants {
 			}
 		}
 
-		Msg.debug("Node.ccwSortedVectorList(..): 0: " + v0.edge.descr());
+		Msg.debug("Vertex.ccwSortedVectorList(..): 0: " + v0.edge.descr());
 
 		// Sort vectors in ccw order starting with v0.
-		// Uses the fact that elem initially is the element ccw to v0 around this Node.
+		// Uses the fact that elem initially is the element ccw to v0 around this Vertex.
 		ArrayList<MyVector> VS = new ArrayList<>();
 		e = v0.edge;
 
@@ -330,7 +329,7 @@ public class Node extends Constants {
 	/*
 	 * // b1: First boundary edge // b2: Second boundary edge public ArrayList
 	 * ccwSortedVectorList(Edge b0, Edge b1) {
-	 * Msg.debug("Entering Node.ccwSortedVectorList(Edge b0, Edge b1)");
+	 * Msg.debug("Entering Vertex.ccwSortedVectorList(Edge b0, Edge b1)");
 	 * Msg.debug("b0: "+b0.descr()); Msg.debug("b1: "+b1.descr()); Element elem,
 	 * start; MyVector v, v0, v1; Edge e; ArrayList vectors= new ArrayList();
 	 * 
@@ -342,10 +341,10 @@ public class Node extends Constants {
 	 * elem= b0.element1; if (v0.isCWto(v1)) { if (elem.concavityAt(this)) { v0= v1;
 	 * elem= b1.element1; } } else if (!elem.concavityAt(this)) { v0= v1; elem=
 	 * b1.element1; }
-	 * Msg.debug("Node.ccwSortedVectorList(Edge, Edge): 0: "+v0.edge.descr());
+	 * Msg.debug("Vertex.ccwSortedVectorList(Edge, Edge): 0: "+v0.edge.descr());
 	 * 
 	 * // Sort vectors in ccw order starting with v0. // Uses the fact that elem
-	 * initially is the element ccw to v0 around this Node. ArrayList VS= new
+	 * initially is the element ccw to v0 around this Vertex. ArrayList VS= new
 	 * ArrayList(); e= v0.edge;
 	 * 
 	 * start= elem; do { v= e.getVector(this); v.edge= e;
@@ -364,10 +363,10 @@ public class Node extends Constants {
 	 * @param b1 First boundary edge
 	 * @param b2 Second boundary edge
 	 */
-	public ArrayList calcCCWSortedEdgeList(Edge b0, Edge b1) {
+	public List<Edge> calcCCWSortedEdgeList(Edge b0, Edge b1) {
 		MyVector v, v0, v1;
 		Edge e;
-		ArrayList vectors = new ArrayList();
+		ArrayList<MyVector> vectors = new ArrayList<MyVector>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
 			e = (Edge) edgeList.get(i);
@@ -381,7 +380,7 @@ public class Node extends Constants {
 		// Initially put the two vectors of b0 and b1 in list.
 		// Select the most CW boundary edge to be first in list.
 
-		ArrayList VS = new ArrayList();
+		ArrayList<MyVector> VS = new ArrayList<MyVector>();
 		v0 = b0.getVector(this);
 		v0.edge = b0;
 		v1 = b1.getVector(this);
@@ -401,8 +400,8 @@ public class Node extends Constants {
 			VS.add(v0);
 		}
 
-		Msg.debug("Node.calcCCWSortedEdgeList(..): 0: " + v0.edge.descr());
-		Msg.debug("Node.calcCCWSortedEdgeList(..): 1: " + v1.edge.descr());
+		Msg.debug("Vertex.calcCCWSortedEdgeList(..): 0: " + v0.edge.descr());
+		Msg.debug("Vertex.calcCCWSortedEdgeList(..): 1: " + v1.edge.descr());
 
 		// Sort vectors in ccw order. I will not move the vector that lies first in VS.
 		Msg.debug("...vectors.size()= " + vectors.size());
@@ -419,13 +418,13 @@ public class Node extends Constants {
 
 				if (!v.isCWto(v0) && v.isCWto(v1)) {
 					VS.add(j + 1, v);
-					Msg.debug("Node.calcCCWSortedEdgeList(..):" + (j + 1) + ": " + v.edge.descr());
+					Msg.debug("Vertex.calcCCWSortedEdgeList(..):" + (j + 1) + ": " + v.edge.descr());
 					break;
 				}
 			}
 		}
 
-		ArrayList edges = new ArrayList(VS.size());
+		ArrayList<Edge> edges = new ArrayList<Edge>(VS.size());
 		for (int i = 0; i < VS.size(); i++) {
 			v = (MyVector) VS.get(i);
 			edges.add(v.edge);
@@ -434,14 +433,14 @@ public class Node extends Constants {
 	}
 
 	/**
-	 * Note: *ALL* nodes in a neighboring quad is regarded as neighbors, not only
+	 * Note: *ALL* vertexs in a neighboring quad is regarded as neighbors, not only
 	 * those that are directly connected to this node by edges.
 	 * 
-	 * @return a ccw sorted list of the neighboring nodes to this, but returns null
+	 * @return a ccw sorted list of the neighboring vertexs to this, but returns null
 	 *         if this node is part of any triangle.
 	 */
-	public Node[] ccwSortedNeighbors() {
-		Msg.debug("Entering Node.ccwSortedNeighbors(..)");
+	public Vertex[] ccwSortedNeighbors() {
+		Msg.debug("Entering Vertex.ccwSortedNeighbors(..)");
 		Element elem;
 		MyVector v, v0, v1;
 		Edge e;
@@ -476,7 +475,7 @@ public class Node extends Constants {
 		} else {
 			// Failing to find any boundary edges, we
 			// select the vector of an arbitrary edge to be v0.
-			// Sets elem to the element that is ccw to v0 around this Node
+			// Sets elem to the element that is ccw to v0 around this Vertex
 			e = (Edge) edgeList.get(0);
 			v0 = e.getVector(this);
 			v0.edge = e;
@@ -492,9 +491,9 @@ public class Node extends Constants {
 			}
 		}
 
-		// Sort nodes in ccw order starting with otherNode of v0 edge.
-		// Uses the fact that elem initially is the element ccw to v0 around this Node.
-		Node[] ccwNodeList = new Node[edgeList.size() * 2];
+		// Sort vertexs in ccw order starting with otherNode of v0 edge.
+		// Uses the fact that elem initially is the element ccw to v0 around this Vertex.
+		Vertex[] ccwNodeList = new Vertex[edgeList.size() * 2];
 		Element start = elem;
 		Quad q;
 		e = v0.edge;
@@ -516,7 +515,7 @@ public class Node extends Constants {
 			ccwNodeList[i++] = e.otherNode(this);
 		}
 
-		Msg.debug("Leaving Node.ccwSortedNeighbors(..): # nodes: " + i);
+		Msg.debug("Leaving Vertex.ccwSortedNeighbors(..): # vertexs: " + i);
 		return ccwNodeList;
 	}
 
@@ -557,11 +556,11 @@ public class Node extends Constants {
 	}
 
 	public int nrOfAdjQuads() {
-		ArrayList<Element> list = adjQuads();
+		List<Element> list = adjQuads();
 		return list.size();
 	}
 
-	public ArrayList<Element> adjQuads() {
+	public List<Element> adjQuads() {
 		Edge e;
 		ArrayList<Element> list = new ArrayList<>();
 
@@ -577,14 +576,14 @@ public class Node extends Constants {
 	}
 
 	public int nrOfAdjTriangles() {
-		ArrayList list = adjTriangles();
+		List<Element> list = adjTriangles();
 		return list.size();
 	}
 
 	// Hmm. Should I include fake quads as well?
-	public ArrayList adjTriangles() {
+	public List<Element> adjTriangles() {
 		Edge e;
-		ArrayList list = new ArrayList();
+		ArrayList<Element> list = new ArrayList<Element>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
 			e = (Edge) edgeList.get(i);
@@ -598,14 +597,14 @@ public class Node extends Constants {
 	}
 
 	/**
-	 * Classic Laplacian smooth. Of course, to be run on internal nodes only.
+	 * Classic Laplacian smooth. Of course, to be run on internal vertexs only.
 	 * 
 	 * @return the vector from the old to the new position.
 	 */
 	public MyVector laplacianMoveVector() {
 		MyVector c, cJSum = new MyVector(origin, origin);
 		Edge e;
-		Node nJ;
+		Vertex nJ;
 
 		int n = edgeList.size();
 		for (int i = 0; i < n; i++) {
@@ -619,14 +618,14 @@ public class Node extends Constants {
 	}
 
 	/**
-	 * Classic Laplacian smooth. Of course, to be run on internal nodes only.
+	 * Classic Laplacian smooth. Of course, to be run on internal vertexs only.
 	 * 
 	 * @return the new position of node
 	 */
-	public Node laplacianSmooth() {
+	public Vertex laplacianSmooth() {
 		MyVector c, cJSum = new MyVector(origin, origin);
 		Edge e;
-		Node nJ;
+		Vertex nJ;
 
 		int n = edgeList.size();
 		for (int i = 0; i < n; i++) {
@@ -636,45 +635,45 @@ public class Node extends Constants {
 			cJSum = cJSum.plus(c);
 		}
 		cJSum = cJSum.div(n);
-		return new Node(x + cJSum.x, y + cJSum.y);
+		return new Vertex(x + cJSum.x, y + cJSum.y);
 	}
 
 	/**
 	 * Classic Laplacian smooth, but exclude the given neighbor node from the
-	 * calculation. Of course, to be run on internal nodes only.
+	 * calculation. Of course, to be run on internal vertexs only.
 	 * 
-	 * @param node the node to be excluded
+	 * @param vertex the node to be excluded
 	 * @return the new position of node
 	 */
-	public Node laplacianSmoothExclude(Node node) {
+	public Vertex laplacianSmoothExclude(Vertex vertex) {
 		MyVector c, cJSum = new MyVector(origin, origin);
 		Edge e;
-		Node nJ;
+		Vertex nJ;
 
 		int n = edgeList.size();
 		for (int i = 0; i < n; i++) {
 			e = (Edge) edgeList.get(i);
 			nJ = e.otherNode(this);
-			if (nJ != node) {
+			if (nJ != vertex) {
 				c = new MyVector(this, nJ);
 				cJSum = cJSum.plus(c);
 			}
 		}
 		cJSum = cJSum.div(n - 1); // -1 because node is excluded
-		return new Node(x + cJSum.x, y + cJSum.y);
+		return new Vertex(x + cJSum.x, y + cJSum.y);
 	}
 
 	/**
-	 * Run this on internal nodes (not part of the boundary or front) Does a
+	 * Run this on internal vertexs (not part of the boundary or front) Does a
 	 * modified length weighted Laplacian smooth.
 	 * 
 	 * @return a new node with the smoothed position.
 	 */
-	public Node modifiedLWLaplacianSmooth() {
-		Msg.debug("Entering Node.modifiedLWLaplacianSmooth()...");
+	public Vertex modifiedLWLaplacianSmooth() {
+		Msg.debug("Entering Vertex.modifiedLWLaplacianSmooth()...");
 		Msg.debug("this= " + this.descr());
 
-		Node nJ;
+		Vertex nJ;
 		double cJLengthSum = 0, len;
 		Edge e, bEdge1, bEdge2;
 		MyVector c, cJLengthMulcJSum = new MyVector(origin, origin), deltaCj, deltaI;
@@ -718,9 +717,9 @@ public class Node extends Constants {
 
 		deltaI = cJLengthMulcJSum.div(cJLengthSum);
 
-		Node node = new Node(x + deltaI.x, y + deltaI.y);
-		Msg.debug("Leaving Node.modifiedLWLaplacianSmooth()... returns node= " + node.descr());
-		return node;
+		Vertex vertex = new Vertex(x + deltaI.x, y + deltaI.y);
+		Msg.debug("Leaving Vertex.modifiedLWLaplacianSmooth()... returns node= " + vertex.descr());
+		return vertex;
 	}
 
 	public int nrOfFrontEdges() {
@@ -746,14 +745,14 @@ public class Node extends Constants {
 	 * @param front2 front/boundary neighbor edge to this
 	 * @return a new node (with a smoothed positing) that can replace this node.
 	 */
-	public Node blackerSmooth(Node nJ, Edge front1, Edge front2, double ld) {
+	public Vertex blackerSmooth(Vertex nJ, Edge front1, Edge front2, double ld) {
 		Msg.debug("Entering blackerSmooth(..)...");
 
-		Node nI = this;
-		Node origin = new Node(0, 0);
-		Node n1, n2, n3, n4;
+		Vertex nI = this;
+		Vertex origin = new Vertex(0, 0);
+		Vertex n1, n2, n3, n4;
 		Quad q;
-		ArrayList adjQuads = adjQuads();
+		List<Element> adjQuads = adjQuads();
 
 		// Step 1, the isoparametric smooth:
 		Msg.debug("...step 1...");
@@ -800,7 +799,7 @@ public class Node extends Constants {
 
 		if (adjQuads.size() != 2 || nrOfFrontEdges() > 2) {
 			Msg.debug("Leaving blackerSmooth(..)...");
-			return new Node(x + deltaA.x, y + deltaA.y);
+			return new Vertex(x + deltaA.x, y + deltaA.y);
 		}
 		// Step 2, length adjustment:
 		else {
@@ -821,7 +820,7 @@ public class Node extends Constants {
 			MyVector deltaI = deltaB.plus(deltaC);
 			deltaI = deltaI.mul(0.5);
 			Msg.debug("Leaving blackerSmooth(..)...");
-			return new Node(x + deltaI.x, y + deltaI.y);
+			return new Vertex(x + deltaI.x, y + deltaI.y);
 		}
 	}
 
@@ -835,9 +834,9 @@ public class Node extends Constants {
 	 * @param f2 front/boundary neighbor edge to this
 	 * @return a vector that should replace the edge between this and nJ
 	 */
-	public MyVector angularSmoothnessAdjustment(Node nJ, Edge f1, Edge f2, double ld) {
+	public MyVector angularSmoothnessAdjustment(Vertex nJ, Edge f1, Edge f2, double ld) {
 		Msg.debug("Entering angularSmoothnessAdjustment(..) ...");
-		Node nI = this;
+		Vertex nI = this;
 		Msg.debug("nI= " + nI.descr());
 		Msg.debug("nJ= " + nJ.descr());
 
@@ -852,8 +851,8 @@ public class Node extends Constants {
 		Msg.debug("f1= " + f1.descr());
 		Msg.debug("f2= " + f2.descr());
 
-		Node nIm1 = f1.otherNode(nI);
-		Node nIp1 = f2.otherNode(nI);
+		Vertex nIm1 = f1.otherNode(nI);
+		Vertex nIp1 = f2.otherNode(nI);
 
 		Msg.debug("nIp1= " + nIp1.descr());
 
@@ -951,7 +950,7 @@ public class Node extends Constants {
 
 		Msg.debug("pB2Ray= " + pB2Ray.descr());
 		Msg.debug("pB2Ray= " + pB2Ray.values());
-		Node q = pB2Ray.pointIntersectsAt(line);
+		Vertex q = pB2Ray.pointIntersectsAt(line);
 		double lq = q.length(nJ);
 		if (Double.isNaN(lq)) {
 			Msg.error("lq is NaN!!!");
@@ -982,7 +981,7 @@ public class Node extends Constants {
 	public boolean invertedOrZeroAreaElements(List<Element> elements) {
 		for (Element elem : elements) {
 			if (elem.invertedOrZeroArea()) {
-				Msg.debug("Node.invertedOrZeroAreaElements(..): invertedOrZeroArea: " + elem.descr());
+				Msg.debug("Vertex.invertedOrZeroAreaElements(..): invertedOrZeroArea: " + elem.descr());
 				return true;
 			}
 		}
@@ -999,7 +998,7 @@ public class Node extends Constants {
 	 * 
 	 * @return true on success else false.
 	 */
-	public boolean incrAdjustUntilNotInvertedOrZeroArea(Node old, List<Element> elements) {
+	public boolean incrAdjustUntilNotInvertedOrZeroArea(Vertex old, List<Element> elements) {
 		Msg.debug("Entering incrAdjustUntilNotInvertedOrZeroArea(..)");
 		Msg.debug("..this: " + descr());
 		Msg.debug("..old: " + old.descr());
@@ -1151,7 +1150,7 @@ public class Node extends Constants {
 		return null;
 	}
 
-	public double length(Node n) {
+	public double length(Vertex n) {
 		double xDiff = x - n.x;
 		double yDiff = y - n.y;
 		return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
@@ -1192,26 +1191,26 @@ public class Node extends Constants {
 	 * Determine if a node is in a given halfplane. The method is based on the
 	 * determinant as described in Schewchuk's paper.
 	 * 
-	 * @return 1 if this Node is in the halfplane defined by Triangle t and Edge e,
-	 *         0 if the Node is on Edge e, -1 if the node is not in the halfplane
+	 * @return 1 if this Vertex is in the halfplane defined by Triangle t and Edge e,
+	 *         0 if the Vertex is on Edge e, -1 if the node is not in the halfplane
 	 *         defined by Triangle t and Edge e.
 	 */
 	public int inHalfplane(Triangle t, Edge e) {
 		return inHalfplane(e.leftNode, e.rightNode, t.oppositeOfEdge(e));
 	}
 
-	// @return 1 if this Node is on the same side of Edge e as Node n is,
-	// 0 if this Node is on the line that extends Edge e, and
-	// -1 if this Node is on the other side of Edge e than Node n is.
-	public int inHalfplane(Edge e, Node n) {
+	// @return 1 if this Vertex is on the same side of Edge e as Vertex n is,
+	// 0 if this Vertex is on the line that extends Edge e, and
+	// -1 if this Vertex is on the other side of Edge e than Vertex n is.
+	public int inHalfplane(Edge e, Vertex n) {
 		return inHalfplane(e.leftNode, e.rightNode, n);
 	}
 
-	// @return 1 if this Node is on the same side of the line (l1, l2) as Node n is,
-	// 0 if this Node is on the line that extends line (l1, l2), and
-	// -1 if this Node is on the other side of line (l1, l2) than Node n is.
-	public int inHalfplane(Node l1, Node l2, Node n) {
-		Msg.debug("Entering Node.inHalfplane(..)");
+	// @return 1 if this Vertex is on the same side of the line (l1, l2) as Vertex n is,
+	// 0 if this Vertex is on the line that extends line (l1, l2), and
+	// -1 if this Vertex is on the other side of line (l1, l2) than Vertex n is.
+	public int inHalfplane(Vertex l1, Vertex l2, Vertex n) {
+		Msg.debug("Entering Vertex.inHalfplane(..)");
 		Msg.debug("l1: " + l1.descr() + ", l2: " + l2.descr() + ", n:" + n.descr());
 		BigDecimal x1 = new BigDecimal(l1.x);
 		BigDecimal y1 = new BigDecimal(l1.y);
@@ -1230,13 +1229,13 @@ public class Node extends Constants {
 
 		int eval1 = det1.compareTo(zero);
 		if (eval1 == 0) {
-			Msg.debug("Leaving Node.inHalfplane(..)");
+			Msg.debug("Leaving Vertex.inHalfplane(..)");
 			return 0;
 		}
 
 		BigDecimal det2 = l_cross_r.subtract(xdiff.multiply(y4)).add(ydiff.multiply(x4));
 		int eval2 = det2.compareTo(zero);
-		Msg.debug("Leaving Node.inHalfplane(..)");
+		Msg.debug("Leaving Vertex.inHalfplane(..)");
 		if ((eval1 < 0 && eval2 < 0) || (eval1 > 0 && eval2 > 0)) {
 			return 1;
 		} else {
@@ -1245,7 +1244,7 @@ public class Node extends Constants {
 	}
 
 	/**
-	 * Test to see if this Node lies in the plane bounded by the two parallel lines
+	 * Test to see if this Vertex lies in the plane bounded by the two parallel lines
 	 * intersecting the Nodes of Edge e that are normal to Edge e.
 	 */
 	public boolean inBoundedPlane(Edge e) {
@@ -1255,23 +1254,23 @@ public class Node extends Constants {
 		int a = inHalfplane(normal1, e.rightNode);
 		int b = inHalfplane(normal2, e.leftNode);
 
-		Msg.debug("Node.inBoundedPlane(..): a: " + a + ", b: " + b);
+		Msg.debug("Vertex.inBoundedPlane(..): a: " + a + ", b: " + b);
 
 		if ((a == 1 || a == 0) && (b == 1 || b == 0)) {
-			Msg.debug("Node.inBoundedPlane(..): returns true");
+			Msg.debug("Vertex.inBoundedPlane(..): returns true");
 			return true;
 		} else {
-			Msg.debug("Node.inBoundedPlane(..): returns false");
+			Msg.debug("Vertex.inBoundedPlane(..): returns false");
 			return false;
 		}
 	}
 
 	/**
 	 * Return true if the circle intersecting the Nodes p1, p2, and p3 contains this
-	 * Node in its interior. p1, p2, p3, and p4 are ccw sorted. Note that testing
+	 * Vertex in its interior. p1, p2, p3, and p4 are ccw sorted. Note that testing
 	 * for convexity of the quad should not be necessary.
 	 */
-	public boolean inCircle(Node p1, Node p2, Node p3) {
+	public boolean inCircle(Vertex p1, Vertex p2, Vertex p3) {
 		Msg.debug("Entering inCircle(..)");
 
 		/*
@@ -1316,8 +1315,8 @@ public class Node extends Constants {
 	 * that this node doesn't already have, and put them into this node's edgeList.
 	 * If this and n have any common edges, these must be removed.
 	 */
-	public void merge(Node n) {
-		Node oldN = n.copyXY();
+	public void merge(Vertex n) {
+		Vertex oldN = n.copyXY();
 		Edge e;
 		int ind;
 		n.setXY(this);
@@ -1334,8 +1333,8 @@ public class Node extends Constants {
 		n.setXY(oldN);
 	}
 
-	public ArrayList frontEdgeList() {
-		ArrayList list = new ArrayList();
+	public List<Edge> frontEdgeList() {
+		ArrayList<Edge> list = new ArrayList<Edge>();
 		Edge e;
 		for (int i = 0; i < edgeList.size(); i++) {
 			e = (Edge) edgeList.get(i);
@@ -1390,8 +1389,8 @@ public class Node extends Constants {
 	}
 
 	/** Calculate the valence pattern for this node and its neighbors. */
-	public void createValencePattern(Node[] ccwNodes) {
-		Msg.debug("Entering Node.createValencePattern(..)");
+	public void createValencePattern(Vertex[] ccwNodes) {
+		Msg.debug("Entering Vertex.createValencePattern(..)");
 		int j = edgeList.size() * 2;
 		if (j >= 128) {
 			Msg.error("Number of edges adjacent node " + descr() + " was greater than expected (" + edgeList.size() + "-2 >= 64)");
@@ -1404,12 +1403,12 @@ public class Node extends Constants {
 		for (int i = 0; i < ccwNodesSize; i++) {
 			pattern[i + 2] = ccwNodes[i].valence();
 		}
-		Msg.debug("Leaving Node.createValencePattern(..)");
+		Msg.debug("Leaving Vertex.createValencePattern(..)");
 	}
 
 	/** Calculate the valence pattern for this node and its neighbors. */
-	public void createValencePattern(byte ccwNodesSize, Node[] ccwNodes) {
-		Msg.debug("Entering Node.createValencePattern(" + ccwNodesSize + ", Node [])");
+	public void createValencePattern(byte ccwNodesSize, Vertex[] ccwNodes) {
+		Msg.debug("Entering Vertex.createValencePattern(" + ccwNodesSize + ", Vertex [])");
 		pattern = new byte[ccwNodesSize + 2]; // +2 for size and c.valence()
 		pattern[0] = (byte) (ccwNodesSize + 2);
 		pattern[1] = valence();
@@ -1418,11 +1417,11 @@ public class Node extends Constants {
 			Msg.debug("...i== " + i);
 			pattern[i + 2] = ccwNodes[i].valence();
 		}
-		Msg.debug("Leaving Node.createValencePattern(byte, Node [])");
+		Msg.debug("Leaving Vertex.createValencePattern(byte, Vertex [])");
 	}
 
 	/**
-	 * Return # of irregular nodes in the valence pattern (nodes whose valence!= 4)
+	 * Return # of irregular vertexs in the valence pattern (vertexs whose valence!= 4)
 	 * Note that calcMyValencePattern() must be called before calling this method.
 	 */
 	public int irregNeighborNodes() {
@@ -1553,7 +1552,7 @@ public class Node extends Constants {
 
 	/**
 	 * Compare the valence pattern of this node to the special pattern in pattern2.
-	 * Also make sure that the tagged nodes in vertexPat are vertices. (That is, the
+	 * Also make sure that the tagged vertexs in vertexPat are vertices. (That is, the
 	 * interior angles must be greater than any other interior angles around this
 	 * node.) In pattern2, the following codes apply:<br>
 	 * <ul>
@@ -1670,7 +1669,7 @@ public class Node extends Constants {
 	}
 
 	/**
-	 * Confirm whether the nodes having the given interior angles have the correct
+	 * Confirm whether the vertexs having the given interior angles have the correct
 	 * vertex pattern.
 	 * 
 	 * @param start     start index for the ang array
@@ -1681,12 +1680,12 @@ public class Node extends Constants {
 	 * @return True if the pattern matches. Otherwise false.
 	 */
 	public boolean fitsVertexPat(byte start, double[] ang, boolean[] vertexPat, int len) {
-		Msg.debug("Entering Node.fitsVertexPat(..)");
+		Msg.debug("Entering Vertex.fitsVertexPat(..)");
 		int i, j = start, k = 0, l;
 		do {
 			// Check the corresponding boolean in vertexPat
 			if (vertexPat[k]) {
-				// Compare ang[j] to all other angles at non-vertex nodes
+				// Compare ang[j] to all other angles at non-vertex vertexs
 				i = j + 1;
 				if (i == len) {
 					i = 0;
@@ -1701,7 +1700,7 @@ public class Node extends Constants {
 						Msg.debug("ang[" + i + "] < ang[" + j + "]");
 						Msg.debug("ang[" + i + "]== " + Math.toDegrees(ang[i]));
 						Msg.debug("ang[" + j + "]== " + Math.toDegrees(ang[j]));
-						Msg.debug("Leaving Node.fitsVertexPat(..): false");
+						Msg.debug("Leaving Vertex.fitsVertexPat(..): false");
 						return false;
 					}
 					i++;
@@ -1722,22 +1721,22 @@ public class Node extends Constants {
 			k++;
 		} while (j != start);
 
-		Msg.debug("Leaving Node.fitsVertexPat(..): true");
+		Msg.debug("Leaving Vertex.fitsVertexPat(..): true");
 		return true;
 	}
 
 	/**
-	 * Fill the angles array with the angles at the opposite nodes.
+	 * Fill the angles array with the angles at the opposite vertexs.
 	 * 
-	 * @param ccwNeighbors the surrounding nodes in ccw order
+	 * @param ccwNeighbors the surrounding vertexs in ccw order
 	 * @param len          the length of
 	 * @return an array of doubles
 	 */
-	public double[] surroundingAngles(Node[] ccwNeighbors, int len) {
-		Msg.debug("Entering Node.surroundingAngles(..)");
+	public double[] surroundingAngles(Vertex[] ccwNeighbors, int len) {
+		Msg.debug("Entering Vertex.surroundingAngles(..)");
 		Quad q, qa, qb;
 		Edge e, ep, en;
-		Node n, np, nn, no;
+		Vertex n, np, nn, no;
 		double[] angles = new double[len];
 		for (int i = 0; i < len; i++) {
 			n = ccwNeighbors[i];
@@ -1769,7 +1768,7 @@ public class Node extends Constants {
 				angles[i] = qa.ang[qa.angleIndex(no)] + qb.ang[qb.angleIndex(no)];
 			}
 		}
-		Msg.debug("Leaving Node.surroundingAngles(..)");
+		Msg.debug("Leaving Vertex.surroundingAngles(..)");
 		return angles;
 	}
 
@@ -1785,11 +1784,11 @@ public class Node extends Constants {
 	 * Note that calcMyValencePattern() must be called before calling this method.
 	 * 
 	 * @param pattern2 A valence pattern
-	 * @param bpat     a boolean pattern indicating which nodes are located on the
+	 * @param bpat     a boolean pattern indicating which vertexs are located on the
 	 *                 boundary
 	 * @return If they match then return the true, otherwise return false.
 	 */
-	public boolean boundaryPatternMatch(byte[] pattern2, boolean[] bpat, Node[] ccwNeighbors) {
+	public boolean boundaryPatternMatch(byte[] pattern2, boolean[] bpat, Vertex[] ccwNeighbors) {
 		Msg.debug("Entering boundaryPatternMatch(..)");
 
 		if (pattern[0] != pattern2[0] || pattern[1] != pattern2[1] || bpat[0] != boundaryNode()) {
@@ -1842,13 +1841,13 @@ public class Node extends Constants {
 	 * Note that calcMyValencePattern() must be called before calling this method.
 	 * 
 	 * @param pattern2     A valence pattern
-	 * @param bpat         a boolean pattern indicating which nodes are located on
+	 * @param bpat         a boolean pattern indicating which vertexs are located on
 	 *                     the boundary
-	 * @param ccwNeighbors the neighbor nodes in ccw order
+	 * @param ccwNeighbors the neighbor vertexs in ccw order
 	 * @return If they match then return the true, otherwise return false.
 	 */
 
-	public int boundaryPatternMatchSpecial(byte[] pattern2, boolean[] bpat, Node[] ccwNeighbors) {
+	public int boundaryPatternMatchSpecial(byte[] pattern2, boolean[] bpat, Vertex[] ccwNeighbors) {
 
 		Msg.debug("Entering boundaryPatternMatchSpecial(..)");
 
@@ -1928,8 +1927,8 @@ public class Node extends Constants {
 		return -1;
 	}
 
-	public Edge commonEdge(Node n) {
-		Node other;
+	public Edge commonEdge(Vertex n) {
+		Vertex other;
 		Edge e;
 		for (Object element : edgeList) {
 			e = (Edge) element;

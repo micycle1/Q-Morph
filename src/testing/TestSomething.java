@@ -3,7 +3,7 @@ package testing;
 import meshditor.Constants;
 import meshditor.Msg;
 import meshditor.MyVector;
-import meshditor.Node;
+import meshditor.Vertex;
 
 public class TestSomething extends Constants {
 
@@ -20,12 +20,12 @@ public class TestSomething extends Constants {
 
 		Msg.debug("Testing the old and new MyVector.dot(..) methods:");
 
-		Node n0 = new Node(0, 0);
-		Node n1 = new Node(1, 0);
-		Node n2 = new Node(1, 1);
-		Node n3 = new Node(0, 1);
-		Node n4 = new Node(-1, 1);
-		Node n5 = new Node(-1, 0);
+		Vertex n0 = new Vertex(0, 0);
+		Vertex n1 = new Vertex(1, 0);
+		Vertex n2 = new Vertex(1, 1);
+		Vertex n3 = new Vertex(0, 1);
+		Vertex n4 = new Vertex(-1, 1);
+		Vertex n5 = new Vertex(-1, 0);
 
 		MyVector v1 = new MyVector(n0, n1);
 		MyVector v2 = new MyVector(n0, n2);

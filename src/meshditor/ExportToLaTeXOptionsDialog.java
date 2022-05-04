@@ -48,7 +48,7 @@ public class ExportToLaTeXOptionsDialog extends Dialog {
 		corrContainer.add(yCorrLabel = new Label("Offset for y coordinates: "), 2);
 		corrContainer.add(yCorr = new TextField("0", 4), "East", 3);
 
-		nodesContainer.add(nodes = new Checkbox("Visible nodes (diameter of each node is 0.1 units)", true), "Center", 0);
+		nodesContainer.add(nodes = new Checkbox("Visible vertexs (diameter of each node is 0.1 units)", true), "Center", 0);
 
 		buttonContainer.add(ok = new Button("OK"), "West", 0);
 		buttonContainer.add(cancel = new Button("Cancel"), "East", 1);

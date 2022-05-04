@@ -18,7 +18,7 @@ public class MyVector extends Constants {
 	 * @param x      the x component
 	 * @param y      the y component
 	 */
-	public MyVector(Node origin, double x, double y) {
+	public MyVector(Vertex origin, double x, double y) {
 		this.origin = origin;
 		this.x = x;
 		this.y = y;
@@ -41,7 +41,7 @@ public class MyVector extends Constants {
 	 * @param length the length of the vector
 	 * @param origin the origin of the vector
 	 */
-	public MyVector(double angle, double length, Node origin) {
+	public MyVector(double angle, double length, Vertex origin) {
 		this.origin = origin;
 		this.x = length * Math.cos(angle);
 		this.y = length * Math.sin(angle);
@@ -51,7 +51,7 @@ public class MyVector extends Constants {
 	 * @param a the origin of the vector
 	 * @param b the endpoint of the vector
 	 */
-	public MyVector(Node a, Node b) {
+	public MyVector(Vertex a, Vertex b) {
 		this.origin = a;
 		this.x = b.x - a.x;
 		this.y = b.y - a.y;
@@ -165,8 +165,8 @@ public class MyVector extends Constants {
 		double aLen = Math.sqrt(x * x + y * y);
 		double bLen = Math.sqrt(v.x * v.x + v.y * v.y);
 
-		Node cOrigin = new Node(origin.x + x, origin.y + y);
-		Node cEnd = new Node(v.origin.x + v.x, v.origin.y + v.y);
+		Vertex cOrigin = new Vertex(origin.x + x, origin.y + y);
+		Vertex cEnd = new Vertex(v.origin.x + v.x, v.origin.y + v.y);
 
 		double cxLen = cOrigin.x - cEnd.x;
 		double cyLen = cOrigin.y - cEnd.y;
@@ -184,8 +184,8 @@ public class MyVector extends Constants {
 		double aLen = Math.sqrt(x * x + y * y);
 		double bLen = Math.sqrt(v.x * v.x + v.y * v.y);
 
-		Node cOrigin = new Node(origin.x + x, origin.y + y);
-		Node cEnd = new Node(v.origin.x + v.x, v.origin.y + v.y);
+		Vertex cOrigin = new Vertex(origin.x + x, origin.y + y);
+		Vertex cEnd = new Vertex(v.origin.x + v.x, v.origin.y + v.y);
 
 		double cxLen = cOrigin.x - cEnd.x;
 		double cyLen = cOrigin.y - cEnd.y;
@@ -365,8 +365,8 @@ public class MyVector extends Constants {
 	 * @return if vectors intersects at one point exactly, return a node for this
 	 *         point Else return null.
 	 */
-	public Node pointIntersectsAt(MyVector d1) {
-		Node p0 = origin, p1 = d1.origin;
+	public Vertex pointIntersectsAt(MyVector d1) {
+		Vertex p0 = origin, p1 = d1.origin;
 		MyVector delta = new MyVector(p0, p1.x - p0.x, p1.y - p0.y);
 		MyVector d0 = this;
 		double d0crossd1 = d0.cross(d1);
@@ -381,7 +381,7 @@ public class MyVector extends Constants {
 			} else {
 				double x = d1.origin.x + t * d1.x;
 				double y = d1.origin.y + t * d1.y;
-				Node poi = new Node(x, y);
+				Vertex poi = new Vertex(x, y);
 				return poi; // Intersects at this edge point
 			}
 		}
@@ -389,7 +389,7 @@ public class MyVector extends Constants {
 
 	/** @return true if this and d1 intersect, else false. */
 	public boolean intersects(MyVector d1) {
-		Node p0 = origin, p1 = d1.origin;
+		Vertex p0 = origin, p1 = d1.origin;
 		MyVector delta = new MyVector(p0, p1.x - p0.x, p1.y - p0.y);
 		MyVector d0 = this;
 		double d0crossd1 = d0.cross(d1);
@@ -443,7 +443,7 @@ public class MyVector extends Constants {
 
 	/** @return true if this and d1 intersect in a single point, else false. */
 	public boolean pointIntersects(MyVector d1) {
-		Node p0 = origin, p1 = d1.origin;
+		Vertex p0 = origin, p1 = d1.origin;
 		MyVector delta = new MyVector(p0, p1.x - p0.x, p1.y - p0.y);
 		MyVector d0 = this;
 		double d0crossd1 = d0.cross(d1);
@@ -469,7 +469,7 @@ public class MyVector extends Constants {
 	 *         is, a point that is not an endpoint, ) else return false.
 	 */
 	public boolean innerpointIntersects(MyVector d1) {
-		Node p0 = origin, p1 = d1.origin;
+		Vertex p0 = origin, p1 = d1.origin;
 		MyVector delta = new MyVector(p0, p1.x - p0.x, p1.y - p0.y);
 		MyVector d0 = this;
 
@@ -504,7 +504,7 @@ public class MyVector extends Constants {
 	/*
 	 * // Return true if this and d1 intersect in a inner point of each other, //
 	 * (that is, a point that is not an endpoint, ) // else return false. public
-	 * boolean innerpointIntersects(MyVector d1) { Node p0= origin, p1= d1.origin;
+	 * boolean innerpointIntersects(MyVector d1) { Vertex p0= origin, p1= d1.origin;
 	 * MyVector delta= new MyVector(p0, p1.x- p0.x, p1.y- p0.y); MyVector d0= this;
 	 * 
 	 * BigDecimal d0x= new BigDecimal(d0.x), d0y= new BigDecimal(d0.y), d1x= new
@@ -540,7 +540,7 @@ public class MyVector extends Constants {
 		System.out.println(descr());
 	}
 
-	Node origin;
+	Vertex origin;
 	double x, y;
 	Edge edge;
 }

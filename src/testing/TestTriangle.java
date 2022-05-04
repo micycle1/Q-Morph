@@ -3,15 +3,15 @@ package testing;
 import meshditor.Edge;
 import meshditor.GeomBasics;
 import meshditor.Msg;
-import meshditor.Node;
+import meshditor.Vertex;
 import meshditor.Triangle;
 
 public class TestTriangle extends GeomBasics {
 
 	public static void main(String[] args) {
-		Node n1 = new Node(0, 0);
-		Node n2 = new Node(3, 0);
-		Node n3 = new Node(0, 3);
+		Vertex n1 = new Vertex(0, 0);
+		Vertex n2 = new Vertex(3, 0);
+		Vertex n3 = new Vertex(0, 3);
 
 		Edge e1 = new Edge(n1, n2);
 		Edge e2 = new Edge(n1, n3);

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Canvas class which paints the background grid, the nodes, the edges etc.
+ * The Canvas class which paints the background grid, the vertexs, the edges etc.
  */
 
 class GCanvas extends Canvas {
@@ -148,7 +148,7 @@ class GCanvas extends Canvas {
 	@Override
 	public void paint(Graphics g) {
 		Edge e;
-		Node n;
+		Vertex n;
 		List nodeList = GeomBasics.getNodeList();
 		List edgeList = GeomBasics.getEdgeList();
 		int halfGridIncr = gridIncr / 2;
@@ -218,7 +218,7 @@ class GCanvas extends Canvas {
 
 		if (nodeList != null) {
 			for (Object element : nodeList) {
-				n = (Node) element;
+				n = (Vertex) element;
 				g.setColor(n.color);
 				g.fillOval((int) (n.x * scale + yaxis_xval - 3), (int) (-n.y * scale + xaxis_yval - 3), 5, 5);
 			}

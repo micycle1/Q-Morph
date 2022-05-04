@@ -33,7 +33,7 @@ class GControls extends Panel implements ItemListener {
 		this.gui = gui;
 		this.canvas = cvas;
 
-		add(constructStatus = new Label("# of nodes remaining: "));
+		add(constructStatus = new Label("# of vertexs remaining: "));
 		add(clickStatus);
 		add(grid = new Checkbox("Show grid", true));
 		add(axis = new Checkbox("Show axis", true));

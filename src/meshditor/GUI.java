@@ -17,7 +17,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 /** This class implements the graphical user interface. */
@@ -28,7 +27,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		f = new Frame("MeshDitor");
 		// Font font= new Font("SansSerif", Font.PLAIN, 12);
 		// f.setFont(font);
-		f.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		f.setFont(new Font("Calibri", Font.PLAIN, 12));
 		f.setIconImage(null); // MyIconImage.makeIconImage()
 		GeomBasics.createNewLists();
 	}
@@ -38,7 +37,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		f = new Frame("MeshDitor: " + filename);
 		// Font font= new Font("SansSerif", Font.PLAIN, 12);
 		// f.setFont(font);
-		f.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		f.setFont(new Font("Calibri", Font.PLAIN, 12));
 		f.setIconImage(null); // MyIconImage.makeIconImage()
 
 		this.filename = filename;
@@ -54,7 +53,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 	/** The filename of the current mesh. */
 	public String filename;
-	/** Boolean indicating that we are currently defining nodes. */
+	/** Boolean indicating that we are currently defining vertexs. */
 	public boolean nodeMode = false;
 	/** Boolean indicating that we are currently defining triangles. */
 	public boolean triangleMode = true;
@@ -98,11 +97,11 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		fileMenu = new Menu("File");
 		newItem = new MenuItem("New");
 		loadMeshItem = new MenuItem("Load mesh");
-		loadNodesItem = new MenuItem("Load nodes");
+		loadNodesItem = new MenuItem("Load vertexs");
 		saveItem = new MenuItem("Save mesh");
 		saveAsItem = new MenuItem("Save mesh as...");
-		saveNodesItem = new MenuItem("Save nodes");
-		saveNodesAsItem = new MenuItem("Save nodes as...");
+		saveNodesItem = new MenuItem("Save vertexs");
+		saveNodesAsItem = new MenuItem("Save vertexs as...");
 		saveTriAsItem = new MenuItem("Save triangle mesh as...");
 		exportItem = new MenuItem("Export mesh to LaTeX file");
 		exitItem = new MenuItem("Exit");
@@ -142,7 +141,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 		modeMenu = new Menu("Mode");
 
-		nodeModeItem = new CheckboxMenuItem("Plot nodes");
+		nodeModeItem = new CheckboxMenuItem("Plot vertexs");
 		nodeModeItem.setState(false);
 		nodeModeItem.addItemListener(this);
 		modeMenu.add(nodeModeItem);
@@ -176,11 +175,11 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		printElementsItem.addActionListener(this);
 		reportMetricsItem = new MenuItem("Report mesh metrics");
 		reportMetricsItem.addActionListener(this);
-		printValencesItem = new MenuItem("Print valences of all nodes");
+		printValencesItem = new MenuItem("Print valences of all vertexs");
 		printValencesItem.addActionListener(this);
-		printValPatItem = new MenuItem("Print valence patterns of all nodes");
+		printValPatItem = new MenuItem("Print valence patterns of all vertexs");
 		printValPatItem.addActionListener(this);
-		printAngAtSurNodesItem = new MenuItem("Print angles at surrounding nodes");
+		printAngAtSurNodesItem = new MenuItem("Print angles at surrounding vertexs");
 		printAngAtSurNodesItem.addActionListener(this);
 
 		centroidItem = new MenuItem("Create centroid for last quad");
@@ -288,7 +287,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	}
 
 	void commandLoadNodes() {
-		FileDialog fd = new FileDialog(f, "Load nodes from file", FileDialog.LOAD);
+		FileDialog fd = new FileDialog(f, "Load vertexs from file", FileDialog.LOAD);
 		fd.setDirectory(GeomBasics.meshDirectory);
 		fd.show();
 		String dir = fd.getDirectory();
@@ -323,7 +322,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	}
 
 	void commandSaveNodesAs() {
-		FileDialog fd = new FileDialog(f, "Save nodes to file", FileDialog.SAVE);
+		FileDialog fd = new FileDialog(f, "Save vertexs to file", FileDialog.SAVE);
 		fd.setDirectory(GeomBasics.meshDirectory);
 		fd.show();
 		String dir = fd.getDirectory();
@@ -513,7 +512,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		String command = (String) e.getItem();
-		if (command.equals("Plot nodes")) {
+		if (command.equals("Plot vertexs")) {
 			commandNodeMode();
 		} else if (command.equals("Construct triangles")) {
 			commandTriMode();
@@ -542,13 +541,13 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			commandNew();
 		} else if (command.equals("Load mesh")) {
 			commandLoadMesh();
-		} else if (command.equals("Load nodes")) {
+		} else if (command.equals("Load vertexs")) {
 			commandLoadNodes();
 		} else if (command.equals("Save mesh")) {
 			commandSaveMesh();
-		} else if (command.equals("Save nodes")) {
+		} else if (command.equals("Save vertexs")) {
 			commandSaveNodes();
-		} else if (command.equals("Save nodes as...")) {
+		} else if (command.equals("Save vertexs as...")) {
 			commandSaveNodesAs();
 		} else if (command.equals("Save mesh as...")) {
 			commandSaveMeshAs();
@@ -581,15 +580,15 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			GeomBasics.updateMeshMetrics();
 			rd = new MsgDialog(f, "Mesh Metrics Report", GeomBasics.meshMetricsReport(), 80, 18);
 			rd.show();
-		} else if (command.equals("Print valences of all nodes")) {
+		} else if (command.equals("Print valences of all vertexs")) {
 			GeomBasics.printValences();
-		} else if (command.equals("Print valence patterns of all nodes")) {
+		} else if (command.equals("Print valence patterns of all vertexs")) {
 			GeomBasics.printValPatterns();
-		} else if (command.equals("Print angles at surrounding nodes")) {
+		} else if (command.equals("Print angles at surrounding vertexs")) {
 			GeomBasics.printAnglesAtSurrondingNodes();
 		} else if (command.equals("Create centroid for last quad")) {
 
-			Node n;
+			Vertex n;
 			Quad q;
 			Element elem;
 			int size = GeomBasics.elementList.size();
@@ -625,10 +624,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 	/** A class for handling mouse actions. */
 	class MyMouseListener extends MouseAdapter {
-		Node movingNode = null, oldMovingNode = null;
+		Vertex movingNode = null, oldMovingNode = null;
 		int nodeCnt = 0;
 		Edge edge1, edge2, edge3, edge4;
-		Node[] myNodeList = new Node[4];
+		Vertex[] myNodeList = new Vertex[4];
 		Triangle tri;
 		Quad q;
 		boolean lastActionMergeNodes = false;
@@ -663,12 +662,12 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			double y = Math.rint(e.getY() / 10.0) * 10;
 			x = (x - cvas.getYAxisXPos()) / scale;
 			y = (y - cvas.getXAxisYPos()) / -scale;
-			Node n = new Node(x, y);
+			Vertex n = new Vertex(x, y);
 			if (!GeomBasics.nodeList.contains(n)) {
 				GeomBasics.nodeList.add(n);
 				lastActionNewNode = true;
 			} else {
-				n = (Node) GeomBasics.nodeList.get(GeomBasics.nodeList.indexOf(n));
+				n = (Vertex) GeomBasics.nodeList.get(GeomBasics.nodeList.indexOf(n));
 			}
 
 			if (!nodeMode) {
@@ -838,10 +837,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			x = (x - cvas.getYAxisXPos()) / scale;
 			y = (y - cvas.getXAxisYPos()) / -scale;
 
-			movingNode = new Node(x, y);
+			movingNode = new Vertex(x, y);
 			int j = GeomBasics.nodeList.indexOf(movingNode);
 			if (j != -1) {
-				movingNode = (Node) GeomBasics.nodeList.get(j);
+				movingNode = (Vertex) GeomBasics.nodeList.get(j);
 				oldX = movingNode.x;
 				oldY = movingNode.y;
 			} else {
@@ -857,7 +856,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			Msg.debug("Entering mouseReleased(..)");
 
 			Edge ei, ej, oldE;
-			Node n, other;
+			Vertex n, other;
 			int ind, j, k;
 
 			double x = Math.rint(e.getX() / 10.0) * 10;
@@ -867,12 +866,12 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 			if (movingNode != null && (x != movingNode.x || y != movingNode.y)) {
 				oldMovingNode = movingNode.copy();
-				ind = GeomBasics.nodeList.indexOf(new Node(x, y));
+				ind = GeomBasics.nodeList.indexOf(new Vertex(x, y));
 				movingNode.setXY(x, y);
 				movingNode.update();
 
-				if (ind != -1) { // We have to merge the nodes
-					n = (Node) GeomBasics.nodeList.get(ind);
+				if (ind != -1) { // We have to merge the vertexs
+					n = (Vertex) GeomBasics.nodeList.get(ind);
 
 					for (int i = 0; i < n.edgeList.size(); i++) {
 						ei = (Edge) n.edgeList.get(i);

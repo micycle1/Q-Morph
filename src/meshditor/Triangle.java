@@ -99,19 +99,19 @@ public class Triangle extends Element {
 	// and optBasedSmooth(..))
 	// The triangle created is a copy of this, and each of the edges are also
 	// copies.
-	// One of the nodes in the triangle has been replaced.
+	// One of the vertexs in the triangle has been replaced.
 	// The Edge.repleceNode(..) method updates the edge length.
 	// *Not tested!!!*
 
 	@Override
-	public Element elementWithExchangedNodes(Node original, Node replacement) {
-		Node node1 = edgeList[0].leftNode;
-		Node node2 = edgeList[0].rightNode;
-		Node node3 = edgeList[1].rightNode;
+	public Element elementWithExchangedNodes(Vertex original, Vertex replacement) {
+		Vertex node1 = edgeList[0].leftNode;
+		Vertex node2 = edgeList[0].rightNode;
+		Vertex node3 = edgeList[1].rightNode;
 		if (node3 == node1 || node3 == node2) {
 			node3 = edgeList[1].leftNode;
 		}
-		Node common1;
+		Vertex common1;
 
 		// Make a copy of the original triangle...
 		Triangle t = new Triangle(this);
@@ -158,9 +158,9 @@ public class Triangle extends Element {
 	// (x,y).
 	// Else return false.
 	@Override
-	public boolean invertedWhenNodeRelocated(Node n1, Node n2) {
+	public boolean invertedWhenNodeRelocated(Vertex n1, Vertex n2) {
 		Msg.debug("Entering Triangle.invertedWhenNodeRelocated(..)");
-		Node a, b, c;
+		Vertex a, b, c;
 		MyVector ac, bc;
 		a = firstNode;
 		b = edgeList[0].otherNode(a);
@@ -192,8 +192,8 @@ public class Triangle extends Element {
 	public boolean equals(Object o) {
 		if (o instanceof Triangle) {
 			Triangle t = (Triangle) o;
-			Node node1, node2, node3;
-			Node tnode1, tnode2, tnode3;
+			Vertex node1, node2, node3;
+			Vertex tnode1, tnode2, tnode3;
 			node1 = edgeList[0].leftNode;
 			node2 = edgeList[0].rightNode;
 			node3 = edgeList[1].rightNode;
@@ -219,7 +219,7 @@ public class Triangle extends Element {
 	}
 
 	@Override
-	public double angle(Edge e, Node n) {
+	public double angle(Edge e, Vertex n) {
 		return ang[angleIndex(e, neighborEdge(n, e))];
 	}
 
@@ -240,7 +240,7 @@ public class Triangle extends Element {
 	}
 
 	@Override
-	public void updateAngle(Node n) {
+	public void updateAngle(Vertex n) {
 		int j = angleIndex(n), i;
 
 		i = angleIndex(edgeList[0], edgeList[1]);
@@ -255,7 +255,7 @@ public class Triangle extends Element {
 				if (j == i) {
 					ang[i] = edgeList[2].computeCCWAngle(edgeList[0]);
 				} else {
-					Msg.error("Quad.updateAngle(Node): Node not found.");
+					Msg.error("Quad.updateAngle(Vertex): Vertex not found.");
 				}
 			}
 		}
@@ -284,7 +284,7 @@ public class Triangle extends Element {
 	}
 
 	@Override
-	public boolean hasNode(Node n) {
+	public boolean hasNode(Vertex n) {
 		if (edgeList[0].hasNode(n) || edgeList[1].hasNode(n) || edgeList[2].hasNode(n)) {
 			return true;
 		} else {
@@ -334,10 +334,10 @@ public class Triangle extends Element {
 		}
 	}
 
-	// Returns the other edge belonging to this triangle that also share Node n
+	// Returns the other edge belonging to this triangle that also share Vertex n
 	// Returns null if not found
 	@Override
-	public Edge neighborEdge(Node n, Edge e) {
+	public Edge neighborEdge(Vertex n, Edge e) {
 		if (edgeList[0] != e && edgeList[0].hasNode(n)) {
 			return edgeList[0];
 		} else if (edgeList[1] != e && edgeList[1].hasNode(n)) {
@@ -345,7 +345,7 @@ public class Triangle extends Element {
 		} else if (edgeList[2] != e && edgeList[2].hasNode(n)) {
 			return edgeList[2];
 		} else {
-			Msg.error("Triangle.neighborEdge(Node, Edge): Neighbor not found.");
+			Msg.error("Triangle.neighborEdge(Vertex, Edge): Neighbor not found.");
 			return null; // e
 		}
 	}
@@ -378,7 +378,7 @@ public class Triangle extends Element {
 	}
 
 	@Override
-	public int angleIndex(Node n) {
+	public int angleIndex(Vertex n) {
 		// angle betw. edges 0 && 1
 		if (edgeList[0].commonNode(edgeList[1]) == n) {
 			return 2;
@@ -387,7 +387,7 @@ public class Triangle extends Element {
 		} else if (edgeList[2].commonNode(edgeList[0]) == n) {
 			return 1;
 		} else {
-			Msg.error("Quad.angleIndex(Node): Node not found");
+			Msg.error("Quad.angleIndex(Vertex): Vertex not found");
 			return -1;
 		}
 	}
@@ -397,7 +397,7 @@ public class Triangle extends Element {
 		return angleIndex(indexOf(e1), indexOf(e2));
 	}
 
-	public Edge oppositeOfNode(Node n) {
+	public Edge oppositeOfNode(Vertex n) {
 		if (edgeList[0].hasNode(n) && edgeList[1].hasNode(n)) {
 			return edgeList[2];
 		} else if (edgeList[0].hasNode(n) && edgeList[2].hasNode(n)) {
@@ -410,7 +410,7 @@ public class Triangle extends Element {
 		}
 	}
 
-	public Node oppositeOfEdge(Edge e) {
+	public Vertex oppositeOfEdge(Edge e) {
 		if (edgeList[0] == e) {
 			if (!e.hasNode(edgeList[1].leftNode)) {
 				return edgeList[1].leftNode;
@@ -459,7 +459,7 @@ public class Triangle extends Element {
 	// angles into true angles. The largest angle indicates that this edge is ccw to
 	// e1.
 	public Edge nextCCWEdge(Edge e1) {
-		Node e1commone2, e1commone3;
+		Vertex e1commone2, e1commone3;
 		Edge e2, e3;
 		MyVector v1Forv2, v1Forv3, v2, v3;
 		if (e1 == edgeList[0]) {
@@ -504,7 +504,7 @@ public class Triangle extends Element {
 	}
 
 	public Edge nextCWEdge(Edge e1) {
-		Node e1commone2, e1commone3;
+		Vertex e1commone2, e1commone3;
 		Edge e2, e3;
 		MyVector v1Forv2, v1Forv3, v2, v3;
 		if (e1 == edgeList[0]) {
@@ -557,12 +557,12 @@ public class Triangle extends Element {
 		}
 	}
 
-	// We simply check that the nodes of the element are not collinear.
+	// We simply check that the vertexs of the element are not collinear.
 	@Override
 	public boolean areaLargerThan0() {
-		Node na = edgeList[0].leftNode;
-		Node nb = edgeList[0].rightNode;
-		Node nc = oppositeOfEdge(edgeList[0]);
+		Vertex na = edgeList[0].leftNode;
+		Vertex nb = edgeList[0].rightNode;
+		Vertex nc = oppositeOfEdge(edgeList[0]);
 
 		if (cross(na, nc, nb, nc) != 0) {
 			return true;
@@ -571,14 +571,14 @@ public class Triangle extends Element {
 		}
 
 		/*
-		 * Node n= oppositeOfEdge(edgeList[0]); if (n.onLine(edgeList[0])) return false;
+		 * Vertex n= oppositeOfEdge(edgeList[0]); if (n.onLine(edgeList[0])) return false;
 		 * else return true;
 		 */
 	}
 
 	// Check if the old pos and the new pos of the node are on different sides
-	// of the nodes opposite edge.
-	public boolean inverted(Node oldN, Node newN) {
+	// of the vertexs opposite edge.
+	public boolean inverted(Vertex oldN, Vertex newN) {
 		Edge e = oppositeOfNode(newN);
 		// Check with edge e:
 		double oldN_e_det = (e.leftNode.x - oldN.x) * (e.rightNode.y - oldN.y) - (e.leftNode.y - oldN.y) * (e.rightNode.x - oldN.x);
@@ -600,7 +600,7 @@ public class Triangle extends Element {
 	// Return true if the triangle has become inverted
 	@Override
 	public boolean inverted() {
-		Node a, b, c;
+		Vertex a, b, c;
 		MyVector ac, bc;
 		a = firstNode;
 		b = edgeList[0].otherNode(a);
@@ -620,7 +620,7 @@ public class Triangle extends Element {
 	// Return true if the triangle has become inverted or the area is zero
 	@Override
 	public boolean invertedOrZeroArea() {
-		Node a, b, c;
+		Vertex a, b, c;
 		MyVector ac, bc;
 		a = firstNode;
 		b = edgeList[0].otherNode(a);
@@ -639,7 +639,7 @@ public class Triangle extends Element {
 
 	// Return true if the triangle area is zero.
 	public boolean zeroArea() {
-		Node a, b, c;
+		Vertex a, b, c;
 		MyVector ac, bc;
 		a = firstNode;
 		b = edgeList[0].otherNode(a);
@@ -657,7 +657,7 @@ public class Triangle extends Element {
 
 	// Triangles don't have concavities, so return false.
 	@Override
-	public boolean concavityAt(Node n) {
+	public boolean concavityAt(Vertex n) {
 		return false;
 	}
 
@@ -700,7 +700,7 @@ public class Triangle extends Element {
 	public void updateDistortionMetric(double factor) {
 		Msg.debug("Entering Triangle.updateDistortionMetric(..)");
 		double AB = edgeList[0].len, CB = edgeList[1].len, CA = edgeList[2].len;
-		Node a = edgeList[2].commonNode(edgeList[0]), b = edgeList[0].commonNode(edgeList[1]), c = edgeList[2].commonNode(edgeList[1]);
+		Vertex a = edgeList[2].commonNode(edgeList[0]), b = edgeList[0].commonNode(edgeList[1]), c = edgeList[2].commonNode(edgeList[1]);
 		MyVector vCA = new MyVector(c, a), vCB = new MyVector(c, b);
 
 		double temp = factor * Math.abs(vCA.cross(vCB)) / (CA * CA + AB * AB + CB * CB);
@@ -727,8 +727,8 @@ public class Triangle extends Element {
 
 	// Return the node at the largest interior angle
 	@Override
-	public Node nodeAtLargestAngle() {
-		Node candNode = edgeList[0].leftNode;
+	public Vertex nodeAtLargestAngle() {
+		Vertex candNode = edgeList[0].leftNode;
 		double cand = ang[angleIndex(candNode)], temp;
 
 		temp = ang[angleIndex(edgeList[0].rightNode)];
@@ -784,7 +784,7 @@ public class Triangle extends Element {
 
 	@Override
 	public String descr() {
-		Node node1, node2, node3;
+		Vertex node1, node2, node3;
 		node1 = edgeList[0].leftNode;
 		node2 = edgeList[0].rightNode;
 		node3 = edgeList[1].rightNode;
