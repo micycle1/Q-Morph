@@ -9,13 +9,13 @@ import java.util.List;
  */
 public class Edge extends Constants {
 	
-	public Edge(Vertex node1, Vertex node2) {
-		if ((node1.x < node2.x) || (node1.x == node2.x && node1.y > node2.y)) {
-			leftNode = node1;
-			rightNode = node2;
+	public Edge(Vertex Vertex1, Vertex Vertex2) {
+		if ((Vertex1.x < Vertex2.x) || (Vertex1.x == Vertex2.x && Vertex1.y > Vertex2.y)) {
+			leftVertex = Vertex1;
+			rightVertex = Vertex2;
 		} else {
-			leftNode = node2;
-			rightNode = node1;
+			leftVertex = Vertex2;
+			rightVertex = Vertex1;
 		}
 
 		len = computeLength();
@@ -23,8 +23,8 @@ public class Edge extends Constants {
 
 	// Create a clone of Edge e with all the important fields
 	private Edge(Edge e) {
-		leftNode = e.leftNode;
-		rightNode = e.rightNode;
+		leftVertex = e.leftVertex;
+		rightVertex = e.rightVertex;
 		len = e.len;
 		e.element1 = element1;
 		e.element2 = element2;
@@ -34,7 +34,7 @@ public class Edge extends Constants {
 	public boolean equals(Object o) {
 		if (o instanceof Edge) {
 			Edge e = (Edge) o;
-			if (leftNode.equals(e.leftNode) && rightNode.equals(e.rightNode)) {
+			if (leftVertex.equals(e.leftVertex) && rightVertex.equals(e.rightVertex)) {
 				return true;
 			}
 		}
@@ -126,7 +126,7 @@ public class Edge extends Constants {
 
 	// Determine whether the frontNeighbor is an appropriate side Edge for a future
 	// Quad with Edge e as base Edge. Return the frontNeighbor if so, else null.
-	// elem== null if n.boundaryNode()== true
+	// elem== null if n.boundaryVertex()== true
 	public Edge evalPotSideEdge(Edge frontNeighbor, Vertex n) {
 		Msg.debug("Entering Edge.evalPotSideEdge(..)");
 		Element tri = getTriangleElement(), quad = getQuadElement();
@@ -148,7 +148,7 @@ public class Edge extends Constants {
 		}
 	}
 
-	// Determine the state bit at both Nodes and set the left and right side Edges.
+	// Determine the state bit at both Vertexes and set the left and right side Edges.
 	// If a state bit is set, then the corresponding front neighbor Edge must get
 	// Edge this as a side Edge at that Vertex. If it is not set, then it must get a
 	// null
@@ -164,17 +164,17 @@ public class Edge extends Constants {
 		Edge l, r;
 
 		// Alter states and side Edges on left side:
-		l = evalPotSideEdge(lfn, leftNode);
+		l = evalPotSideEdge(lfn, leftVertex);
 		if (l != null) {
 			leftSide = true;
-			if (leftNode == lfn.leftNode) {
+			if (leftVertex == lfn.leftVertex) {
 				lfn.alterLeftState(true);
 			} else {
 				lfn.alterRightState(true);
 			}
 		} else {
 			leftSide = false;
-			if (leftNode == lfn.leftNode) {
+			if (leftVertex == lfn.leftVertex) {
 				lfn.alterLeftState(false);
 			} else {
 				lfn.alterRightState(false);
@@ -182,17 +182,17 @@ public class Edge extends Constants {
 		}
 
 		// Alter states and side Edges on right side:
-		r = evalPotSideEdge(rfn, rightNode);
+		r = evalPotSideEdge(rfn, rightVertex);
 		if (r != null) {
 			rightSide = true;
-			if (rightNode == rfn.leftNode) {
+			if (rightVertex == rfn.leftVertex) {
 				rfn.alterLeftState(true);
 			} else {
 				rfn.alterRightState(true);
 			}
 		} else {
 			rightSide = false;
-			if (rightNode == rfn.leftNode) {
+			if (rightVertex == rfn.leftVertex) {
 				rfn.alterLeftState(false);
 			} else {
 				rfn.alterRightState(false);
@@ -306,9 +306,9 @@ public class Edge extends Constants {
 		}
 	}
 
-	// If e.leftNode is leftmore than this.leftNode, return true, else false
+	// If e.leftVertex is leftmore than this.leftVertex, return true, else false
 	public boolean leftTo(Edge e) {
-		if ((leftNode.x < e.leftNode.x) || (leftNode.x == e.leftNode.x && leftNode.y < e.leftNode.y)) {
+		if ((leftVertex.x < e.leftVertex.x) || (leftVertex.x == e.leftVertex.x && leftVertex.y < e.leftVertex.y)) {
 			return true;
 		} else {
 			return false;
@@ -331,7 +331,7 @@ public class Edge extends Constants {
 	}
 
 	public String descr() {
-		return "(" + leftNode.x + ", " + leftNode.y + "), (" + rightNode.x + ", " + rightNode.y + ")";
+		return "(" + leftVertex.x + ", " + leftVertex.y + "), (" + rightVertex.x + ", " + rightVertex.y + ")";
 	}
 
 	public void printMe() {
@@ -342,12 +342,12 @@ public class Edge extends Constants {
 		return len;
 	}
 
-	// Replace this edge's node n1 with the node n2:
-	public boolean replaceNode(Vertex n1, Vertex n2) {
-		if (leftNode.equals(n1)) {
-			leftNode = n2;
-		} else if (rightNode.equals(n1)) {
-			rightNode = n2;
+	// Replace this edge's Vertex n1 with the Vertex n2:
+	public boolean replaceVertex(Vertex n1, Vertex n2) {
+		if (leftVertex.equals(n1)) {
+			leftVertex = n2;
+		} else if (rightVertex.equals(n1)) {
+			rightVertex = n2;
 		} else {
 			return false;
 		}
@@ -356,40 +356,40 @@ public class Edge extends Constants {
 	}
 
 	// Seam two edges together. The method assumes that they already have one common
-	// node. For each edge in the edgeList of the otherNode (otherE) of edge e:
-	// Provided that otherThis or the otherNode of otherE is not found in any edge
+	// Vertex. For each edge in the edgeList of the otherVertex (otherE) of edge e:
+	// Provided that otherThis or the otherVertex of otherE is not found in any edge
 	// in
-	// the edgeList of the otherNode of this edge (otherThis), then the edge is
+	// the edgeList of the otherVertex of this edge (otherThis), then the edge is
 	// added
 	// to this' edgeList.
 
 	// Assumes that the quad area defined by the three distinct vertexs of the two
 	// edges,
-	// and the node in the top of the triangle adjacent the otherNodes (of the
+	// and the Vertex in the top of the triangle adjacent the otherVertexes (of the
 	// common
-	// node of the two edges), is empty.
+	// Vertex of the two edges), is empty.
 
 	public void seamWith(Edge e) {
-		Vertex nK = commonNode(e);
-		Vertex nKp1 = otherNode(nK), nKm1 = e.otherNode(nK), other;
+		Vertex nK = commonVertex(e);
+		Vertex nKp1 = otherVertex(nK), nKm1 = e.otherVertex(nK), other;
 		boolean found = false;
 		Edge eI, eJ;
 
 		for (int i = 0; i < nKm1.edgeList.size(); i++) {
 			eI = (Edge) nKm1.edgeList.get(i);
-			other = eI.otherNode(nKm1);
+			other = eI.otherVertex(nKm1);
 
 			if (other != nKp1) {
 				for (int j = 0; j < nKp1.edgeList.size(); j++) {
 					eJ = (Edge) nKp1.edgeList.get(j);
 
-					if (other == eJ.otherNode(nKp1)) {
+					if (other == eJ.otherVertex(nKp1)) {
 						found = true;
 
 						other.edgeList.remove(other.edgeList.indexOf(eI));
 
-						if (eI.element1.firstNode == nKm1) {
-							eI.element1.firstNode = nKp1;
+						if (eI.element1.firstVertex == nKm1) {
+							eI.element1.firstVertex = nKp1;
 						}
 						eI.element1.replaceEdge(eI, eJ);
 						eJ.connectToElement(eI.element1);
@@ -397,14 +397,14 @@ public class Edge extends Constants {
 					}
 				}
 				if (!found) {
-					if (eI.element1.firstNode == nKm1) {
-						eI.element1.firstNode = nKp1;
+					if (eI.element1.firstVertex == nKm1) {
+						eI.element1.firstVertex = nKp1;
 					}
-					if (eI.element2.firstNode == nKm1) {
-						eI.element2.firstNode = nKp1;
+					if (eI.element2.firstVertex == nKm1) {
+						eI.element2.firstVertex = nKp1;
 					}
 
-					eI.replaceNode(nKm1, nKp1);
+					eI.replaceVertex(nKm1, nKp1);
 					nKp1.edgeList.add(eI);
 				} else {
 					found = false;
@@ -418,15 +418,15 @@ public class Edge extends Constants {
 
 	// Return the midpoint (represented by a new Vertex) of this edge:
 	public Vertex midPoint() {
-		double xDiff = rightNode.x - leftNode.x;
-		double yDiff = rightNode.y - leftNode.y;
+		double xDiff = rightVertex.x - leftVertex.x;
+		double yDiff = rightVertex.y - leftVertex.y;
 
-		return new Vertex(leftNode.x + xDiff * 0.5, leftNode.y + yDiff * 0.5);
+		return new Vertex(leftVertex.x + xDiff * 0.5, leftVertex.y + yDiff * 0.5);
 	}
 
 	public double computeLength() {
-		double xdiff = rightNode.x - leftNode.x;
-		double ydiff = rightNode.y - leftNode.y;
+		double xdiff = rightVertex.x - leftVertex.x;
+		double ydiff = rightVertex.y - leftVertex.y;
 		return Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 	}
 
@@ -436,22 +436,22 @@ public class Edge extends Constants {
 		return Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 	}
 
-	public double length(Vertex node1, Vertex node2) {
-		double xdiff = node2.x - node1.x;
-		double ydiff = node2.y - node1.y;
+	public double length(Vertex Vertex1, Vertex Vertex2) {
+		double xdiff = Vertex2.x - Vertex1.x;
+		double ydiff = Vertex2.y - Vertex1.y;
 		return Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 	}
 
 	// Returns angle relative to the x-axis (which is directed from the origin (0,0)
 	// to
-	// the right, btw) at node n (which is leftNode or rightNode).
+	// the right, btw) at Vertex n (which is leftVertex or rightVertex).
 	// Range: <-180, 180>
 	public double angleAt(Vertex n) {
 		// Math.acos returns values in the range 0.0 through pi, avoiding neg numbers.
 		// If this is CW to x-axis, then return pos acos, else return neg acos
-		// double x= leftNode.x-rightNode.x;
-		// double y= leftNode.y-rightNode.y;
-		Vertex other = otherNode(n);
+		// double x= leftVertex.x-rightVertex.x;
+		// double y= leftVertex.y-rightVertex.y;
+		Vertex other = otherVertex(n);
 
 		double x = n.x - other.x;
 		double y = n.y - other.y;
@@ -514,7 +514,7 @@ public class Edge extends Constants {
 			curElem = curElem.neighbor(curEdge);
 		}
 
-		// If n is a boundaryNode, the situation gets more complicated:
+		// If n is a boundaryVertex, the situation gets more complicated:
 		if (curEdge != eEdge) {
 			// Sum the "internal" angles:
 			curEdge = this;
@@ -556,20 +556,20 @@ public class Edge extends Constants {
 			return 2 * Math.PI;
 		}
 
-		if (leftNode.equals(n)) {
-			if (n.equals(edge.leftNode)) {
-				c = length(rightNode, edge.rightNode);
-			} else if (n.equals(edge.rightNode)) {
-				c = length(rightNode, edge.leftNode);
+		if (leftVertex.equals(n)) {
+			if (n.equals(edge.leftVertex)) {
+				c = length(rightVertex, edge.rightVertex);
+			} else if (n.equals(edge.rightVertex)) {
+				c = length(rightVertex, edge.leftVertex);
 			} else {
 				Msg.error("Edge::computePosAngle(..): These edges are not connected.");
 				return 0;
 			}
-		} else if (rightNode.equals(n)) {
-			if (n.equals(edge.leftNode)) {
-				c = length(leftNode, edge.rightNode);
-			} else if (n.equals(edge.rightNode)) {
-				c = length(leftNode, edge.leftNode);
+		} else if (rightVertex.equals(n)) {
+			if (n.equals(edge.leftVertex)) {
+				c = length(leftVertex, edge.rightVertex);
+			} else if (n.equals(edge.rightVertex)) {
+				c = length(leftVertex, edge.leftVertex);
 			} else {
 				Msg.error("Edge::computePosAngle(..): These edges are not connected.");
 				return 0;
@@ -597,7 +597,7 @@ public class Edge extends Constants {
 	// Compute the ccw directed angle between this Edge and Edge edge at Vertex n.
 	// Returns a positive value in range [0, 2*PI>.
 	public double computeCCWAngle(Edge edge) {
-		Vertex n = commonNode(edge);
+		Vertex n = commonVertex(edge);
 		double temp = computePosAngle(edge, n);
 
 		MyVector thisVector = getVector(n);
@@ -610,12 +610,12 @@ public class Edge extends Constants {
 		}
 	}
 
-	// Return a common node for edges this and e
-	public Vertex commonNode(Edge e) {
-		if (hasNode(e.leftNode)) {
-			return e.leftNode;
-		} else if (hasNode(e.rightNode)) {
-			return e.rightNode;
+	// Return a common Vertex for edges this and e
+	public Vertex commonVertex(Edge e) {
+		if (hasVertex(e.leftVertex)) {
+			return e.leftVertex;
+		} else if (hasVertex(e.rightVertex)) {
+			return e.rightVertex;
 		} else {
 			return null;
 		}
@@ -633,28 +633,28 @@ public class Edge extends Constants {
 	}
 
 	// Add this Edge to the vertexs' edgeLists. Careful, there's no safety checks!
-	public void connectNodes() {
-		leftNode.edgeList.add(this);
-		rightNode.edgeList.add(this);
+	public void connectVertexes() {
+		leftVertex.edgeList.add(this);
+		rightVertex.edgeList.add(this);
 	}
 
 	// Remove this Edge from the vertexs' edgeLists. Careful, there's no safety
 	// checks!
-	public void disconnectNodes() {
-		leftNode.edgeList.remove(leftNode.edgeList.indexOf(this));
-		rightNode.edgeList.remove(rightNode.edgeList.indexOf(this));
+	public void disconnectVertexes() {
+		leftVertex.edgeList.remove(leftVertex.edgeList.indexOf(this));
+		rightVertex.edgeList.remove(rightVertex.edgeList.indexOf(this));
 	}
 
 	// Remove this Edge from the vertexs' edgeLists. Safety checks...
-	public void tryToDisconnectNodes() {
+	public void tryToDisconnectVertexes() {
 		int i;
-		i = leftNode.edgeList.indexOf(this);
+		i = leftVertex.edgeList.indexOf(this);
 		if (i != -1) {
-			leftNode.edgeList.remove(i);
+			leftVertex.edgeList.remove(i);
 		}
-		i = rightNode.edgeList.indexOf(this);
+		i = rightVertex.edgeList.indexOf(this);
 		if (i != -1) {
-			rightNode.edgeList.remove(i);
+			rightVertex.edgeList.remove(i);
 		}
 	}
 
@@ -710,10 +710,10 @@ public class Edge extends Constants {
 	}
 
 	/**
-	 * @param wrongNode a node that we don't want returned
-	 * @return a node opposite to this edge in an adjacent triangle
+	 * @param wrongVertex a Vertex that we don't want returned
+	 * @return a Vertex opposite to this edge in an adjacent triangle
 	 */
-	public Vertex oppositeNode(Vertex wrongNode) {
+	public Vertex oppositeVertex(Vertex wrongVertex) {
 		Vertex candidate;
 		Edge otherEdge;
 
@@ -725,15 +725,15 @@ public class Edge extends Constants {
 			otherEdge = element1.edgeList[1];
 		}
 
-		// This edge contains an opposite node... get this node....
-		if (otherEdge.leftNode != leftNode && otherEdge.leftNode != rightNode) {
-			candidate = otherEdge.leftNode;
+		// This edge contains an opposite Vertex... get this Vertex....
+		if (otherEdge.leftVertex != leftVertex && otherEdge.leftVertex != rightVertex) {
+			candidate = otherEdge.leftVertex;
 		} else {
-			candidate = otherEdge.rightNode;
+			candidate = otherEdge.rightVertex;
 		}
 
-		// Damn, it's the wrong node! Then we must go look in element2.
-		if (candidate == wrongNode) {
+		// Damn, it's the wrong Vertex! Then we must go look in element2.
+		if (candidate == wrongVertex) {
 
 			// Pick one of the other edges in element2
 			ind = element2.indexOf(this);
@@ -743,20 +743,20 @@ public class Edge extends Constants {
 				otherEdge = element2.edgeList[1];
 			}
 
-			// This edge contains an opposite node
-			// get this node....
-			if (otherEdge.leftNode != leftNode && otherEdge.leftNode != rightNode) {
-				candidate = otherEdge.leftNode;
-			} else if (otherEdge.rightNode != leftNode && otherEdge.rightNode != rightNode) {
-				candidate = otherEdge.rightNode;
+			// This edge contains an opposite Vertex
+			// get this Vertex....
+			if (otherEdge.leftVertex != leftVertex && otherEdge.leftVertex != rightVertex) {
+				candidate = otherEdge.leftVertex;
+			} else if (otherEdge.rightVertex != leftVertex && otherEdge.rightVertex != rightVertex) {
+				candidate = otherEdge.rightVertex;
 			}
 		}
 		return candidate;
 	}
 
 	// Construct an Edge that is a unit normal to this Edge.
-	// (Remember to add the new Vertex to nodeList if you want to keep it.)
-	// nB: one of the vertexs on this edge (leftNode or rightNode)
+	// (Remember to add the new Vertex to vertexList if you want to keep it.)
+	// nB: one of the vertexs on this edge (leftVertex or rightVertex)
 
 	/*
 	 * C b ____----x ___---- | b=1 ___---- | x----------------------x A c B
@@ -780,8 +780,8 @@ public class Edge extends Constants {
 	public Edge unitNormalAt(Vertex n) {
 		Msg.debug("Entering Edge.unitNormalAt(..)");
 
-		double xdiff = rightNode.x - leftNode.x;
-		double ydiff = rightNode.y - leftNode.y;
+		double xdiff = rightVertex.x - leftVertex.x;
+		double ydiff = rightVertex.y - leftVertex.y;
 
 		Msg.debug("this: " + descr() + ", n: " + n.descr());
 
@@ -790,10 +790,10 @@ public class Edge extends Constants {
 		double xn = n.x - ydiff / c;
 		double yn = n.y + xdiff / c;
 
-		Vertex newNode = new Vertex(xn, yn);
+		Vertex newVertex = new Vertex(xn, yn);
 
 		Msg.debug("Leaving Edge.unitNormalAt(..)");
-		return new Edge(n, newNode);
+		return new Edge(n, newVertex);
 	}
 
 	public Edge getSwappedEdge() {
@@ -806,8 +806,8 @@ public class Edge extends Constants {
 			return null;
 		}
 
-		Vertex n = this.oppositeNode(null);
-		Vertex m = this.oppositeNode(n);
+		Vertex n = this.oppositeVertex(null);
+		Vertex m = this.oppositeVertex(n);
 		Edge swappedEdge = new Edge(n, m);
 
 		return swappedEdge;
@@ -830,10 +830,10 @@ public class Edge extends Constants {
 		// extract the outer edges
 		ArrayList edges = new ArrayList();
 
-		Edge e1 = element1.neighborEdge(leftNode, this);
-		Edge e2 = element1.neighborEdge(e1.otherNode(leftNode), e1);
-		Edge e3 = element2.neighborEdge(rightNode, this);
-		Edge e4 = element2.neighborEdge(e3.otherNode(rightNode), e3);
+		Edge e1 = element1.neighborEdge(leftVertex, this);
+		Edge e2 = element1.neighborEdge(e1.otherVertex(leftVertex), e1);
+		Edge e3 = element2.neighborEdge(rightVertex, this);
+		Edge e4 = element2.neighborEdge(e3.otherVertex(rightVertex), e3);
 
 		element2.disconnectEdges(); // important: element2 *first*, then element1
 		element1.disconnectEdges();
@@ -844,23 +844,23 @@ public class Edge extends Constants {
 		t1.connectEdges();
 		t2.connectEdges();
 
-		// Update edgeLists at this.leftNode and this.rightNode
-		// and at e.leftNode and e.rightNode:
-		disconnectNodes();
-		e.connectNodes();
+		// Update edgeLists at this.leftVertex and this.rightVertex
+		// and at e.leftVertex and e.rightVertex:
+		disconnectVertexes();
+		e.connectVertexes();
 
 		Msg.debug("Leaving Edge.swapToAndSetElementsFor(..)");
 	}
 
 	public MyVector getVector() {
-		return new MyVector(leftNode, rightNode);
+		return new MyVector(leftVertex, rightVertex);
 	}
 
 	public MyVector getVector(Vertex origin) {
-		if (origin.equals(leftNode)) {
-			return new MyVector(leftNode, rightNode);
-		} else if (origin.equals(rightNode)) {
-			return new MyVector(rightNode, leftNode);
+		if (origin.equals(leftVertex)) {
+			return new MyVector(leftVertex, rightVertex);
+		} else if (origin.equals(rightVertex)) {
+			return new MyVector(rightVertex, leftVertex);
 		} else {
 			Msg.error("Edge::getVector(Vertex): Vertex not an endpoint in this edge.");
 			return null;
@@ -893,8 +893,8 @@ public class Edge extends Constants {
 		}
 	}
 
-	public boolean hasNode(Vertex n) {
-		if (leftNode == n || rightNode == n) {
+	public boolean hasVertex(Vertex n) {
+		if (leftVertex == n || rightVertex == n) {
 			return true;
 		} else {
 			return false;
@@ -925,57 +925,57 @@ public class Edge extends Constants {
 		}
 	}
 
-	public Vertex otherNode(Vertex n) {
-		if (n.equals(leftNode)) {
-			return rightNode;
-		} else if (n.equals(rightNode)) {
-			return leftNode;
+	public Vertex otherVertex(Vertex n) {
+		if (n.equals(leftVertex)) {
+			return rightVertex;
+		} else if (n.equals(rightVertex)) {
+			return leftVertex;
 		} else {
 			Msg.debug("this: " + descr());
 			Msg.debug("n: " + n.descr());
-			Msg.error("Edge.otherNode(Vertex): n is not on this edge");
+			Msg.error("Edge.otherVertex(Vertex): n is not on this edge");
 			return null;
 		}
 	}
 
 	/**
-	 * Extend this edge at a given node and to a given lenth.
+	 * Extend this edge at a given Vertex and to a given lenth.
 	 * 
 	 * @param length the new length of this edge
-	 * @param nJ     the node from which the edge is extended
-	 * @return the other node on the new edge
+	 * @param nJ     the Vertex from which the edge is extended
+	 * @return the other Vertex on the new edge
 	 */
-	public Vertex otherNodeGivenNewLength(double length, Vertex nJ) {
+	public Vertex otherVertexGivenNewLength(double length, Vertex nJ) {
 		// First find the angle between the existing edge and the x-axis:
 		// Use a triangle containing one 90 degrees angle:
-		MyVector v = new MyVector(nJ, this.otherNode(nJ));
+		MyVector v = new MyVector(nJ, this.otherVertex(nJ));
 		v.setLengthAndAngle(length, v.angle());
 
-		// Use this to create the new node:
+		// Use this to create the new Vertex:
 		return new Vertex(v.origin.x + v.x, v.origin.y + v.y);
 	}
 
-	// Prefers the left node if they are at equal y positions
-	public Vertex upperNode() {
-		if (leftNode.y >= rightNode.y) {
-			return leftNode;
+	// Prefers the left Vertex if they are at equal y positions
+	public Vertex upperVertex() {
+		if (leftVertex.y >= rightVertex.y) {
+			return leftVertex;
 		} else {
-			return rightNode;
+			return rightVertex;
 		}
 	}
 
-	// Prefers the right node if they are at equal y positions
-	public Vertex lowerNode() {
-		if (rightNode.y <= leftNode.y) {
-			return rightNode;
+	// Prefers the right Vertex if they are at equal y positions
+	public Vertex lowerVertex() {
+		if (rightVertex.y <= leftVertex.y) {
+			return rightVertex;
 		} else {
-			return leftNode;
+			return leftVertex;
 		}
 	}
 
 	/**
-	 * Return true if the 1-orbit around this.commonNode(e) through quad startQ from
-	 * edge this to edge e doesn't contain any triangle elements. If node n lies on
+	 * Return true if the 1-orbit around this.commonVertex(e) through quad startQ from
+	 * edge this to edge e doesn't contain any triangle elements. If Vertex n lies on
 	 * the boundary, and the orbit contains a hole, the orbit simply skips the hole
 	 * and continues on the other side.
 	 */
@@ -983,7 +983,7 @@ public class Edge extends Constants {
 		Msg.debug("Entering Edge.noTrianglesInOrbit(..)");
 		Edge curEdge = this;
 		Element curElem = startQ;
-		Vertex n = commonNode(e);
+		Vertex n = commonVertex(e);
 		if (n == null) {
 			Msg.debug("Leaving Edge.noTrianglesInOrbit(..), returns false");
 			return false;
@@ -1017,8 +1017,8 @@ public class Edge extends Constants {
 		double candAng = Double.POSITIVE_INFINITY, curAng;
 		Triangle t;
 
-		for (int j = 0; j < leftNode.edgeList.size(); j++) {
-			leftEdge = (Edge) leftNode.edgeList.get(j);
+		for (int j = 0; j < leftVertex.edgeList.size(); j++) {
+			leftEdge = (Edge) leftVertex.edgeList.get(j);
 			if (leftEdge != this && leftEdge.isFrontEdge() /* leftEdge.frontEdge */) {
 				list.add(leftEdge);
 			}
@@ -1032,7 +1032,7 @@ public class Edge extends Constants {
 
 			for (Object element : list) {
 				leftEdge = (Edge) element;
-				curAng = sumAngle(t, leftNode, leftEdge);
+				curAng = sumAngle(t, leftVertex, leftEdge);
 				if (curAng < candAng) {
 					candAng = curAng;
 					candidate = leftEdge;
@@ -1054,8 +1054,8 @@ public class Edge extends Constants {
 		double candAng = Double.POSITIVE_INFINITY, curAng;
 		Triangle t;
 
-		for (int j = 0; j < rightNode.edgeList.size(); j++) {
-			rightEdge = (Edge) rightNode.edgeList.get(j);
+		for (int j = 0; j < rightVertex.edgeList.size(); j++) {
+			rightEdge = (Edge) rightVertex.edgeList.get(j);
 			if (rightEdge != this && rightEdge.isFrontEdge()/* frontList.contains(rightEdge) */) {
 				list.add(rightEdge);
 			}
@@ -1066,7 +1066,7 @@ public class Edge extends Constants {
 			t = getTriangleElement();
 			for (Object element : list) {
 				rightEdge = (Edge) element;
-				curAng = sumAngle(t, rightNode, rightEdge);
+				curAng = sumAngle(t, rightVertex, rightEdge);
 
 				Msg.debug(
 						"findRightFrontNeighbor(): Angle between edge this: " + descr() + " and edge " + rightEdge.descr() + ": " + curAng);
@@ -1087,9 +1087,9 @@ public class Edge extends Constants {
 
 	/** Set the appropriate front neighbor to edge e. */
 	public void setFrontNeighbor(Edge e) {
-		if (e.hasNode(leftNode)) {
+		if (e.hasVertex(leftVertex)) {
 			leftFrontNeighbor = e;
-		} else if (e.hasNode(rightNode)) {
+		} else if (e.hasVertex(rightVertex)) {
 			rightFrontNeighbor = e;
 		} else {
 			Msg.warning("Edge.setFrontNeighbor(..): Could not set.");
@@ -1139,17 +1139,17 @@ public class Edge extends Constants {
 
 	/**
 	 * Halve this Edge by introducing a new Vertex at the midpoint, and create two
-	 * Edges from this midpoint to the each of the two opposite Nodes of Edge this:
+	 * Edges from this midpoint to the each of the two opposite Vertexes of Edge this:
 	 * one in element1 and one in element2. Also create two new Edges from Vertex mid
-	 * to the two Nodes of Edge this. Create four new Triangles. Update everything
+	 * to the two Vertexes of Edge this. Create four new Triangles. Update everything
 	 * (also remove this Edge from edgeList and disconnect the vertexs).
 	 * 
 	 * @return the new Edge incident with Vertex ben.
 	 */
-	public Edge splitTrianglesAt(Vertex nN, Vertex ben, List<Triangle> triangleList, List<Edge> edgeList, List<Vertex> nodeList) {
+	public Edge splitTrianglesAt(Vertex nN, Vertex ben, List<Triangle> triangleList, List<Edge> edgeList, List<Vertex> vertexList) {
 		Msg.debug("Entering Edge.splitTrianglesAt(..)");
-		Edge eK1 = new Edge(leftNode, nN);
-		Edge eK2 = new Edge(rightNode, nN);
+		Edge eK1 = new Edge(leftVertex, nN);
+		Edge eK2 = new Edge(rightVertex, nN);
 
 		Triangle tri1 = (Triangle) element1;
 		Triangle tri2 = (Triangle) element2;
@@ -1159,10 +1159,10 @@ public class Edge extends Constants {
 		Edge diagonal1 = new Edge(nN, n1);
 		Edge diagonal2 = new Edge(nN, n2);
 
-		Edge e12 = tri1.neighborEdge(leftNode, this);
-		Edge e13 = tri1.neighborEdge(rightNode, this);
-		Edge e22 = tri2.neighborEdge(leftNode, this);
-		Edge e23 = tri2.neighborEdge(rightNode, this);
+		Edge e12 = tri1.neighborEdge(leftVertex, this);
+		Edge e13 = tri1.neighborEdge(rightVertex, this);
+		Edge e22 = tri2.neighborEdge(leftVertex, this);
+		Edge e23 = tri2.neighborEdge(rightVertex, this);
 
 		Triangle t11 = new Triangle(diagonal1, e12, eK1);
 		Triangle t12 = new Triangle(diagonal1, e13, eK2);
@@ -1170,11 +1170,11 @@ public class Edge extends Constants {
 		Triangle t22 = new Triangle(diagonal2, e23, eK2);
 
 		// Update the vertexs' edgeLists
-		disconnectNodes();
-		eK1.connectNodes();
-		eK2.connectNodes();
-		diagonal1.connectNodes();
-		diagonal2.connectNodes();
+		disconnectVertexes();
+		eK1.connectVertexes();
+		eK2.connectVertexes();
+		diagonal1.connectVertexes();
+		diagonal2.connectVertexes();
 
 		// Disconnect old Triangles
 		tri1.disconnectEdges();
@@ -1206,9 +1206,9 @@ public class Edge extends Constants {
 		Msg.debug("...Created triangle " + t22.descr());
 
 		Msg.debug("Leaving Edge.splitTrianglesAt(..)");
-		if (eK1.hasNode(ben)) {
+		if (eK1.hasVertex(ben)) {
 			return eK1;
-		} else if (eK2.hasNode(ben)) {
+		} else if (eK2.hasVertex(ben)) {
 			return eK2;
 		} else {
 			Msg.error("");
@@ -1222,19 +1222,19 @@ public class Edge extends Constants {
 	 * @return the "lower" (the one incident with the baseEdge) of the two edges
 	 *         created from splitting this edge.
 	 */
-	public Edge splitTrianglesAtMyMidPoint(List<Triangle> triangleList, List<Edge> edgeList, List<Vertex> nodeList, Edge baseEdge) {
+	public Edge splitTrianglesAtMyMidPoint(List<Triangle> triangleList, List<Edge> edgeList, List<Vertex> vertexList, Edge baseEdge) {
 		Msg.debug("Entering Edge.splitTrianglesAtMyMidPoint(..).");
 
 		Edge lowerEdge;
-		Vertex ben = baseEdge.commonNode(this);
+		Vertex ben = baseEdge.commonVertex(this);
 		Vertex mid = this.midPoint();
-		nodeList.add(mid);
+		vertexList.add(mid);
 		mid.color = java.awt.Color.blue;
 
 		Msg.debug("Splitting edge " + descr());
 		Msg.debug("Creating new Vertex: " + mid.descr());
 
-		lowerEdge = splitTrianglesAt(mid, ben, triangleList, edgeList, nodeList);
+		lowerEdge = splitTrianglesAt(mid, ben, triangleList, edgeList, vertexList);
 
 		Msg.debug("Leaving Edge.splitTrianglesAtMyMidPoint(..).");
 		return lowerEdge;
@@ -1242,12 +1242,12 @@ public class Edge extends Constants {
 
 	/**
 	 * Find the next edge adjacent a quad element, starting at this edge which is
-	 * part of a given element and which is adjacent a given node. Note that the
+	 * part of a given element and which is adjacent a given Vertex. Note that the
 	 * method stops if the boundary is encountered.
 	 * 
-	 * @param n         the node
+	 * @param n         the Vertex
 	 * @param startElem
-	 * @return the first edge of a quad found when parsing around node n, starting
+	 * @return the first edge of a quad found when parsing around Vertex n, starting
 	 *         at edge e in element startElem and moving in the direction from e to
 	 *         e's neighbor edge at n in startElem. If startElem happens to be a
 	 *         quad, the method won't consider that particular quad. If
@@ -1313,11 +1313,11 @@ public class Edge extends Constants {
 		}
 	}
 
-	/** Return the front neighbor edge at node n. */
+	/** Return the front neighbor edge at Vertex n. */
 	public Edge frontNeighborAt(Vertex n) {
-		if (leftFrontNeighbor != null && commonNode(leftFrontNeighbor) == n) {
+		if (leftFrontNeighbor != null && commonVertex(leftFrontNeighbor) == n) {
 			return leftFrontNeighbor;
-		} else if (rightFrontNeighbor != null && commonNode(rightFrontNeighbor) == n) {
+		} else if (rightFrontNeighbor != null && commonVertex(rightFrontNeighbor) == n) {
 			return rightFrontNeighbor;
 		} else {
 			return null;
@@ -1336,7 +1336,7 @@ public class Edge extends Constants {
 		}
 	}
 
-	// Return a neighbor edge at node n, that is front edge according to the
+	// Return a neighbor edge at Vertex n, that is front edge according to the
 	// definition,
 	// and that is part of the same loop as this edge.
 	// Assumes that this is a true front edge.
@@ -1344,7 +1344,7 @@ public class Edge extends Constants {
 		Element curElem = getTriangleElement();
 		Edge curEdge = this;
 
-		if (!hasNode(n)) {
+		if (!hasVertex(n)) {
 			Msg.error("trueFrontNeighborAt(..): this Edge hasn't got Vertex " + n.descr());
 		}
 
@@ -1356,7 +1356,7 @@ public class Edge extends Constants {
 		return curEdge;
 	}
 
-	Vertex leftNode, rightNode; // This Edge has these two vertexs
+	Vertex leftVertex, rightVertex; // This Edge has these two vertexs
 	Element element1 = null, element2 = null; // Belongs to these Elements (Quads/Triangles)
 	Edge leftFrontNeighbor, rightFrontNeighbor;
 	int level;

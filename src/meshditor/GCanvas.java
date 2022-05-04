@@ -149,7 +149,7 @@ class GCanvas extends Canvas {
 	public void paint(Graphics g) {
 		Edge e;
 		Vertex n;
-		List nodeList = GeomBasics.getNodeList();
+		List vertexList = GeomBasics.getvertexList();
 		List edgeList = GeomBasics.getEdgeList();
 		int halfGridIncr = gridIncr / 2;
 
@@ -201,7 +201,7 @@ class GCanvas extends Canvas {
 
 				if (e.color == java.awt.Color.red) {
 					g.setColor(e.color);
-				} else if (e.leftNode.edgeList.indexOf(e) == -1 && e.rightNode.edgeList.indexOf(e) == -1) {
+				} else if (e.leftVertex.edgeList.indexOf(e) == -1 && e.rightVertex.edgeList.indexOf(e) == -1) {
 					g.setColor(Color.blue);
 				} else if (e.frontEdge) {
 					g.setColor(Color.yellow);
@@ -209,15 +209,15 @@ class GCanvas extends Canvas {
 					g.setColor(e.color);
 				}
 
-				g.drawLine((int) (e.leftNode.x * scale + yaxis_xval), (int) (-e.leftNode.y * scale + xaxis_yval),
-						(int) (e.rightNode.x * scale + yaxis_xval), (int) (-e.rightNode.y * scale + xaxis_yval));
+				g.drawLine((int) (e.leftVertex.x * scale + yaxis_xval), (int) (-e.leftVertex.y * scale + xaxis_yval),
+						(int) (e.rightVertex.x * scale + yaxis_xval), (int) (-e.rightVertex.y * scale + xaxis_yval));
 				g.setColor(Color.green);
 
 			}
 		}
 
-		if (nodeList != null) {
-			for (Object element : nodeList) {
+		if (vertexList != null) {
+			for (Object element : vertexList) {
 				n = (Vertex) element;
 				g.setColor(n.color);
 				g.fillOval((int) (n.x * scale + yaxis_xval - 3), (int) (-n.y * scale + xaxis_yval - 3), 5, 5);

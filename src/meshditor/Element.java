@@ -22,22 +22,22 @@ public abstract class Element extends Constants {
 	 */
 	public abstract void updateAngle(Vertex n);
 
-	/** @return description string for element (list of node coordinates) */
+	/** @return description string for element (list of Vertex coordinates) */
 	public abstract String descr();
 
-	/** Output description string for element (list of node coordinates) */
+	/** Output description string for element (list of Vertex coordinates) */
 	public abstract void printMe();
 
 	/** Verify that the quad has the specified edge. */
 	public abstract boolean hasEdge(Edge e);
 
-	/** Verify that the quad has the specified node. */
-	public abstract boolean hasNode(Vertex n);
+	/** Verify that the quad has the specified Vertex. */
+	public abstract boolean hasVertex(Vertex n);
 
 	/** Verify that the area of the quad is greater than 0. */
 	public abstract boolean areaLargerThan0();
 
-	/** Return local neighboring edge at node n. */
+	/** Return local neighboring edge at Vertex n. */
 	public abstract Edge neighborEdge(Vertex n, Edge e);
 
 	/** Return the index to this edge in this element's edgeList */
@@ -73,13 +73,13 @@ public abstract class Element extends Constants {
 	public abstract void disconnectEdges();
 
 	/** Create a simple element for testing purposes only. */
-	public abstract Element elementWithExchangedNodes(Vertex original, Vertex replacement);
+	public abstract Element elementWithExchangedVertexes(Vertex original, Vertex replacement);
 
 	/**
-	 * @return true if the quad becomes inverted when node n1 is relocated to pos.
+	 * @return true if the quad becomes inverted when Vertex n1 is relocated to pos.
 	 *         n2. Else return false.
 	 */
-	public abstract boolean invertedWhenNodeRelocated(Vertex n1, Vertex n2);
+	public abstract boolean invertedWhenVertexRelocated(Vertex n1, Vertex n2);
 
 	/**
 	 * Update the distortion metric according to the article "An approach to
@@ -101,8 +101,8 @@ public abstract class Element extends Constants {
 	/** Return the size of the largest angle. */
 	public abstract double largestAngle();
 
-	/** Return the node at the largest interior angle. */
-	public abstract Vertex nodeAtLargestAngle();
+	/** Return the Vertex at the largest interior angle. */
+	public abstract Vertex VertexAtLargestAngle();
 
 	/** Set the color of the edges to red. */
 	public abstract void markEdgesIllegal();
@@ -132,5 +132,5 @@ public abstract class Element extends Constants {
 	/** An array of edges */
 	Edge[] edgeList;
 	/** Vertex used for determining inversion, amonst other things. */
-	Vertex firstNode;
+	Vertex firstVertex;
 }

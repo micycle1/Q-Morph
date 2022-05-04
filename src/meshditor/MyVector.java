@@ -362,7 +362,7 @@ public class MyVector extends Constants {
 	// Local copy at ~karll/hfag/teori/IntersectionLin2Cir2.pdf
 
 	/**
-	 * @return if vectors intersects at one point exactly, return a node for this
+	 * @return if vectors intersects at one point exactly, return a Vertex for this
 	 *         point Else return null.
 	 */
 	public Vertex pointIntersectsAt(MyVector d1) {

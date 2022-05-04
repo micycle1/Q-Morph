@@ -65,7 +65,7 @@ public class Constants {
 	public static final double EPSILONLARGER = java.lang.Math.PI;
 
 	// Constants for post smoothing
-	/** The node coincidence tolerance */
+	/** The Vertex coincidence tolerance */
 	public static double COINCTOL = 0.01;
 	/** A value for the move tolerance. I don't know if it's any good. */
 	public static double MOVETOLERANCE = 0.01;
@@ -83,7 +83,7 @@ public class Constants {
 	public static final double defaultE1Factor = 0.04;
 	public static final double defaultE2Factor = 0.09;
 	public static final double defaultCHEVRONMIN = DEG_200;
-	public static final double defaultCOINCTOL = 0.01; // The node coincidence tolerance
+	public static final double defaultCOINCTOL = 0.01; // The Vertex coincidence tolerance
 	public static final double defaultMOVETOLERANCE = 0.01; // dunno if it's a good choice
 	public static final double defaultOBSTOL = 0.1;// should be 0.1, adjust to trigger OBS
 	public static final double defaultDELTAFACTOR = 0.00001;

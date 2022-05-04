@@ -17,7 +17,7 @@ QM_TARGETS = $(BINPATH)/Constants.class $(BINPATH)/Msg.class \
 $(BINPATH)/GeomBasics.class $(BINPATH)/QMorph.class \
 $(BINPATH)/DelaunayMeshGen.class $(BINPATH)/TopoCleanup.class \
 $(BINPATH)/GlobalSmooth.class $(BINPATH)/Element.class $(BINPATH)/Quad.class \
-$(BINPATH)/Triangle.class $(BINPATH)/Edge.class $(BINPATH)/Node.class \
+$(BINPATH)/Triangle.class $(BINPATH)/Edge.class $(BINPATH)/Vertex.class \
 $(BINPATH)/Dart.class $(BINPATH)/Ray.class $(BINPATH)/MyVector.class \
 $(BINPATH)/MyLine.class
 
@@ -33,7 +33,7 @@ JAR_TARGET = $(CLASSPATH)/$(PACKAGE).jar
 
 JAVASOURCES = $(PACKAGE)/QMorph.java $(PACKAGE)/Quad.java \
 $(PACKAGE)/Triangle.java $(PACKAGE)/Element.java $(PACKAGE)/Ray.java \
-$(PACKAGE)/MyVector.java $(PACKAGE)/MyLine.java $(PACKAGE)/Node.java \
+$(PACKAGE)/MyVector.java $(PACKAGE)/MyLine.java $(PACKAGE)/Vertex.java \
 $(PACKAGE)/Dart.java $(PACKAGE)/Edge.java $(PACKAGE)/GUI.java \
 $(PACKAGE)/DelaunayMeshGen.java \
 $(PACKAGE)/GeomBasics.java $(PACKAGE)/TopoCleanup.java $(PACKAGE)/GlobalSmooth.java \
@@ -90,8 +90,8 @@ $(BINPATH)/Triangle.class: $(PACKAGE)/Triangle.java
 $(BINPATH)/Edge.class: $(PACKAGE)/Edge.java $(PACKAGE)/Constants.java
 	$(JC) $(JC_FLAGS) $(PACKAGE)/Edge.java
 
-$(BINPATH)/Node.class: $(PACKAGE)/Node.java
-	$(JC) $(JC_FLAGS) $(PACKAGE)/Node.java
+$(BINPATH)/Vertex.class: $(PACKAGE)/Vertex.java
+	$(JC) $(JC_FLAGS) $(PACKAGE)/Vertex.java
 
 $(BINPATH)/Dart.class: $(PACKAGE)/Dart.java
 	$(JC) $(JC_FLAGS) $(PACKAGE)/Dart.java

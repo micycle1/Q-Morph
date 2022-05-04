@@ -48,13 +48,13 @@ public class TestInvertion extends Constants {
 		Msg.debug("e2= " + e2.descr());
 		Msg.debug("e5= " + e5.descr());
 
-		Msg.debug("angle between e1 and e2: " + Math.toDegrees(t.angle(e1, e1.commonNode(e2))));
-		Msg.debug("angle between e2 and e5: " + Math.toDegrees(t.angle(e2, e2.commonNode(e5))));
-		Msg.debug("angle between e1 and e5: " + Math.toDegrees(t.angle(e1, e1.commonNode(e5))));
+		Msg.debug("angle between e1 and e2: " + Math.toDegrees(t.angle(e1, e1.commonVertex(e2))));
+		Msg.debug("angle between e2 and e5: " + Math.toDegrees(t.angle(e2, e2.commonVertex(e5))));
+		Msg.debug("angle between e1 and e5: " + Math.toDegrees(t.angle(e1, e1.commonVertex(e5))));
 
-		Msg.debug("angle between e2 and e1: " + Math.toDegrees(t.angle(e2, e2.commonNode(e1))));
-		Msg.debug("angle between e5 and e2: " + Math.toDegrees(t.angle(e5, e5.commonNode(e2))));
-		Msg.debug("angle between e5 and e1: " + Math.toDegrees(t.angle(e5, e5.commonNode(e1))));
+		Msg.debug("angle between e2 and e1: " + Math.toDegrees(t.angle(e2, e2.commonVertex(e1))));
+		Msg.debug("angle between e5 and e2: " + Math.toDegrees(t.angle(e5, e5.commonVertex(e2))));
+		Msg.debug("angle between e5 and e1: " + Math.toDegrees(t.angle(e5, e5.commonVertex(e1))));
 
 		Msg.debug("angleIndex(e2, e1)= " + t.angleIndex(e2, e1));
 		Msg.debug("angleIndex(e5, e2)= " + t.angleIndex(e5, e2));

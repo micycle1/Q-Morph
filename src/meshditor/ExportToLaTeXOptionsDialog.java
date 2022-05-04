@@ -20,11 +20,11 @@ import java.awt.event.ActionListener;
 public class ExportToLaTeXOptionsDialog extends Dialog {
 	boolean okState = false;
 	TextField xCorr, yCorr, unitlength;
-	Checkbox nodes;
+	Checkbox Vertexes;
 	Dialog d;
 	Button ok, cancel;
 	Label xCorrLabel, yCorrLabel, unitlengthLabel;
-	Container unitContainer, corrContainer, nodesContainer, buttonContainer;
+	Container unitContainer, corrContainer, VertexesContainer, buttonContainer;
 
 	public ExportToLaTeXOptionsDialog(Frame f, String title, boolean modal) {
 		super(f, title, modal);
@@ -35,8 +35,8 @@ public class ExportToLaTeXOptionsDialog extends Dialog {
 		unitContainer.setLayout(new FlowLayout(FlowLayout.CENTER));
 		corrContainer = new Container();
 		corrContainer.setLayout(new FlowLayout(FlowLayout.CENTER));
-		nodesContainer = new Container();
-		nodesContainer.setLayout(new FlowLayout(FlowLayout.CENTER));
+		VertexesContainer = new Container();
+		VertexesContainer.setLayout(new FlowLayout(FlowLayout.CENTER));
 		buttonContainer = new Container();
 		buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER));
 
@@ -48,7 +48,7 @@ public class ExportToLaTeXOptionsDialog extends Dialog {
 		corrContainer.add(yCorrLabel = new Label("Offset for y coordinates: "), 2);
 		corrContainer.add(yCorr = new TextField("0", 4), "East", 3);
 
-		nodesContainer.add(nodes = new Checkbox("Visible vertexs (diameter of each node is 0.1 units)", true), "Center", 0);
+		VertexesContainer.add(Vertexes = new Checkbox("Visible vertexs (diameter of each Vertex is 0.1 units)", true), "Center", 0);
 
 		buttonContainer.add(ok = new Button("OK"), "West", 0);
 		buttonContainer.add(cancel = new Button("Cancel"), "East", 1);
@@ -58,7 +58,7 @@ public class ExportToLaTeXOptionsDialog extends Dialog {
 
 		add(unitContainer, 0);
 		add(corrContainer, 1);
-		add(nodesContainer, 2);
+		add(VertexesContainer, 2);
 		add(buttonContainer, 3);
 
 		pack();
@@ -76,8 +76,8 @@ public class ExportToLaTeXOptionsDialog extends Dialog {
 		return Double.parseDouble(yCorr.getText().trim());
 	}
 
-	public boolean getVisibleNodes() {
-		return nodes.getState();
+	public boolean getVisibleVertexes() {
+		return Vertexes.getState();
 	}
 
 	public boolean okPressed() {

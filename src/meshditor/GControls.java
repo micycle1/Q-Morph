@@ -150,10 +150,10 @@ class GControls extends Panel implements ItemListener {
 				method.step(); // Run one more step ...
 
 				if (GeomBasics.leftmost == null) {
-					GeomBasics.findExtremeNodes();
+					GeomBasics.findExtremeVertexes();
 				}
 				// canvas.repaint();
-				// GeomBasics.findExtremeNodes();
+				// GeomBasics.findExtremeVertexes();
 				canvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, gui.scale);
 			} else {
 				md = new MsgDialog(gui.f, "Program message", "You must choose a method first.", 40, 1);

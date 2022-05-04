@@ -26,10 +26,10 @@ public class GlobalSmooth extends GeomBasics {
 	}
 
 	/**
-	 * Compute the constrained Laplacian smoothed position of a node.
+	 * Compute the constrained Laplacian smoothed position of a Vertex.
 	 * 
-	 * @param n the node which is to be subjected to the smooth.
-	 * @return the smoothed position of node n.
+	 * @param n the Vertex which is to be subjected to the smooth.
+	 * @return the smoothed position of Vertex n.
 	 */
 	private Vertex constrainedLaplacianSmooth(Vertex n) {
 		Msg.debug("Entering constrainedLaplacianSmooth(..)");
@@ -55,7 +55,7 @@ public class GlobalSmooth extends GeomBasics {
 			for (int i = 0; i < N; i++) {
 				oElem = (Element) elements.get(i);
 
-				sElem = oElem.elementWithExchangedNodes(n, nLPos);
+				sElem = oElem.elementWithExchangedVertexes(n, nLPos);
 				sElem.updateDistortionMetric();
 
 				if (oElem.distortionMetric > sElem.distortionMetric) {
@@ -130,12 +130,12 @@ public class GlobalSmooth extends GeomBasics {
 	}
 
 	/**
-	 * Compute the optimization-based smoothed position of a node. As described in
-	 * section 5 in the paper. Warning: The fields of the argument node will be
+	 * Compute the optimization-based smoothed position of a Vertex. As described in
+	 * section 5 in the paper. Warning: The fields of the argument Vertex will be
 	 * altered.
 	 * 
-	 * @return a node with a position that is the optimaization-based smoothed
-	 *         position of node n.
+	 * @return a Vertex with a position that is the optimaization-based smoothed
+	 *         position of Vertex n.
 	 */
 	private Vertex optBasedSmooth(Vertex x, List<Element> elements) {
 		Msg.debug("Entering optBasedSmooth(..)");
@@ -156,11 +156,11 @@ public class GlobalSmooth extends GeomBasics {
 
 			// Estimate the gradient vector g for each element:
 			for (Element oElem : elements) {
-				sElem = oElem.elementWithExchangedNodes(x, xPX);
+				sElem = oElem.elementWithExchangedVertexes(x, xPX);
 				sElem.updateDistortionMetric();
 				oElem.gX = (sElem.distortionMetric - oElem.distortionMetric) / delta;
 
-				sElem = oElem.elementWithExchangedNodes(x, xPY);
+				sElem = oElem.elementWithExchangedVertexes(x, xPY);
 				sElem.updateDistortionMetric();
 				oElem.gY = (sElem.distortionMetric - oElem.distortionMetric) / delta;
 
@@ -206,7 +206,7 @@ public class GlobalSmooth extends GeomBasics {
 				newMinDM = java.lang.Double.MAX_VALUE;
 
 				for (Element oElem : elements) {
-					sElem = oElem.elementWithExchangedNodes(x, xNew);
+					sElem = oElem.elementWithExchangedVertexes(x, xNew);
 					sElem.updateDistortionMetric();
 					oElem.newDistortionMetric = sElem.distortionMetric;
 
@@ -272,10 +272,10 @@ public class GlobalSmooth extends GeomBasics {
 		double curLen, oldX, oldY;
 		Vertex v, v_moved, n;
 
-		// Get the internal vertexs from nodeList.
-		for (i = 0; i < nodeList.size(); i++) {
-			v = (Vertex) nodeList.get(i);
-			if (!v.boundaryNode()) {
+		// Get the internal vertexs from vertexList.
+		for (i = 0; i < vertexList.size(); i++) {
+			v = (Vertex) vertexList.get(i);
+			if (!v.boundaryVertex()) {
 				vertexs.add(v);
 			}
 		}
@@ -300,42 +300,42 @@ public class GlobalSmooth extends GeomBasics {
 			}
 		}
 
-		Msg.debug("...nodes.size(): " + vertexs.size());
+		Msg.debug("...Vertexes.size(): " + vertexs.size());
 
 		Edge e;
 
 		double distance, maxMoveDistance = 0.0;
 		int niter = 1;
-		boolean nodeMoved;
+		boolean VertexMoved;
 		do {
-			nodeMoved = false;
+			VertexMoved = false;
 			for (i = 0; i < vertexs.size(); i++) {
 				v = (Vertex) vertexs.get(i);
 
 				if (v == null) {
-					Msg.debug("... no, node has been removed from list");
+					Msg.debug("... no, Vertex has been removed from list");
 					continue;
 				}
 
-				Msg.debug("...processing node " + v.descr());
+				Msg.debug("...processing Vertex " + v.descr());
 				if (!v.movedByOBS) {
 					v_moved = constrainedLaplacianSmooth(v);
 					distance = v.length(v_moved);
 					Msg.debug("...distance moved by CLS is " + distance);
 					if (distance < Constants.MOVETOLERANCE) {
-						Msg.debug("...removing node " + v.descr() + " from list");
+						Msg.debug("...removing Vertex " + v.descr() + " from list");
 						vertexs.set(i, null);
 					} else {
 						// Allow the move
 						v.setXY(v_moved);
 						v.update();
-						nodeMoved = true;
-						Msg.debug("...allowing CLS move of node " + v.descr());
+						VertexMoved = true;
+						Msg.debug("...allowing CLS move of Vertex " + v.descr());
 						// Put neighbor vertexs back in list, if they are not already there
 						for (j = 0; j < v.edgeList.size(); j++) {
 							e = (Edge) v.edgeList.get(j);
-							n = e.otherNode(v);
-							if (!n.boundaryNode() && !vertexs.contains(n)) {
+							n = e.otherVertex(v);
+							if (!n.boundaryVertex() && !vertexs.contains(n)) {
 								vertexs.add(n);
 							}
 						}
@@ -353,7 +353,7 @@ public class GlobalSmooth extends GeomBasics {
 				}
 				if (niter >= 2) {
 					Msg.debug("...niter>= 2");
-					// Find minimum distortion metric for the elements adjacent node v
+					// Find minimum distortion metric for the elements adjacent Vertex v
 					elements = v.adjElements();
 					elem = (Element) elements.get(0);
 					double minDistMetric = elem.distortionMetric;
@@ -372,8 +372,8 @@ public class GlobalSmooth extends GeomBasics {
 							// Put neighbor vertexs back in list, if they're not there
 							for (j = 0; j < v.edgeList.size(); j++) {
 								e = (Edge) v.edgeList.get(j);
-								n = e.otherNode(v);
-								if (!n.boundaryNode() && !vertexs.contains(n)) {
+								n = e.otherVertex(v);
+								if (!n.boundaryVertex() && !vertexs.contains(n)) {
 									vertexs.add(n);
 								}
 							}
@@ -386,7 +386,7 @@ public class GlobalSmooth extends GeomBasics {
 							// Do the move
 							v.setXY(v_moved);
 							v.update();
-							nodeMoved = true;
+							VertexMoved = true;
 							v.movedByOBS = true; // Mark v as recently moved by OptBS
 						} else {
 							v.setXY(oldX, oldY);
@@ -398,7 +398,7 @@ public class GlobalSmooth extends GeomBasics {
 				}
 			}
 			niter++;
-		} while (nodeMoved && maxMoveDistance >= 1.75 * MOVETOLERANCE && niter < MAXITER);
+		} while (VertexMoved && maxMoveDistance >= 1.75 * MOVETOLERANCE && niter < MAXITER);
 		Msg.debug("Leaving GlobalSmooth.run(), niter==" + niter);
 	}
 

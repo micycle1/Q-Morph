@@ -73,7 +73,7 @@ public class TopoCleanup extends GeomBasics {
 		}
 
 		deleteList = new ArrayList<>();
-		vertexs = new ArrayList<>(nodeList);
+		vertexs = new ArrayList<>(vertexList);
 		d = new Dart();
 	}
 
@@ -244,10 +244,10 @@ public class TopoCleanup extends GeomBasics {
 	}
 
 	/**
-	 * The chevron is deleted along with one of its neighbors. A new node is created
+	 * The chevron is deleted along with one of its neighbors. A new Vertex is created
 	 * and the deleted quads are replaced with three new ones surrounding the new
-	 * node. The neighbor chosen for deletion is the one that, when replaced by the
-	 * new quads, yields the optimal node valences.
+	 * Vertex. The neighbor chosen for deletion is the one that, when replaced by the
+	 * new quads, yields the optimal Vertex valences.
 	 * 
 	 * @param q the chevron to be eliminated
 	 */
@@ -266,23 +266,23 @@ public class TopoCleanup extends GeomBasics {
 		int[] valenceAlt2 = new int[6];
 		int irrAlt1 = 0, irrAlt2 = 0, badAlt1 = 0, badAlt2 = 0;
 
-		n = q.nodeAtLargestAngle();
+		n = q.VertexAtLargestAngle();
 		Msg.debug("...n== " + n.descr());
-		Msg.debug("...size of angle at node n is: " + Math.toDegrees(q.ang[q.angleIndex(n)]) + " degrees.");
+		Msg.debug("...size of angle at Vertex n is: " + Math.toDegrees(q.ang[q.angleIndex(n)]) + " degrees.");
 		e3 = q.neighborEdge(n);
-		n3 = e3.otherNode(n);
+		n3 = e3.otherVertex(n);
 		e4 = q.neighborEdge(n, e3);
-		n1 = e4.otherNode(n);
+		n1 = e4.otherVertex(n);
 
 		e2 = q.neighborEdge(n3, e3);
-		n2 = e2.otherNode(n3);
+		n2 = e2.otherVertex(n3);
 		e1 = q.neighborEdge(n2, e2);
 
 		neighbor1 = q.neighbor(e1);
 		neighbor2 = q.neighbor(e2);
 
-		if (!n.boundaryNode()) {
-			// Then the node can be relocated so that the element is no longer a chevron
+		if (!n.boundaryVertex()) {
+			// Then the Vertex can be relocated so that the element is no longer a chevron
 			Msg.debug("...trying to resolve chevron by smoothing...");
 			Vertex nOld = new Vertex(n.x, n.y), nNew = n.laplacianSmooth();
 
@@ -313,24 +313,24 @@ public class TopoCleanup extends GeomBasics {
 		}
 
 		if (q1 != null && q2 != null) {
-			Msg.debug("...n - node at largest angle of quad " + q.descr() + " is: " + n.descr());
+			Msg.debug("...n - Vertex at largest angle of quad " + q.descr() + " is: " + n.descr());
 
 			if (q.ang[q.angleIndex(n1)] + q1.ang[q1.angleIndex(n1)] < DEG_180) {
 				valenceAlt1[0] = n.valence() + 1;
 				valenceAlt1[1] = n1.valence() - 1;
 				valenceAlt1[2] = n2.valence();
 				valenceAlt1[3] = n3.valence();
-				valenceAlt1[4] = q1.oppositeNode(n2).valence() + 1;
-				valenceAlt1[5] = q1.oppositeNode(n1).valence();
+				valenceAlt1[4] = q1.oppositeVertex(n2).valence() + 1;
+				valenceAlt1[5] = q1.oppositeVertex(n1).valence();
 
-				irrAlt1 = 1; // the new central node will have valence 3
+				irrAlt1 = 1; // the new central Vertex will have valence 3
 			} else { // then we must consider a fill_4(q, e1, n1):
 				valenceAlt1[0] = n.valence() + 1;
 				valenceAlt1[1] = n1.valence();
 				valenceAlt1[2] = n2.valence();
 				valenceAlt1[3] = n3.valence();
-				valenceAlt1[4] = q1.oppositeNode(n2).valence();
-				valenceAlt1[5] = q1.oppositeNode(n1).valence() + 1;
+				valenceAlt1[4] = q1.oppositeVertex(n2).valence();
+				valenceAlt1[5] = q1.oppositeVertex(n1).valence() + 1;
 
 				irrAlt1 = 2; // the two new central vertexs will each have valence 3
 			}
@@ -340,17 +340,17 @@ public class TopoCleanup extends GeomBasics {
 				valenceAlt2[1] = n1.valence();
 				valenceAlt2[2] = n2.valence();
 				valenceAlt2[3] = n3.valence() - 1;
-				valenceAlt2[4] = q2.oppositeNode(n2).valence() + 1;
-				valenceAlt2[5] = q2.oppositeNode(n3).valence();
+				valenceAlt2[4] = q2.oppositeVertex(n2).valence() + 1;
+				valenceAlt2[5] = q2.oppositeVertex(n3).valence();
 
-				irrAlt2 = 1; // the new central node will have valence 3
+				irrAlt2 = 1; // the new central Vertex will have valence 3
 			} else { // then we must consider a fill_4(q, e2, n3):
 				valenceAlt2[0] = n.valence() + 1;
 				valenceAlt2[1] = n1.valence();
 				valenceAlt2[2] = n2.valence();
 				valenceAlt2[3] = n3.valence();
-				valenceAlt2[4] = q2.oppositeNode(n2).valence();
-				valenceAlt2[5] = q2.oppositeNode(n3).valence() + 1;
+				valenceAlt2[4] = q2.oppositeVertex(n2).valence();
+				valenceAlt2[5] = q2.oppositeVertex(n3).valence() + 1;
 
 				irrAlt2 = 2; // the two new central vertexs will each have valence 3
 			}
@@ -412,10 +412,10 @@ public class TopoCleanup extends GeomBasics {
 	 * 
 	 * @param q    the first quad
 	 * @param e    the edge which is adjacent to both q and its neighbor
-	 * @param n    a node belonging to q, e, and one of the three new edges to be
+	 * @param n    a Vertex belonging to q, e, and one of the three new edges to be
 	 *             created
 	 * @param safe boolean indicating whether a safe pos must be attempted for the
-	 *             new node
+	 *             new Vertex
 	 */
 	private Dart fill3(Quad q, Edge e, Vertex n, boolean safe) {
 		Msg.debug("Entering TopoCleanup.fill3(..)");
@@ -424,44 +424,44 @@ public class TopoCleanup extends GeomBasics {
 		Quad qn = (Quad) q.neighbor(e);
 		Quad qn1, qn2, qn3;
 		Edge b, l, r, t, ea, eb, ec;
-		Vertex nOpp = q.oppositeNode(n);
+		Vertex nOpp = q.oppositeVertex(n);
 		Edge e2 = q.neighborEdge(n, e);
-		Vertex eother = e.otherNode(n), e2other = e2.otherNode(n);
+		Vertex eother = e.otherVertex(n), e2other = e2.otherVertex(n);
 		Dart d = new Dart();
 
-		Vertex newNode;
+		Vertex newVertex;
 		if (safe) {
-			newNode = e.midPoint();
+			newVertex = e.midPoint();
 		} else {
-			newNode = q.centroid();
+			newVertex = q.centroid();
 		}
 
-		newNode.color = java.awt.Color.red; // creation in tCleanup
-		ea = new Edge(nOpp, newNode);
-		eb = new Edge(n, newNode);
-		ec = new Edge(newNode, qn.oppositeNode(n));
+		newVertex.color = java.awt.Color.red; // creation in tCleanup
+		ea = new Edge(nOpp, newVertex);
+		eb = new Edge(n, newVertex);
+		ec = new Edge(newVertex, qn.oppositeVertex(n));
 
 		// Some minor updating...
 		q.disconnectEdges();
 		qn.disconnectEdges();
 
-		ea.connectNodes();
-		eb.connectNodes();
-		ec.connectNodes();
+		ea.connectVertexes();
+		eb.connectVertexes();
+		ec.connectVertexes();
 
 		b = q.neighborEdge(e2other, e2);
-		if (nOpp == b.rightNode) {
-			l = q.neighborEdge(b.leftNode, b);
+		if (nOpp == b.rightVertex) {
+			l = q.neighborEdge(b.leftVertex, b);
 			r = ea;
 		} else {
 			l = ea;
-			r = q.neighborEdge(b.rightNode, b);
+			r = q.neighborEdge(b.rightVertex, b);
 		}
 		t = eb;
 		qn1 = new Quad(b, l, r, t); // 1st replacement quad
 
 		b = eb;
-		if (ec.hasNode(b.rightNode)) { // b.leftNode== n
+		if (ec.hasVertex(b.rightVertex)) { // b.leftVertex== n
 			l = qn.neighborEdge(n, e);
 			r = ec;
 		} else {
@@ -472,7 +472,7 @@ public class TopoCleanup extends GeomBasics {
 		qn2 = new Quad(b, l, r, t); // 2nd replacement quad
 
 		b = q.neighborEdge(eother, e);
-		if (b.leftNode == nOpp) {
+		if (b.leftVertex == nOpp) {
 			l = ea;
 			r = qn.neighborEdge(eother, e);
 		} else {
@@ -482,7 +482,7 @@ public class TopoCleanup extends GeomBasics {
 		t = ec;
 		qn3 = new Quad(b, l, r, t); // 3rd replacement quad
 
-		// remember to update the lists (nodeList, edgeList,
+		// remember to update the lists (vertexList, edgeList,
 		// elementList, the vertexs' edgeLists, ...
 		qn1.connectEdges();
 		qn2.connectEdges();
@@ -492,26 +492,26 @@ public class TopoCleanup extends GeomBasics {
 		elementList.add(qn2);
 		elementList.add(qn3);
 
-		e.disconnectNodes();
+		e.disconnectVertexes();
 		edgeList.remove(edgeList.indexOf(e));
 
 		edgeList.add(ea);
 		edgeList.add(eb);
 		edgeList.add(ec);
 
-		nodeList.add(newNode);
-		vertexs.add(newNode);
+		vertexList.add(newVertex);
+		vertexs.add(newVertex);
 
 		Msg.debug("...qn1: " + qn1.descr());
 		Msg.debug("...qn2: " + qn2.descr());
 		Msg.debug("...qn3: " + qn3.descr());
 
-		// Try smoothing the pos of newNode:
-		Vertex nOld = new Vertex(newNode.x, newNode.y), smoothed = newNode.laplacianSmooth();
-		if (!newNode.equals(smoothed)) {
-			newNode.moveTo(smoothed);
-			inversionCheckAndRepair(newNode, nOld);
-			newNode.update();
+		// Try smoothing the pos of newVertex:
+		Vertex nOld = new Vertex(newVertex.x, newVertex.y), smoothed = newVertex.laplacianSmooth();
+		if (!newVertex.equals(smoothed)) {
+			newVertex.moveTo(smoothed);
+			inversionCheckAndRepair(newVertex, nOld);
+			newVertex.update();
 		}
 
 		d.elem = qn1;
@@ -528,7 +528,7 @@ public class TopoCleanup extends GeomBasics {
 	 * 
 	 * @param q  the first of the two quads to be combined
 	 * @param e  the common edge of q and the second quad
-	 * @param n2 one of the vertexs of edge e and whose opposite node in q will not
+	 * @param n2 one of the vertexs of edge e and whose opposite Vertex in q will not
 	 *           get connected to any new edge.
 	 */
 	private Dart fill4(Quad q, Edge e, Vertex n2) {
@@ -539,19 +539,19 @@ public class TopoCleanup extends GeomBasics {
 		Quad qn = (Quad) q.neighbor(e);
 		// First get the vertexs and edges in the two quads
 		Edge temp;
-		Vertex n5 = e.otherNode(n2);
+		Vertex n5 = e.otherVertex(n2);
 
 		Edge e1 = q.neighborEdge(n5, e);
-		Vertex n0 = e1.otherNode(n5);
+		Vertex n0 = e1.otherVertex(n5);
 		Edge e2 = q.neighborEdge(n0, e1);
-		Vertex n1 = e2.otherNode(n0);
+		Vertex n1 = e2.otherVertex(n0);
 
 		Edge e3 = q.neighborEdge(n1, e2);
 		Edge e4 = qn.neighborEdge(n2, e);
-		Vertex n3 = e4.otherNode(n2);
+		Vertex n3 = e4.otherVertex(n2);
 		Edge e5 = qn.neighborEdge(n3, e4);
 		Edge e6 = qn.neighborEdge(n5, e);
-		Vertex n4 = e6.otherNode(n5);
+		Vertex n4 = e6.otherVertex(n5);
 
 		// Create new vertexs and edges
 		Vertex n6 = e.midPoint();
@@ -567,15 +567,15 @@ public class TopoCleanup extends GeomBasics {
 		Edge eNew4 = new Edge(n5, n7);
 		Edge eNew5 = new Edge(n3, n7);
 
-		eNew1.connectNodes();
-		eNew2.connectNodes();
-		eNew3.connectNodes();
-		eNew4.connectNodes();
-		eNew5.connectNodes();
+		eNew1.connectVertexes();
+		eNew2.connectVertexes();
+		eNew3.connectVertexes();
+		eNew4.connectVertexes();
+		eNew5.connectVertexes();
 
 		// Create the new quads
 		Edge l, r;
-		if (eNew1.leftNode == n0) {
+		if (eNew1.leftVertex == n0) {
 			l = e2;
 			r = eNew2;
 		} else {
@@ -584,7 +584,7 @@ public class TopoCleanup extends GeomBasics {
 		}
 		Quad qNew1 = new Quad(eNew1, l, r, e3);
 
-		if (e1.leftNode == n5) {
+		if (e1.leftVertex == n5) {
 			l = eNew4;
 			r = eNew1;
 		} else {
@@ -593,7 +593,7 @@ public class TopoCleanup extends GeomBasics {
 		}
 		Quad qNew2 = new Quad(e1, l, r, eNew3);
 
-		if (e4.leftNode == n3) {
+		if (e4.leftVertex == n3) {
 			l = eNew5;
 			r = eNew2;
 		} else {
@@ -602,7 +602,7 @@ public class TopoCleanup extends GeomBasics {
 		}
 		Quad qNew3 = new Quad(e4, l, r, eNew3);
 
-		if (e6.leftNode == n4) {
+		if (e6.leftVertex == n4) {
 			l = e5;
 			r = eNew4;
 		} else {
@@ -612,7 +612,7 @@ public class TopoCleanup extends GeomBasics {
 		Quad qNew4 = new Quad(e6, l, r, eNew5);
 
 		// Update lists etc.
-		e.disconnectNodes();
+		e.disconnectVertexes();
 		q.disconnectEdges();
 		qn.disconnectEdges();
 
@@ -633,8 +633,8 @@ public class TopoCleanup extends GeomBasics {
 		elementList.add(qNew3);
 		elementList.add(qNew4);
 
-		nodeList.add(n6);
-		nodeList.add(n7);
+		vertexList.add(n6);
+		vertexList.add(n7);
 		vertexs.add(n6);
 		vertexs.add(n7);
 
@@ -679,13 +679,13 @@ public class TopoCleanup extends GeomBasics {
 	 *                  <li>Code 1 for alpha iterator 1
 	 *                  <li>Code 2 for alpha iterator 2
 	 *                  <li>Code 3 for closing the current quad, new pos of cur.
-	 *                  node at the opposite node
+	 *                  Vertex at the opposite Vertex
 	 *                  <li>Code 4 for closing the current quad, new pos of cur.
-	 *                  node midway to oppos. node
+	 *                  Vertex midway to oppos. Vertex
 	 *                  <li>Code 5 for filling cur. quad and neighbour with fill_3
 	 *                  <li>Code 6 for filling cur. quad and neighbour with fill_4
 	 *                  <li>Code 7 for splitting cur. quad into two new quads along
-	 *                  diagonal from cur. node
+	 *                  diagonal from cur. Vertex
 	 *                  <li>Code 8 for switching cur. edge clockwise
 	 *                  <li>Code 9 for switching cur. edge counter-clockwise
 	 */
@@ -703,7 +703,7 @@ public class TopoCleanup extends GeomBasics {
 
 			// Alpha iterators:
 			if (a == 0) {
-				d.n = d.e.otherNode(d.n);
+				d.n = d.e.otherVertex(d.n);
 			} else if (a == 1) {
 				d.e = d.elem.neighborEdge(d.n, d.e);
 			} else if (a == 2) {
@@ -762,8 +762,8 @@ public class TopoCleanup extends GeomBasics {
 	 * valence of 4 or less 4+ (code 24) means a valence of 4 or more 5 means a
 	 * valence of 5 or more 0 means the valence is ignored and unchanged and is
 	 * usually drawn as valence 4 1st value in pattern is total length of pattern
-	 * 2nd value is the valence of the central node The rest of the valences then
-	 * follow in ccw order around the central node
+	 * 2nd value is the valence of the central Vertex The rest of the valences then
+	 * follow in ccw order around the central Vertex
 	 */
 
 	/* The connectivity cases */
@@ -837,16 +837,16 @@ public class TopoCleanup extends GeomBasics {
 		// First check for the standard patterns:
 		for (i = 0; i < vertexs.size(); i++) {
 			c = (Vertex) vertexs.get(i);
-			if (c == null || c.boundaryOrTriangleNode()) {
+			if (c == null || c.boundaryOrTriangleVertex()) {
 				continue;
 			}
 			ccwNeighbors = c.ccwSortedNeighbors();
 			c.createValencePattern(ccwNeighbors);
-			if (c.irregNeighborNodes() <= 2) {
+			if (c.irregNeighborVertexes() <= 2) {
 				continue;
 			}
 
-			Msg.debug("The valence of node " + c.descr() + " is " + c.valDescr());
+			Msg.debug("The valence of Vertex " + c.descr() + " is " + c.valDescr());
 			angles = c.surroundingAngles(ccwNeighbors, c.pattern[0] - 2);
 
 			if ((vInd = c.patternMatch(stdCase1, stdVertexCase1, angles)) != -1) {
@@ -858,7 +858,7 @@ public class TopoCleanup extends GeomBasics {
 				if (vInd != -1) {
 					vertexs.remove(vInd);
 				}
-				addNodes(ccwNeighbors, c.pattern[0] - 2);
+				addVertexes(ccwNeighbors, c.pattern[0] - 2);
 			} else if ((vInd = c.patternMatch(stdCase2a, stdVertexCase2a, angles)) != -1) {
 				Msg.debug("connCleanupStep(): matching stdCase2a");
 				d = getDartAt(c, ccwNeighbors, vInd - 2);
@@ -868,7 +868,7 @@ public class TopoCleanup extends GeomBasics {
 				if (vInd != -1) {
 					vertexs.remove(vInd);
 				}
-				addNodes(ccwNeighbors, c.pattern[0] - 2);
+				addVertexes(ccwNeighbors, c.pattern[0] - 2);
 			} else if ((vInd = c.patternMatch(stdCase2b, stdVertexCase2b, angles)) != -1) {
 				Msg.debug("connCleanupStep(): matching stdCase2b");
 				d = getDartAt(c, ccwNeighbors, vInd - 2);
@@ -878,7 +878,7 @@ public class TopoCleanup extends GeomBasics {
 				if (vInd != -1) {
 					vertexs.remove(vInd);
 				}
-				addNodes(ccwNeighbors, c.pattern[0] - 2);
+				addVertexes(ccwNeighbors, c.pattern[0] - 2);
 			} else if ((vInd = c.patternMatch(stdCase3a, stdVertexCase3a, angles)) != -1) {
 				Msg.debug("connCleanupStep(): matching stdCase3a");
 				d = getDartAt(c, ccwNeighbors, vInd - 2);
@@ -888,7 +888,7 @@ public class TopoCleanup extends GeomBasics {
 				if (vInd != -1) {
 					vertexs.remove(vInd);
 				}
-				addNodes(ccwNeighbors, c.pattern[0] - 2);
+				addVertexes(ccwNeighbors, c.pattern[0] - 2);
 			} else if ((vInd = c.patternMatch(stdCase3b, stdVertexCase3b, angles)) != -1) {
 				Msg.debug("connCleanupStep(): matching stdCase3b");
 				d = getDartAt(c, ccwNeighbors, vInd - 2);
@@ -898,23 +898,23 @@ public class TopoCleanup extends GeomBasics {
 				if (vInd != -1) {
 					vertexs.remove(vInd);
 				}
-				addNodes(ccwNeighbors, c.pattern[0] - 2);
+				addVertexes(ccwNeighbors, c.pattern[0] - 2);
 			}
 		}
 
 		// Then check for the other patterns:
 		for (i = 0; i < vertexs.size(); i++) {
 			c = (Vertex) vertexs.get(i);
-			if (c == null || c.boundaryOrTriangleNode()) {
+			if (c == null || c.boundaryOrTriangleVertex()) {
 				continue;
 			}
 			ccwNeighbors = c.ccwSortedNeighbors();
 			c.createValencePattern(ccwNeighbors);
-			if (c.irregNeighborNodes() <= 2) {
+			if (c.irregNeighborVertexes() <= 2) {
 				continue;
 			}
 
-			Msg.debug("The valence of node " + c.descr() + " is " + c.valDescr());
+			Msg.debug("The valence of Vertex " + c.descr() + " is " + c.valDescr());
 			angles = c.surroundingAngles(ccwNeighbors, c.pattern[0] - 2);
 
 			if ((vInd = c.patternMatch(case1a)) != -1) {
@@ -926,7 +926,7 @@ public class TopoCleanup extends GeomBasics {
 					if (vInd != -1) {
 						vertexs.remove(vInd);
 					}
-					addNodes(ccwNeighbors, c.pattern[0] - 2);
+					addVertexes(ccwNeighbors, c.pattern[0] - 2);
 				}
 			} else if ((vInd = c.patternMatch(case1b)) != -1) {
 				Msg.debug("connCleanupStep(): matching case1b");
@@ -937,7 +937,7 @@ public class TopoCleanup extends GeomBasics {
 					if (vInd != -1) {
 						vertexs.remove(vInd);
 					}
-					addNodes(ccwNeighbors, c.pattern[0] - 2);
+					addVertexes(ccwNeighbors, c.pattern[0] - 2);
 				}
 			} else if ((vInd = c.patternMatch(case2)) != -1) {
 				Msg.debug("connCleanupStep(): matching case2");
@@ -948,10 +948,10 @@ public class TopoCleanup extends GeomBasics {
 					if (vInd != -1) {
 						vertexs.remove(vInd);
 					}
-					addNodes(ccwNeighbors, c.pattern[0] - 2);
+					addVertexes(ccwNeighbors, c.pattern[0] - 2);
 				}
 			} else if ((vInd = c.patternMatch(case3, vertexCase3, angles)) != -1
-					&& internalNodes(ipat3, ccwNeighbors, vInd - 2, c.pattern[0] - 2)) {
+					&& internalVertexes(ipat3, ccwNeighbors, vInd - 2, c.pattern[0] - 2)) {
 				Msg.debug("connCleanupStep(): matching case3");
 				d = getDartAt(c, ccwNeighbors, vInd - 2);
 				if (d != null) {
@@ -960,9 +960,9 @@ public class TopoCleanup extends GeomBasics {
 					if (vInd != -1) {
 						vertexs.remove(vInd);
 					}
-					addNodes(ccwNeighbors, c.pattern[0] - 2);
+					addVertexes(ccwNeighbors, c.pattern[0] - 2);
 				}
-			} else if ((vInd = c.patternMatch(case4)) != -1 && internalNodes(ipat4, ccwNeighbors, vInd - 2, c.pattern[0] - 2)) {
+			} else if ((vInd = c.patternMatch(case4)) != -1 && internalVertexes(ipat4, ccwNeighbors, vInd - 2, c.pattern[0] - 2)) {
 				Msg.debug("connCleanupStep(): matching case4");
 				d = getDartAt(c, ccwNeighbors, vInd - 2);
 				if (d != null) {
@@ -971,9 +971,9 @@ public class TopoCleanup extends GeomBasics {
 					if (vInd != -1) {
 						vertexs.remove(vInd);
 					}
-					addNodes(ccwNeighbors, c.pattern[0] - 2);
+					addVertexes(ccwNeighbors, c.pattern[0] - 2);
 				}
-			} else if ((vInd = c.patternMatch(case5)) != -1 && internalNodes(ipat5, ccwNeighbors, vInd - 2, c.pattern[0] - 2)) {
+			} else if ((vInd = c.patternMatch(case5)) != -1 && internalVertexes(ipat5, ccwNeighbors, vInd - 2, c.pattern[0] - 2)) {
 				Msg.debug("connCleanupStep(): matching case5");
 				d = getDartAt(c, ccwNeighbors, vInd - 2);
 				if (d != null) {
@@ -982,24 +982,24 @@ public class TopoCleanup extends GeomBasics {
 					if (vInd != -1) {
 						vertexs.remove(vInd);
 					}
-					addNodes(ccwNeighbors, c.pattern[0] - 2);
+					addVertexes(ccwNeighbors, c.pattern[0] - 2);
 				}
 			}
 		}
 
-		vertexs = new ArrayList<>(nodeList);
+		vertexs = new ArrayList<>(vertexList);
 		connCleanupFinished = true;
 		count = 0;
 		Msg.debug("Leaving TopoCleanup.connCleanupStep(), all is well");
 	}
 
 	/** Method to confirm whether marked vertexs are truely internal . */
-	private boolean internalNodes(boolean[] ipat, Vertex[] ccwNodes, int index, int len) {
-		Msg.debug("Entering internalNodes(..)");
+	private boolean internalVertexes(boolean[] ipat, Vertex[] ccwVertexes, int index, int len) {
+		Msg.debug("Entering internalVertexes(..)");
 		int i = index, j = 0;
 		while (j < len) {
-			if (ipat[j] && ccwNodes[i].boundaryNode()) {
-				Msg.debug("Leaving internalNodes(..): false");
+			if (ipat[j] && ccwVertexes[i].boundaryVertex()) {
+				Msg.debug("Leaving internalVertexes(..): false");
 				return false;
 			}
 			j++;
@@ -1008,19 +1008,19 @@ public class TopoCleanup extends GeomBasics {
 				i = 0;
 			}
 		}
-		Msg.debug("Leaving internalNodes(..): true");
+		Msg.debug("Leaving internalVertexes(..): true");
 		return true;
 	}
 
-	private void addNodes(Vertex[] arrayOfNodes, int len) {
+	private void addVertexes(Vertex[] arrayOfVertexes, int len) {
 		Vertex n;
 		int j;
 		for (int i = 0; i < len; i++) {
-			n = arrayOfNodes[i];
+			n = arrayOfVertexes[i];
 			if (n != null) {
 				j = vertexs.indexOf(n);
 				if (j == -1) {
-					j = nodeList.indexOf(n);
+					j = vertexList.indexOf(n);
 					if (j != -1) {
 						vertexs.add(n);
 					}
@@ -1070,7 +1070,7 @@ public class TopoCleanup extends GeomBasics {
 					if (j != -1) {
 						vertexs.remove(j);
 					}
-					addNodes(ccwNeighbors, n1.pattern[0] - 2);
+					addVertexes(ccwNeighbors, n1.pattern[0] - 2);
 				} else if (n1.boundaryPatternMatch(bcase1b, bpat1b, ccwNeighbors)) {
 					Msg.debug("boundaryCleanupStep(): matching bcase1b, bpat1b");
 					d = getDartAt(n1, ccwNeighbors, 0);
@@ -1080,10 +1080,10 @@ public class TopoCleanup extends GeomBasics {
 					if (j != -1) {
 						vertexs.remove(j);
 					}
-					addNodes(ccwNeighbors, n1.pattern[0] - 2);
+					addVertexes(ccwNeighbors, n1.pattern[0] - 2);
 				}
 			}
-			// vertexs= (ArrayList)nodeList.clone();
+			// vertexs= (ArrayList)vertexList.clone();
 			bcaseValPat1Fin = true;
 			Msg.debug("Leaving boundaryCleanupStep(): Done looking for case 1s.");
 			return;
@@ -1109,7 +1109,7 @@ public class TopoCleanup extends GeomBasics {
 					if (j != -1) {
 						vertexs.remove(j);
 					}
-					addNodes(ccwNeighbors, n1.pattern[0] - 2);
+					addVertexes(ccwNeighbors, n1.pattern[0] - 2);
 				} else if (n1.boundaryPatternMatch(bcase2b, bpat2b, ccwNeighbors)) {
 					Msg.debug("boundaryCleanupStep(): matching bcase2b, bpat2b");
 					d = getDartAt(n1, ccwNeighbors, 0);
@@ -1119,10 +1119,10 @@ public class TopoCleanup extends GeomBasics {
 					if (j != -1) {
 						vertexs.remove(j);
 					}
-					addNodes(ccwNeighbors, n1.pattern[0] - 2);
+					addVertexes(ccwNeighbors, n1.pattern[0] - 2);
 				}
 			}
-			// vertexs= (ArrayList)nodeList.clone();
+			// vertexs= (ArrayList)vertexList.clone();
 			bcaseValPat2Fin = true;
 			Msg.debug("Leaving boundaryCleanupStep(): Done looking for case 2s.");
 			return;
@@ -1133,8 +1133,8 @@ public class TopoCleanup extends GeomBasics {
 				if (n1 == null) {
 					continue;
 				}
-				Msg.debug("...testing node " + n1.descr());
-				if (n1.boundaryNode()) {
+				Msg.debug("...testing Vertex " + n1.descr());
+				if (n1.boundaryVertex()) {
 					continue;
 				}
 
@@ -1153,10 +1153,10 @@ public class TopoCleanup extends GeomBasics {
 					if (j != -1) {
 						vertexs.remove(j);
 					}
-					addNodes(ccwNeighbors, n1.pattern[0] - 2);
+					addVertexes(ccwNeighbors, n1.pattern[0] - 2);
 				}
 			}
-			// vertexs= (ArrayList)nodeList.clone();
+			// vertexs= (ArrayList)vertexList.clone();
 			bcaseValPat3Fin = true;
 			Msg.debug("Leaving boundaryCleanupStep(): Done looking for case 3s.");
 			return;
@@ -1181,10 +1181,10 @@ public class TopoCleanup extends GeomBasics {
 					if (j != -1) {
 						vertexs.remove(j);
 					}
-					addNodes(ccwNeighbors, n1.pattern[0] - 2);
+					addVertexes(ccwNeighbors, n1.pattern[0] - 2);
 				}
 			}
-			// vertexs= (ArrayList)nodeList.clone();
+			// vertexs= (ArrayList)vertexList.clone();
 			bcaseValPat4Fin = true;
 			Msg.debug("Leaving boundaryCleanupStep(): Done looking for case 4s.");
 			return;
@@ -1196,9 +1196,9 @@ public class TopoCleanup extends GeomBasics {
 					continue;
 				}
 
-				if (n1.boundaryNode()) {
+				if (n1.boundaryVertex()) {
 
-					Msg.debug("...testing node " + n1.descr());
+					Msg.debug("...testing Vertex " + n1.descr());
 					e1 = (Edge) n1.edgeList.get(0);
 					elem = e1.element1;
 					if (!(elem instanceof Quad)) {
@@ -1213,10 +1213,10 @@ public class TopoCleanup extends GeomBasics {
 							Msg.debug("...inside if (e1.boundaryEdge() ...");
 							Quad q3 = null, q4 = null, q33 = null, q44 = null, qNew, qn = null;
 							Edge e3, e4, e33, e44;
-							n0 = e1.otherNode(n1);
-							n2 = e2.otherNode(n1);
+							n0 = e1.otherVertex(n1);
+							n2 = e2.otherVertex(n1);
 							e3 = q.neighborEdge(n2, e2);
-							n3 = e3.otherNode(n2);
+							n3 = e3.otherVertex(n2);
 							e4 = q.neighborEdge(n3, e3);
 
 							elem = q.neighbor(e3);
@@ -1273,7 +1273,7 @@ public class TopoCleanup extends GeomBasics {
 									elementList.remove(elementList.indexOf(q4));
 									elementList.remove(elementList.indexOf(q44));
 
-									fill3(q4, e44, e44.otherNode(n3), true);
+									fill3(q4, e44, e44.otherVertex(n3), true);
 									qNew = (Quad) q.neighbor(e4);
 									fill3(q, e4, n3, true);
 
@@ -1301,12 +1301,12 @@ public class TopoCleanup extends GeomBasics {
 					continue;
 				}
 
-				if (n1.boundaryNode() && n1.valence() > 4) {
-					Msg.debug("...testing node " + n1.descr());
+				if (n1.boundaryVertex() && n1.valence() > 4) {
+					Msg.debug("...testing Vertex " + n1.descr());
 
-					// First find a quad having an edge at the boundary at node n1,
+					// First find a quad having an edge at the boundary at Vertex n1,
 					// or if this does not exist, the find the first quad when looking
-					// from the boundary an inwards around node n1:
+					// from the boundary an inwards around Vertex n1:
 					e1 = n1.anotherBoundaryEdge(null);
 					if (e1.element1 instanceof Quad) {
 						q = (Quad) e1.element1;
@@ -1334,9 +1334,9 @@ public class TopoCleanup extends GeomBasics {
 
 							Msg.debug("...Considering to close quad");
 
-							n2 = e1.otherNode(n1);
+							n2 = e1.otherVertex(n1);
 							e2 = q.neighborEdge(n1, e1);
-							n3 = e2.otherNode(n1);
+							n3 = e2.otherVertex(n1);
 
 							n2val = n2.valence();
 							n3val = n3.valence();
@@ -1345,7 +1345,7 @@ public class TopoCleanup extends GeomBasics {
 
 							if (Math.abs(4 - (val - 2)) <= maxdev) {
 								Msg.debug("...closing quad " + q.descr());
-								d = closeQuad(q, e1, e1.otherNode(n1), true);
+								d = closeQuad(q, e1, e1.otherVertex(n1), true);
 								if (d != null) {
 									q = pq;
 									e1 = ep;
@@ -1368,7 +1368,7 @@ public class TopoCleanup extends GeomBasics {
 			Msg.debug("Leaving boundaryCleanupStep(): Done removing diamonds.");
 			return;
 		} else {
-			vertexs = new ArrayList<>(nodeList);
+			vertexs = new ArrayList<>(vertexList);
 			boundaryCleanupFinished = true;
 			count = 0;
 			Msg.debug("Leaving TopoCleanup.boundaryCleanupStep(), all is well.");
@@ -1398,7 +1398,7 @@ public class TopoCleanup extends GeomBasics {
 					continue;
 				}
 
-				if (n.boundaryNode()) {
+				if (n.boundaryVertex()) {
 
 					if (n.edgeList.size() == 3) {
 
@@ -1432,13 +1432,13 @@ public class TopoCleanup extends GeomBasics {
 							continue;
 						}
 
-						n1 = e1.otherNode(n);
-						n2 = e2.otherNode(n);
-						nqOpp = q.oppositeNode(n);
+						n1 = e1.otherVertex(n);
+						n2 = e2.otherVertex(n);
+						nqOpp = q.oppositeVertex(n);
 
 						ang1 = q.ang[q.angleIndex(n1)];
 
-						if (!n1.boundaryNode() || !n2.boundaryNode() || !nqOpp.boundaryNode()) {
+						if (!n1.boundaryVertex() || !n2.boundaryVertex() || !nqOpp.boundaryVertex()) {
 							continue;
 						}
 
@@ -1455,20 +1455,20 @@ public class TopoCleanup extends GeomBasics {
 						}
 
 						e3 = q2.neighborEdge(n, e2);
-						n3 = e3.otherNode(n);
+						n3 = e3.otherVertex(n);
 						q2angn3 = q2.ang[q2.angleIndex(n3)];
-						nq2Opp = q2.oppositeNode(n);
+						nq2Opp = q2.oppositeVertex(n);
 
 						e4 = qo.neighborEdge(n1, eo);
-						n4 = e4.otherNode(n1);
-						noOpp = qo.oppositeNode(n1);
+						n4 = e4.otherVertex(n1);
+						noOpp = qo.oppositeVertex(n1);
 
-						if (ang2 != 0 && q2angn3 > ango && n3.boundaryNode() && nq2Opp.boundaryNode()) {
+						if (ang2 != 0 && q2angn3 > ango && n3.boundaryVertex() && nq2Opp.boundaryVertex()) {
 
 							elementList.remove(elementList.indexOf(q));
 							elementList.remove(elementList.indexOf(q2));
 							fill4(q, e2, n);
-						} else if (ango != 0 && ango > q2angn3 && n4.boundaryNode() && nq2Opp.boundaryNode()) {
+						} else if (ango != 0 && ango > q2angn3 && n4.boundaryVertex() && nq2Opp.boundaryVertex()) {
 
 							elementList.remove(elementList.indexOf(q));
 							elementList.remove(elementList.indexOf(qo));
@@ -1504,12 +1504,12 @@ public class TopoCleanup extends GeomBasics {
 						}
 						e4 = qo.neighborEdge(n, e3);
 
-						n1 = e1.otherNode(n);
-						n2 = e2.otherNode(n);
-						n3 = e3.otherNode(n);
-						n4 = e4.otherNode(n);
+						n1 = e1.otherVertex(n);
+						n2 = e2.otherVertex(n);
+						n3 = e3.otherVertex(n);
+						n4 = e4.otherVertex(n);
 
-						if (!n1.boundaryNode() || !n2.boundaryNode() || !n3.boundaryNode() || !n4.boundaryNode()) {
+						if (!n1.boundaryVertex() || !n2.boundaryVertex() || !n3.boundaryVertex() || !n4.boundaryVertex()) {
 							continue;
 						}
 
@@ -1556,17 +1556,17 @@ public class TopoCleanup extends GeomBasics {
 		}
 		deleteList.clear();
 
-		vertexs = new ArrayList<>(nodeList);
+		vertexs = new ArrayList<>(vertexList);
 		shapeCleanupFinished = true;
 		count = 0;
 		Msg.debug("Leaving TopoCleanup.shapeCleanupStep(), all elements ok.");
 	}
 
 	/**
-	 * Return the dart with node c, the edge connecting c and the node at pos. i in
-	 * neighbors, and the quad with that edge and node at pos. i+1
+	 * Return the dart with Vertex c, the edge connecting c and the Vertex at pos. i in
+	 * neighbors, and the quad with that edge and Vertex at pos. i+1
 	 * 
-	 * @param c         the central node
+	 * @param c         the central Vertex
 	 * @param neighbors array of neighboring vertexs to c
 	 * @param i         index into neighbors
 	 */
@@ -1577,14 +1577,14 @@ public class TopoCleanup extends GeomBasics {
 			Msg.debug("Leaving getDartAt(..), not found!");
 			return null;
 		}
-		Msg.debug("...1st matching node in neighbors: " + neighbors[i].descr());
+		Msg.debug("...1st matching Vertex in neighbors: " + neighbors[i].descr());
 		Quad q1 = (Quad) e.element1;
 		Quad q2 = (Quad) e.element2;
 
 		Msg.debug("Leaving getDartAt(..)");
-		if (q1.hasNode(neighbors[i + 1])) {
+		if (q1.hasVertex(neighbors[i + 1])) {
 			return new Dart(c, e, q1);
-		} else if (q2.hasNode(neighbors[i + 1])) {
+		} else if (q2.hasVertex(neighbors[i + 1])) {
 			return new Dart(c, e, q2);
 		} else {
 			return null;
@@ -1595,20 +1595,20 @@ public class TopoCleanup extends GeomBasics {
 	 * Collapse a quad by joining two and two of its consecutive edges.
 	 * 
 	 * @param q        the quad to be collapsed
-	 * @param e1       an edge of q that has the node nK
-	 * @param nK       the node that is to be joined with its opposite node in q
+	 * @param e1       an edge of q that has the Vertex nK
+	 * @param nK       the Vertex that is to be joined with its opposite Vertex in q
 	 * @param centroid boolean indicating whether to look for a new pos for the
 	 *                 joined vertexs somewhere between the original positions,
 	 *                 starting at the centroid of q, or to unconditionally try
-	 *                 using the position of the node in q which is opposite to nK.
+	 *                 using the position of the Vertex in q which is opposite to nK.
 	 * @return the new current dart.
 	 */
 	private Dart closeQuad(Quad q, Edge e1, Vertex nK, boolean centroid) {
 		Msg.debug("Entering closeQuad(..)");
 		Dart d = new Dart();
 		Element nElem = q.neighbor(e1); // Save for later...
-		Vertex nKOpp = q.oppositeNode(nK);
-		Vertex nKp1 = e1.otherNode(nK); // , nKm1= eKm1.otherNode(nK);
+		Vertex nKOpp = q.oppositeVertex(nK);
+		Vertex nKp1 = e1.otherVertex(nK); // , nKm1= eKm1.otherVertex(nK);
 		Edge e2 = q.neighborEdge(nKp1, e1), e4 = q.neighborEdge(nK, e1);
 
 		List<Element> lK = nK.adjElements();
@@ -1636,7 +1636,7 @@ public class TopoCleanup extends GeomBasics {
 		q.closeQuad(e2, e1); // (e1,e2)
 
 		nKOpp.setXY(n); // nK.setXY(n);
-		nodeList.remove(nodeList.indexOf(nK)); // nKOpp
+		vertexList.remove(vertexList.indexOf(nK)); // nKOpp
 		i = vertexs.indexOf(nK);
 		if (i != -1) {
 			vertexs.set(i, null); // nKOpp
@@ -1652,12 +1652,12 @@ public class TopoCleanup extends GeomBasics {
 	}
 
 	/**
-	 * Create a new quad by "opening" one at the specified node inside the specified
+	 * Create a new quad by "opening" one at the specified Vertex inside the specified
 	 * quad. This effectively results in a splitting of the specified quad.
 	 * 
 	 * @param q  the quad
 	 * @param e  an edge in q (not used by method), but contained in returned dart
-	 * @param n1 split q along the diagonal between n1 and its opposite node
+	 * @param n1 split q along the diagonal between n1 and its opposite Vertex
 	 */
 	private Dart openQuad(Quad q, Edge e, Vertex n1) {
 		Msg.debug("Entering openQuad(..)");
@@ -1666,17 +1666,17 @@ public class TopoCleanup extends GeomBasics {
 		Edge e1 = q.neighborEdge(n1);
 		Edge e2 = q.neighborEdge(n1, e1);
 
-		Vertex n2 = e2.otherNode(n1);
+		Vertex n2 = e2.otherVertex(n1);
 		Edge e3 = q.neighborEdge(n2, e2);
-		Vertex n3 = e3.otherNode(n2);
+		Vertex n3 = e3.otherVertex(n2);
 		Edge e4 = q.neighborEdge(n3, e3);
-		Vertex n4 = e4.otherNode(n3);
+		Vertex n4 = e4.otherVertex(n3);
 
 		Edge e1New = new Edge(c, n1);
 		Edge e4New = new Edge(c, n3);
 
-		e1New.connectNodes();
-		e4New.connectNodes();
+		e1New.connectVertexes();
+		e4New.connectVertexes();
 
 		q.replaceEdge(e1, e1New);
 		q.replaceEdge(e4, e4New);
@@ -1687,7 +1687,7 @@ public class TopoCleanup extends GeomBasics {
 		e4New.connectToQuad(q);
 
 		Quad qNew;
-		if (e1.leftNode == n1) {
+		if (e1.leftVertex == n1) {
 			qNew = new Quad(e1, e1New, e4, e4New);
 		} else {
 			qNew = new Quad(e1, e4, e1New, e4New);
@@ -1700,7 +1700,7 @@ public class TopoCleanup extends GeomBasics {
 
 		elementList.add(qNew);
 		c.color = java.awt.Color.red; // Indicate it was created during clean-up
-		nodeList.add(c);
+		vertexList.add(c);
 		vertexs.add(c);
 
 		q.updateLR();
@@ -1735,44 +1735,44 @@ public class TopoCleanup extends GeomBasics {
 		int qaIndex = elementList.indexOf(qa), qbIndex = elementList.indexOf(qb);
 
 		// First get the edges of qa in ccw order:
-		n2a = qa.nextCCWNode(e1a.leftNode);
-		if (n2a == e1a.rightNode) {
-			n1a = e1a.leftNode;
+		n2a = qa.nextCCWVertex(e1a.leftVertex);
+		if (n2a == e1a.rightVertex) {
+			n1a = e1a.leftVertex;
 		} else {
-			n1a = e1a.rightNode;
-			n2a = e1a.leftNode;
+			n1a = e1a.rightVertex;
+			n2a = e1a.leftVertex;
 		}
 
 		e2a = qa.neighborEdge(n2a, e1a);
-		n3a = e2a.otherNode(n2a);
+		n3a = e2a.otherVertex(n2a);
 		e3a = qa.neighborEdge(n3a, e2a);
-		n4a = e3a.otherNode(n3a);
+		n4a = e3a.otherVertex(n3a);
 		e4a = qa.neighborEdge(n4a, e3a);
 
 		// Now get the edges of qb in ccw order:
 		e1b = e1a;
-		n2b = qb.nextCCWNode(e1b.leftNode);
-		if (n2b == e1b.rightNode) {
-			n1b = e1b.leftNode;
+		n2b = qb.nextCCWVertex(e1b.leftVertex);
+		if (n2b == e1b.rightVertex) {
+			n1b = e1b.leftVertex;
 		} else {
-			n1b = e1b.rightNode;
-			n2b = e1b.leftNode;
+			n1b = e1b.rightVertex;
+			n2b = e1b.leftVertex;
 		}
 		e2b = qb.neighborEdge(n2b, e1b);
-		n3b = e2b.otherNode(n2b);
+		n3b = e2b.otherVertex(n2b);
 		e3b = qb.neighborEdge(n3b, e2b);
-		n4b = e3b.otherNode(n3b);
+		n4b = e3b.otherVertex(n3b);
 		e4b = qb.neighborEdge(n4b, e3b);
 
 		Vertex nOld, smoothed;
 		// Check to see if the switch will violate the mesh topology:
 		if (e4a.sumAngle(qa, n1a, e2b) >= Math.PI) { // if angle >= 180 degrees...
-			if (n1a.boundaryNode()) { // exit if node on boundary
+			if (n1a.boundaryVertex()) { // exit if Vertex on boundary
 				Msg.debug("Leaving switchDiagonalCCW(..): returning null");
 				return null;
 			}
 
-			// ...then try smoothing the pos of the node:
+			// ...then try smoothing the pos of the Vertex:
 			nOld = new Vertex(n1a.x, n1a.y);
 			smoothed = n1a.laplacianSmoothExclude(n2a);
 			if (!n1a.equals(smoothed)) {
@@ -1788,12 +1788,12 @@ public class TopoCleanup extends GeomBasics {
 		}
 
 		if (e2a.sumAngle(qa, n2a, e4b) >= Math.PI) { // if angle >= 180 degrees...
-			if (n2a.boundaryNode()) { // exit if node on boundary
+			if (n2a.boundaryVertex()) { // exit if Vertex on boundary
 				Msg.debug("Leaving switchDiagonalCCW(..): returning null");
 				return null;
 			}
 
-			// ...then try smoothing the pos of the node:
+			// ...then try smoothing the pos of the Vertex:
 			nOld = new Vertex(n2a.x, n2a.y);
 			smoothed = n2a.laplacianSmoothExclude(n1a);
 			if (!n2a.equals(smoothed)) {
@@ -1811,8 +1811,8 @@ public class TopoCleanup extends GeomBasics {
 		eNew = new Edge(n3a, n3b);
 
 		// Create the new quads:
-		l = qa.neighborEdge(e4a.leftNode, e4a);
-		r = qa.neighborEdge(e4a.rightNode, e4a);
+		l = qa.neighborEdge(e4a.leftVertex, e4a);
+		r = qa.neighborEdge(e4a.rightVertex, e4a);
 		if (l == e1a) {
 			l = e2b;
 		} else {
@@ -1820,8 +1820,8 @@ public class TopoCleanup extends GeomBasics {
 		}
 		q1 = new Quad(e4a, l, r, eNew);
 
-		l = qb.neighborEdge(e4b.leftNode, e4b);
-		r = qb.neighborEdge(e4b.rightNode, e4b);
+		l = qb.neighborEdge(e4b.leftVertex, e4b);
+		r = qb.neighborEdge(e4b.rightVertex, e4b);
 		if (l == e1b) {
 			l = e2a;
 		} else {
@@ -1831,10 +1831,10 @@ public class TopoCleanup extends GeomBasics {
 
 		qa.disconnectEdges();
 		qb.disconnectEdges();
-		e1a.disconnectNodes();
+		e1a.disconnectVertexes();
 		q1.connectEdges();
 		q2.connectEdges();
-		eNew.connectNodes();
+		eNew.connectVertexes();
 
 		// Update lists:
 		edgeList.set(edgeList.indexOf(e1a), eNew);
@@ -1876,38 +1876,38 @@ public class TopoCleanup extends GeomBasics {
 		int qaIndex = elementList.indexOf(qa), qbIndex = elementList.indexOf(qb);
 
 		// First get the edges of qa in ccw order:
-		n2a = qa.nextCCWNode(e1a.leftNode);
-		if (n2a == e1a.rightNode) {
-			n1a = e1a.leftNode;
+		n2a = qa.nextCCWVertex(e1a.leftVertex);
+		if (n2a == e1a.rightVertex) {
+			n1a = e1a.leftVertex;
 		} else {
-			n1a = e1a.rightNode;
-			n2a = e1a.leftNode;
+			n1a = e1a.rightVertex;
+			n2a = e1a.leftVertex;
 		}
 		e2a = qa.neighborEdge(n2a, e1a);
-		n3a = e2a.otherNode(n2a);
+		n3a = e2a.otherVertex(n2a);
 		e3a = qa.neighborEdge(n3a, e2a);
-		n4a = e3a.otherNode(n3a);
+		n4a = e3a.otherVertex(n3a);
 		e4a = qa.neighborEdge(n4a, e3a);
 
 		// Now get the edges of qb in ccw order:
 		e1b = e1a;
-		n2b = qb.nextCCWNode(e1b.leftNode);
-		if (n2b == e1b.rightNode) {
-			n1b = e1b.leftNode;
+		n2b = qb.nextCCWVertex(e1b.leftVertex);
+		if (n2b == e1b.rightVertex) {
+			n1b = e1b.leftVertex;
 		} else {
-			n1b = e1b.rightNode;
-			n2b = e1b.leftNode;
+			n1b = e1b.rightVertex;
+			n2b = e1b.leftVertex;
 		}
 		e2b = qb.neighborEdge(n2b, e1b);
-		n3b = e2b.otherNode(n2b);
+		n3b = e2b.otherVertex(n2b);
 		e3b = qb.neighborEdge(n3b, e2b);
-		n4b = e3b.otherNode(n3b);
+		n4b = e3b.otherVertex(n3b);
 		e4b = qb.neighborEdge(n4b, e3b);
 
 		Vertex nOld, smoothed;
 		// Check to see if the switch will violate the mesh topology:
 		if (e4a.sumAngle(qa, n1a, e2b) >= Math.PI) { // if angle >= 180 degrees...
-			// ...then try smoothing the pos of the node:
+			// ...then try smoothing the pos of the Vertex:
 			nOld = new Vertex(n1a.x, n1a.y);
 			smoothed = n1a.laplacianSmooth();
 			if (!n1a.equals(smoothed)) {
@@ -1924,7 +1924,7 @@ public class TopoCleanup extends GeomBasics {
 
 		// Check to see if the switch will violate the mesh topology:
 		if (e2a.sumAngle(qa, n2a, e4b) >= Math.PI) { // if angle >= 180 degrees...
-			// ...then try smoothing the pos of the node:
+			// ...then try smoothing the pos of the Vertex:
 			nOld = new Vertex(n2a.x, n2a.y);
 			smoothed = n2a.laplacianSmooth();
 			if (!n2a.equals(smoothed)) {
@@ -1943,8 +1943,8 @@ public class TopoCleanup extends GeomBasics {
 		eNew = new Edge(n4a, n4b);
 
 		// Create the new quads:
-		l = qa.neighborEdge(e2a.leftNode, e2a);
-		r = qa.neighborEdge(e2a.rightNode, e2a);
+		l = qa.neighborEdge(e2a.leftVertex, e2a);
+		r = qa.neighborEdge(e2a.rightVertex, e2a);
 		if (l == e1a) {
 			l = e4b;
 		} else {
@@ -1952,8 +1952,8 @@ public class TopoCleanup extends GeomBasics {
 		}
 		q1 = new Quad(e2a, l, r, eNew);
 
-		l = qb.neighborEdge(e2b.leftNode, e2b);
-		r = qb.neighborEdge(e2b.rightNode, e2b);
+		l = qb.neighborEdge(e2b.leftVertex, e2b);
+		r = qb.neighborEdge(e2b.rightVertex, e2b);
 		if (l == e1b) {
 			l = e4a;
 		} else {
@@ -1963,10 +1963,10 @@ public class TopoCleanup extends GeomBasics {
 
 		qa.disconnectEdges();
 		qb.disconnectEdges();
-		e1a.disconnectNodes();
+		e1a.disconnectVertexes();
 		q1.connectEdges();
 		q2.connectEdges();
-		eNew.connectNodes();
+		eNew.connectVertexes();
 
 		// Update lists:
 		edgeList.set(edgeList.indexOf(e1a), eNew);
@@ -1990,12 +1990,12 @@ public class TopoCleanup extends GeomBasics {
 		Msg.debug("Entering TopoCleanup.globalSmoth()");
 		Vertex n, nn, nOld;
 
-		for (Object element : nodeList) {
+		for (Object element : vertexList) {
 			n = (Vertex) element;
 
-			if (!n.boundaryNode()) {
+			if (!n.boundaryVertex()) {
 
-				// Try smoothing the pos of the node:
+				// Try smoothing the pos of the Vertex:
 				nOld = new Vertex(n.x, n.y);
 				nn = n.laplacianSmooth();
 				if (!n.equals(nn)) {

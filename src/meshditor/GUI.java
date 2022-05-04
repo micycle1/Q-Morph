@@ -46,15 +46,15 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		// qm= new QuadMorph(params);
 
 		GeomBasics.loadMesh();
-		GeomBasics.findExtremeNodes();
+		GeomBasics.findExtremeVertexes();
 		// edgeList= GeomBasics.getEdgeList();
-		// nodeList= GeomBasics.getNodeList();
+		// vertexList= GeomBasics.getvertexList();
 	}
 
 	/** The filename of the current mesh. */
 	public String filename;
 	/** Boolean indicating that we are currently defining vertexs. */
-	public boolean nodeMode = false;
+	public boolean VertexMode = false;
 	/** Boolean indicating that we are currently defining triangles. */
 	public boolean triangleMode = true;
 	/** Boolean indicating that we are currently defining quads. */
@@ -81,12 +81,12 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	int scale = 100;
 	MyMouseListener myMouseListener;
 
-	MenuItem newItem, loadMeshItem, loadNodesItem, saveItem, saveAsItem, saveNodesItem, saveNodesAsItem, saveTriAsItem, exportItem,
+	MenuItem newItem, loadMeshItem, loadVertexesItem, saveItem, saveAsItem, saveVertexesItem, saveVertexesAsItem, saveTriAsItem, exportItem,
 			exitItem;
 	MenuItem undoItem, clearEdgesItem;
-	CheckboxMenuItem nodeModeItem, triModeItem, quadModeItem, debugModeItem, stepModeItem;
+	CheckboxMenuItem VertexModeItem, triModeItem, quadModeItem, debugModeItem, stepModeItem;
 	MenuItem consistencyItem, detectInversionItem, printElementsItem, printTrianglesItem, reportMetricsItem, printValencesItem,
-			printValPatItem, printAngAtSurNodesItem, centroidItem, triCountItem, delauneyItem, qmorphItem, globalCleanUpItem,
+			printValPatItem, printAngAtSurVertexesItem, centroidItem, triCountItem, delauneyItem, qmorphItem, globalCleanUpItem,
 			globalSmoothItem, helpItem, aboutItem;
 
 	MenuShortcut qkey;
@@ -97,11 +97,11 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		fileMenu = new Menu("File");
 		newItem = new MenuItem("New");
 		loadMeshItem = new MenuItem("Load mesh");
-		loadNodesItem = new MenuItem("Load vertexs");
+		loadVertexesItem = new MenuItem("Load vertexs");
 		saveItem = new MenuItem("Save mesh");
 		saveAsItem = new MenuItem("Save mesh as...");
-		saveNodesItem = new MenuItem("Save vertexs");
-		saveNodesAsItem = new MenuItem("Save vertexs as...");
+		saveVertexesItem = new MenuItem("Save vertexs");
+		saveVertexesAsItem = new MenuItem("Save vertexs as...");
 		saveTriAsItem = new MenuItem("Save triangle mesh as...");
 		exportItem = new MenuItem("Export mesh to LaTeX file");
 		exitItem = new MenuItem("Exit");
@@ -110,10 +110,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 		newItem.addActionListener(this);
 		loadMeshItem.addActionListener(this);
-		loadNodesItem.addActionListener(this);
+		loadVertexesItem.addActionListener(this);
 		saveItem.addActionListener(this);
-		saveNodesItem.addActionListener(this);
-		saveNodesAsItem.addActionListener(this);
+		saveVertexesItem.addActionListener(this);
+		saveVertexesAsItem.addActionListener(this);
 		saveAsItem.addActionListener(this);
 		saveTriAsItem.addActionListener(this);
 		exportItem.addActionListener(this);
@@ -121,18 +121,18 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 		fileMenu.add(newItem);
 		fileMenu.add(loadMeshItem);
-		fileMenu.add(loadNodesItem);
+		fileMenu.add(loadVertexesItem);
 		fileMenu.add(saveItem);
 		fileMenu.add(saveAsItem);
-		fileMenu.add(saveNodesItem);
-		fileMenu.add(saveNodesAsItem);
+		fileMenu.add(saveVertexesItem);
+		fileMenu.add(saveVertexesAsItem);
 		fileMenu.add(saveTriAsItem);
 		fileMenu.add(exportItem);
 		fileMenu.addSeparator();
 		fileMenu.add(exitItem);
 
 		editMenu = new Menu("Edit");
-		undoItem = new MenuItem("Undo last node/edge creation or move");
+		undoItem = new MenuItem("Undo last Vertex/edge creation or move");
 		undoItem.addActionListener(this);
 		editMenu.add(undoItem);
 		clearEdgesItem = new MenuItem("Clear all edges");
@@ -141,10 +141,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 		modeMenu = new Menu("Mode");
 
-		nodeModeItem = new CheckboxMenuItem("Plot vertexs");
-		nodeModeItem.setState(false);
-		nodeModeItem.addItemListener(this);
-		modeMenu.add(nodeModeItem);
+		VertexModeItem = new CheckboxMenuItem("Plot vertexs");
+		VertexModeItem.setState(false);
+		VertexModeItem.addItemListener(this);
+		modeMenu.add(VertexModeItem);
 
 		triModeItem = new CheckboxMenuItem("Construct triangles");
 		triModeItem.setState(true);
@@ -179,8 +179,8 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		printValencesItem.addActionListener(this);
 		printValPatItem = new MenuItem("Print valence patterns of all vertexs");
 		printValPatItem.addActionListener(this);
-		printAngAtSurNodesItem = new MenuItem("Print angles at surrounding vertexs");
-		printAngAtSurNodesItem.addActionListener(this);
+		printAngAtSurVertexesItem = new MenuItem("Print angles at surrounding vertexs");
+		printAngAtSurVertexesItem.addActionListener(this);
 
 		centroidItem = new MenuItem("Create centroid for last quad");
 		centroidItem.addActionListener(this);
@@ -194,7 +194,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		debugMenu.add(reportMetricsItem);
 		debugMenu.add(printValencesItem);
 		debugMenu.add(printValPatItem);
-		debugMenu.add(printAngAtSurNodesItem);
+		debugMenu.add(printAngAtSurVertexesItem);
 		debugMenu.add(centroidItem);
 		debugMenu.add(triCountItem);
 
@@ -281,12 +281,12 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			GeomBasics.loadMesh();
 			f.setTitle("MeshDitor: " + loadName);
 
-			GeomBasics.findExtremeNodes();
+			GeomBasics.findExtremeVertexes();
 			cvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, scale);
 		}
 	}
 
-	void commandLoadNodes() {
+	void commandLoadVertexes() {
 		FileDialog fd = new FileDialog(f, "Load vertexs from file", FileDialog.LOAD);
 		fd.setDirectory(GeomBasics.meshDirectory);
 		fd.show();
@@ -297,10 +297,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			cvas.clear();
 
 			GeomBasics.setParams(loadName, dir, false, false);
-			GeomBasics.loadNodes();
+			GeomBasics.loadVertexes();
 			f.setTitle("MeshDitor: " + loadName);
 
-			GeomBasics.findExtremeNodes();
+			GeomBasics.findExtremeVertexes();
 			cvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, scale);
 		}
 	}
@@ -313,22 +313,22 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		}
 	}
 
-	void commandSaveNodes() {
+	void commandSaveVertexes() {
 		if (filename == null || filename == "") {
-			commandSaveNodesAs();
+			commandSaveVertexesAs();
 		} else {
 			GeomBasics.writeMesh(GeomBasics.meshDirectory + GeomBasics.meshFilename);
 		}
 	}
 
-	void commandSaveNodesAs() {
+	void commandSaveVertexesAs() {
 		FileDialog fd = new FileDialog(f, "Save vertexs to file", FileDialog.SAVE);
 		fd.setDirectory(GeomBasics.meshDirectory);
 		fd.show();
 		String dir = fd.getDirectory();
 		String saveName = fd.getFile();
 		if (dir != null && dir != "" && saveName != null && saveName != "") {
-			GeomBasics.writeNodes(dir + saveName);
+			GeomBasics.writeVertexes(dir + saveName);
 			f.setTitle("MeshDitor: " + saveName);
 			filename = dir + saveName;
 			GeomBasics.setParams(saveName, dir, false, false);
@@ -365,7 +365,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	void commandExportMeshToLaTeX() {
 		int ul;
 		double xcorr, ycorr;
-		boolean visibleNodes;
+		boolean visibleVertexes;
 
 		ExportToLaTeXOptionsDialog ed = new ExportToLaTeXOptionsDialog(f, "Set export parameters", true);
 		ed.show();
@@ -374,14 +374,14 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			ul = ed.getUnitlength();
 			xcorr = ed.getXCorr();
 			ycorr = ed.getYCorr();
-			visibleNodes = ed.getVisibleNodes();
+			visibleVertexes = ed.getVisibleVertexes();
 
 			FileDialog fd = new FileDialog(f, "Export mesh to file", FileDialog.SAVE);
 			fd.setVisible(true);
 			String dir = fd.getDirectory();
 			String saveName = fd.getFile();
 			if (dir != null && dir != "" && saveName != null && saveName != "") {
-				GeomBasics.exportMeshToLaTeX(dir + saveName, ul, xcorr, ycorr, visibleNodes);
+				GeomBasics.exportMeshToLaTeX(dir + saveName, ul, xcorr, ycorr, visibleVertexes);
 			}
 		}
 	}
@@ -396,31 +396,31 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		cvas.repaint();
 	}
 
-	void commandNodeMode() {
-		nodeMode = true;
+	void commandVertexMode() {
+		VertexMode = true;
 		triangleMode = false;
 		quadMode = false;
-		nodeModeItem.setState(true);
+		VertexModeItem.setState(true);
 		triModeItem.setState(false);
 		quadModeItem.setState(false);
 		gctrls.clickStatus.setText("1");
 	}
 
 	void commandTriMode() {
-		nodeMode = false;
+		VertexMode = false;
 		triangleMode = true;
 		quadMode = false;
-		nodeModeItem.setState(false);
+		VertexModeItem.setState(false);
 		triModeItem.setState(true);
 		quadModeItem.setState(false);
 		gctrls.clickStatus.setText("3");
 	}
 
 	void commandQuadMode() {
-		nodeMode = false;
+		VertexMode = false;
 		triangleMode = false;
 		quadMode = true;
-		nodeModeItem.setState(false);
+		VertexModeItem.setState(false);
 		triModeItem.setState(false);
 		quadModeItem.setState(true);
 		gctrls.clickStatus.setText("4");
@@ -458,7 +458,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 			if (!GeomBasics.step) {
 				qm.run();
-				GeomBasics.findExtremeNodes();
+				GeomBasics.findExtremeVertexes();
 				cvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, scale);
 			} else {
 				Msg.debug("Running QMorph.run(..) in step mode");
@@ -473,9 +473,9 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		if (!GeomBasics.step) {
 			/* Straightforwardly run the method */
 			tri.run();
-			// elementList= tri.getTriangleList(); // tri.incrDelauney(nodeList);
+			// elementList= tri.getTriangleList(); // tri.incrDelauney(vertexList);
 			// edgeList= tri.getEdgeList();
-			// nodeList= tri.getNodeList();
+			// vertexList= tri.getvertexList();
 			cvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, scale);
 		} else {
 			/* Run method in step mode */
@@ -513,7 +513,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	public void itemStateChanged(ItemEvent e) {
 		String command = (String) e.getItem();
 		if (command.equals("Plot vertexs")) {
-			commandNodeMode();
+			commandVertexMode();
 		} else if (command.equals("Construct triangles")) {
 			commandTriMode();
 		} else if (command.equals("Construct quads")) {
@@ -542,13 +542,13 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		} else if (command.equals("Load mesh")) {
 			commandLoadMesh();
 		} else if (command.equals("Load vertexs")) {
-			commandLoadNodes();
+			commandLoadVertexes();
 		} else if (command.equals("Save mesh")) {
 			commandSaveMesh();
 		} else if (command.equals("Save vertexs")) {
-			commandSaveNodes();
+			commandSaveVertexes();
 		} else if (command.equals("Save vertexs as...")) {
-			commandSaveNodesAs();
+			commandSaveVertexesAs();
 		} else if (command.equals("Save mesh as...")) {
 			commandSaveMeshAs();
 		} else if (command.equals("Save triangle mesh as...")) {
@@ -557,7 +557,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			commandExportMeshToLaTeX();
 		} else if (command.equals("Exit")) {
 			System.exit(0);
-		} else if (command.equals("Undo last node/edge creation or move")) {
+		} else if (command.equals("Undo last Vertex/edge creation or move")) {
 			commandUndo();
 		} else if (command.equals("Clear all edges")) {
 			commandClearEdges();
@@ -585,7 +585,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		} else if (command.equals("Print valence patterns of all vertexs")) {
 			GeomBasics.printValPatterns();
 		} else if (command.equals("Print angles at surrounding vertexs")) {
-			GeomBasics.printAnglesAtSurrondingNodes();
+			GeomBasics.printAnglesAtSurrondingVertexes();
 		} else if (command.equals("Create centroid for last quad")) {
 
 			Vertex n;
@@ -597,7 +597,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 				if (elem instanceof Quad) {
 					q = (Quad) elem;
 					n = q.centroid();
-					GeomBasics.nodeList.add(n);
+					GeomBasics.vertexList.add(n);
 					cvas.repaint();
 				}
 			}
@@ -624,15 +624,15 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 	/** A class for handling mouse actions. */
 	class MyMouseListener extends MouseAdapter {
-		Vertex movingNode = null, oldMovingNode = null;
-		int nodeCnt = 0;
+		Vertex movingVertex = null, oldMovingVertex = null;
+		int VertexCnt = 0;
 		Edge edge1, edge2, edge3, edge4;
-		Vertex[] myNodeList = new Vertex[4];
+		Vertex[] myvertexList = new Vertex[4];
 		Triangle tri;
 		Quad q;
-		boolean lastActionMergeNodes = false;
-		boolean lastActionMoveNode = false;
-		boolean lastActionNewNode = false;
+		boolean lastActionMergeVertexes = false;
+		boolean lastActionMoveVertex = false;
+		boolean lastActionNewVertex = false;
 		boolean lastActionNewEdge = false;
 		boolean lastActionTwoNewEdges = false;
 		boolean lastActionNewTriangle = false;
@@ -649,9 +649,9 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		public void mouseClicked(MouseEvent e) {
 			Msg.debug("Entering mouseClicked(..)");
 			Edge b, l, r, t;
-			lastActionMoveNode = false;
-			lastActionMergeNodes = false;
-			lastActionNewNode = false;
+			lastActionMoveVertex = false;
+			lastActionMergeVertexes = false;
+			lastActionNewVertex = false;
 			lastActionNewEdge = false;
 			lastActionTwoNewEdges = false;
 			lastActionNewTriangle = false;
@@ -663,42 +663,42 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			x = (x - cvas.getYAxisXPos()) / scale;
 			y = (y - cvas.getXAxisYPos()) / -scale;
 			Vertex n = new Vertex(x, y);
-			if (!GeomBasics.nodeList.contains(n)) {
-				GeomBasics.nodeList.add(n);
-				lastActionNewNode = true;
+			if (!GeomBasics.vertexList.contains(n)) {
+				GeomBasics.vertexList.add(n);
+				lastActionNewVertex = true;
 			} else {
-				n = (Vertex) GeomBasics.nodeList.get(GeomBasics.nodeList.indexOf(n));
+				n = (Vertex) GeomBasics.vertexList.get(GeomBasics.vertexList.indexOf(n));
 			}
 
-			if (!nodeMode) {
-				myNodeList[nodeCnt] = n;
-				nodeCnt++;
-				if (nodeCnt == 2) {
-					if (myNodeList[0] == myNodeList[1]) {
-						nodeCnt = 1;
+			if (!VertexMode) {
+				myvertexList[VertexCnt] = n;
+				VertexCnt++;
+				if (VertexCnt == 2) {
+					if (myvertexList[0] == myvertexList[1]) {
+						VertexCnt = 1;
 						return;
 					}
 
-					edge1 = new Edge(myNodeList[0], myNodeList[1]);
+					edge1 = new Edge(myvertexList[0], myvertexList[1]);
 					if (!GeomBasics.edgeList.contains(edge1)) {
 						GeomBasics.edgeList.add(edge1);
-						edge1.connectNodes();
+						edge1.connectVertexes();
 						nONewEdges++;
 						lastActionNewEdge = true;
 					} else {
 						edge1 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge1));
 					}
-				} else if (nodeCnt == 3 && triangleMode) {
+				} else if (VertexCnt == 3 && triangleMode) {
 
-					if (myNodeList[2] == myNodeList[0] || myNodeList[2] == myNodeList[1]) {
-						nodeCnt = 2;
+					if (myvertexList[2] == myvertexList[0] || myvertexList[2] == myvertexList[1]) {
+						VertexCnt = 2;
 						return;
 					}
 
-					edge2 = new Edge(myNodeList[1], myNodeList[2]);
+					edge2 = new Edge(myvertexList[1], myvertexList[2]);
 					if (!GeomBasics.edgeList.contains(edge2)) {
 						GeomBasics.edgeList.add(edge2);
-						edge2.connectNodes();
+						edge2.connectVertexes();
 						nONewEdges++;
 						if (nONewEdges >= 2) {
 							lastActionTwoNewEdges = true;
@@ -710,10 +710,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						edge2 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge2));
 					}
 
-					edge3 = new Edge(myNodeList[0], myNodeList[2]);
+					edge3 = new Edge(myvertexList[0], myvertexList[2]);
 					if (!GeomBasics.edgeList.contains(edge3)) {
 						GeomBasics.edgeList.add(edge3);
-						edge3.connectNodes();
+						edge3.connectVertexes();
 						nONewEdges++;
 						if (nONewEdges >= 2) {
 							lastActionTwoNewEdges = true;
@@ -732,32 +732,32 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						tri.connectEdges();
 						lastActionNewTriangle = true;
 					}
-					nodeCnt = 0;
-				} else if (nodeCnt == 3 && quadMode) {
-					if (myNodeList[2] == myNodeList[0] || myNodeList[2] == myNodeList[1]) {
-						nodeCnt = 2;
+					VertexCnt = 0;
+				} else if (VertexCnt == 3 && quadMode) {
+					if (myvertexList[2] == myvertexList[0] || myvertexList[2] == myvertexList[1]) {
+						VertexCnt = 2;
 						return;
 					}
 
-					edge2 = new Edge(myNodeList[1], myNodeList[2]);
+					edge2 = new Edge(myvertexList[1], myvertexList[2]);
 					if (!GeomBasics.edgeList.contains(edge2)) {
 						GeomBasics.edgeList.add(edge2);
-						edge2.connectNodes();
+						edge2.connectVertexes();
 						nONewEdges++;
 						lastActionNewEdge = true;
 					} else {
 						edge2 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge2));
 					}
-				} else if (nodeCnt == 4 && quadMode) {
-					if (myNodeList[3] == myNodeList[0] || myNodeList[3] == myNodeList[1] || myNodeList[3] == myNodeList[2]) {
-						nodeCnt = 3;
+				} else if (VertexCnt == 4 && quadMode) {
+					if (myvertexList[3] == myvertexList[0] || myvertexList[3] == myvertexList[1] || myvertexList[3] == myvertexList[2]) {
+						VertexCnt = 3;
 						return;
 					}
 
-					edge3 = new Edge(myNodeList[2], myNodeList[3]);
+					edge3 = new Edge(myvertexList[2], myvertexList[3]);
 					if (!GeomBasics.edgeList.contains(edge3)) {
 						GeomBasics.edgeList.add(edge3);
-						edge3.connectNodes();
+						edge3.connectVertexes();
 						nONewEdges++;
 						if (nONewEdges >= 2) {
 							lastActionTwoNewEdges = true;
@@ -769,10 +769,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						edge3 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge3));
 					}
 
-					edge4 = new Edge(myNodeList[0], myNodeList[3]);
+					edge4 = new Edge(myvertexList[0], myvertexList[3]);
 					if (!GeomBasics.edgeList.contains(edge4)) {
 						GeomBasics.edgeList.add(edge4);
-						edge4.connectNodes();
+						edge4.connectVertexes();
 						nONewEdges++;
 						if (nONewEdges >= 2) {
 							lastActionTwoNewEdges = true;
@@ -785,12 +785,12 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 					}
 
 					// Decide which is base, left, right, and top:
-					if (edge2.hasNode(edge1.leftNode)) {
+					if (edge2.hasVertex(edge1.leftVertex)) {
 						b = edge1;
 						l = edge2;
 						t = edge3;
 						r = edge4;
-					} else if (edge2.hasNode(edge1.rightNode)) {
+					} else if (edge2.hasVertex(edge1.rightVertex)) {
 						b = edge1;
 						r = edge2;
 						t = edge3;
@@ -805,19 +805,19 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						GeomBasics.elementList.add(q);
 						q.connectEdges();
 						/*
-						 * b.connectNodes(); l.connectNodes(); r.connectNodes(); t.connectNodes();
+						 * b.connectVertexes(); l.connectVertexes(); r.connectVertexes(); t.connectVertexes();
 						 */
 						lastActionNewQuad = true;
 					}
-					nodeCnt = 0;
+					VertexCnt = 0;
 				}
 
-				if (nodeMode) {
+				if (VertexMode) {
 					gctrls.clickStatus.setText("1");
 				} else if (triangleMode) {
-					gctrls.clickStatus.setText(Integer.toString(3 - nodeCnt));
+					gctrls.clickStatus.setText(Integer.toString(3 - VertexCnt));
 				} else if (quadMode) {
-					gctrls.clickStatus.setText(Integer.toString(4 - nodeCnt));
+					gctrls.clickStatus.setText(Integer.toString(4 - VertexCnt));
 				}
 			}
 			cvas.repaint();
@@ -826,7 +826,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 		/**
 		 * Invoked when a mouse button is pressed (but not yet released). If it is
-		 * pressed on a particular node, then remember which.
+		 * pressed on a particular Vertex, then remember which.
 		 */
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -837,14 +837,14 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			x = (x - cvas.getYAxisXPos()) / scale;
 			y = (y - cvas.getXAxisYPos()) / -scale;
 
-			movingNode = new Vertex(x, y);
-			int j = GeomBasics.nodeList.indexOf(movingNode);
+			movingVertex = new Vertex(x, y);
+			int j = GeomBasics.vertexList.indexOf(movingVertex);
 			if (j != -1) {
-				movingNode = (Vertex) GeomBasics.nodeList.get(j);
-				oldX = movingNode.x;
-				oldY = movingNode.y;
+				movingVertex = (Vertex) GeomBasics.vertexList.get(j);
+				oldX = movingVertex.x;
+				oldY = movingVertex.y;
 			} else {
-				movingNode = null;
+				movingVertex = null;
 			}
 
 			Msg.debug("Leaving mousePressed(..)");
@@ -864,25 +864,25 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			x = (x - cvas.getYAxisXPos()) / scale;
 			y = (y - cvas.getXAxisYPos()) / -scale;
 
-			if (movingNode != null && (x != movingNode.x || y != movingNode.y)) {
-				oldMovingNode = movingNode.copy();
-				ind = GeomBasics.nodeList.indexOf(new Vertex(x, y));
-				movingNode.setXY(x, y);
-				movingNode.update();
+			if (movingVertex != null && (x != movingVertex.x || y != movingVertex.y)) {
+				oldMovingVertex = movingVertex.copy();
+				ind = GeomBasics.vertexList.indexOf(new Vertex(x, y));
+				movingVertex.setXY(x, y);
+				movingVertex.update();
 
 				if (ind != -1) { // We have to merge the vertexs
-					n = (Vertex) GeomBasics.nodeList.get(ind);
+					n = (Vertex) GeomBasics.vertexList.get(ind);
 
 					for (int i = 0; i < n.edgeList.size(); i++) {
 						ei = (Edge) n.edgeList.get(i);
-						j = movingNode.edgeList.indexOf(ei);
+						j = movingVertex.edgeList.indexOf(ei);
 						if (j == -1) {
-							ei.replaceNode(n, movingNode);
-							movingNode.edgeList.add(ei);
+							ei.replaceVertex(n, movingVertex);
+							movingVertex.edgeList.add(ei);
 							// ei.connectTo()
 						} else { // keep only one copy of each edge
-							// if (ei.leftNode== ei.rightNode) {
-							ej = (Edge) movingNode.edgeList.get(j);
+							// if (ei.leftVertex== ei.rightVertex) {
+							ej = (Edge) movingVertex.edgeList.get(j);
 
 							if (ej.element1 != null) {
 								ej.element1.replaceEdge(ej, ei);
@@ -902,9 +902,9 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 								Msg.debug("ei.element2==" + ei.element2.descr());
 							}
 
-							movingNode.edgeList.set(j, ei);
-							ei.replaceNode(n, movingNode);
-							other = ei.otherNode(movingNode);
+							movingVertex.edgeList.set(j, ei);
+							ei.replaceVertex(n, movingVertex);
+							other = ei.otherVertex(movingVertex);
 
 							// Remove the correct edge from "global" edgelist
 							k = GeomBasics.edgeList.indexOf(ej);
@@ -925,21 +925,21 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						}
 					}
 
-					List<Element> aeList = movingNode.adjElements();
+					List<Element> aeList = movingVertex.adjElements();
 					Element elem;
 					for (Object element : aeList) {
 						elem = (Element) element;
 						elem.updateAngles();
 					}
 
-					GeomBasics.nodeList.remove(ind);
-					lastActionMergeNodes = true;
+					GeomBasics.vertexList.remove(ind);
+					lastActionMergeVertexes = true;
 				} else {
-					lastActionMergeNodes = false;
+					lastActionMergeVertexes = false;
 				}
 
-				lastActionMoveNode = true;
-				lastActionNewNode = false;
+				lastActionMoveVertex = true;
+				lastActionNewVertex = false;
 				lastActionNewEdge = false;
 				lastActionTwoNewEdges = false;
 				lastActionNewTriangle = false;
@@ -953,57 +953,57 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		public void undo() {
 			Edge e;
 			int j;
-			if (lastActionMoveNode) {
-				if (lastActionMergeNodes) {
-					for (int i = 0; i < oldMovingNode.edgeList.size(); i++) {
-						e = (Edge) oldMovingNode.edgeList.get(i);
-						j = movingNode.edgeList.indexOf(e);
+			if (lastActionMoveVertex) {
+				if (lastActionMergeVertexes) {
+					for (int i = 0; i < oldMovingVertex.edgeList.size(); i++) {
+						e = (Edge) oldMovingVertex.edgeList.get(i);
+						j = movingVertex.edgeList.indexOf(e);
 						if (j != -1) {
-							if (!(e.hasNode(movingNode) && e.hasNode(oldMovingNode))) {
-								movingNode.edgeList.remove(j);
-								e.replaceNode(movingNode, oldMovingNode);
+							if (!(e.hasVertex(movingVertex) && e.hasVertex(oldMovingVertex))) {
+								movingVertex.edgeList.remove(j);
+								e.replaceVertex(movingVertex, oldMovingVertex);
 							}
 						} else { // common edge that collapsed because of the merge
-							movingNode.edgeList.add(e);
+							movingVertex.edgeList.add(e);
 							GeomBasics.edgeList.add(e);
 						}
 					}
-					GeomBasics.nodeList.add(oldMovingNode);
+					GeomBasics.vertexList.add(oldMovingVertex);
 				} else {
-					movingNode.setXY(oldX, oldY);
-					movingNode.update();
+					movingVertex.setXY(oldX, oldY);
+					movingVertex.update();
 				}
 			}
 
-			else if (triangleMode && (lastActionNewNode || lastActionNewEdge)) {
-				if (nodeCnt == 0) {
-					nodeCnt = 2;
+			else if (triangleMode && (lastActionNewVertex || lastActionNewEdge)) {
+				if (VertexCnt == 0) {
+					VertexCnt = 2;
 				} else {
-					nodeCnt--;
+					VertexCnt--;
 				}
 			}
 
-			else if (quadMode && (lastActionNewNode || lastActionNewEdge)) {
-				if (nodeCnt == 0) {
-					nodeCnt = 3;
+			else if (quadMode && (lastActionNewVertex || lastActionNewEdge)) {
+				if (VertexCnt == 0) {
+					VertexCnt = 3;
 				} else {
-					nodeCnt--;
+					VertexCnt--;
 				}
 			}
 
-			if (lastActionNewNode) {
-				GeomBasics.nodeList.remove(GeomBasics.nodeList.size() - 1);
+			if (lastActionNewVertex) {
+				GeomBasics.vertexList.remove(GeomBasics.vertexList.size() - 1);
 			}
 			if (lastActionNewEdge) {
 				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
-				e.disconnectNodes();
+				e.disconnectVertexes();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
 			} else if (lastActionTwoNewEdges) {
 				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
-				e.disconnectNodes();
+				e.disconnectVertexes();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
 				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
-				e.disconnectNodes();
+				e.disconnectVertexes();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
 			}
 
@@ -1015,8 +1015,8 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 				GeomBasics.elementList.remove(GeomBasics.elementList.size() - 1);
 			}
 
-			lastActionMoveNode = false;
-			lastActionNewNode = false;
+			lastActionMoveVertex = false;
+			lastActionNewVertex = false;
 			lastActionNewEdge = false;
 			lastActionTwoNewEdges = false;
 			lastActionNewTriangle = false;
