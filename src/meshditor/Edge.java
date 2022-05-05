@@ -22,39 +22,8 @@ public class Edge extends Constants {
 													// to be used as side edge in quad
 	double len; // length of this edge
 	java.awt.Color color = java.awt.Color.green;
-	
+
 	static ArrayList<Edge>[] stateList = new ArrayList[3];
-
-	private static double atan2Quick(final double y, final double x) {
-		final double THREE_QRTR_PI = Math.PI * 0.75;
-		final double QRTR_PI = Math.PI * 0.25;
-
-		double r, angle;
-		final double abs_y = Math.abs(y) + 1e-10f; // kludge to prevent 0/0 condition
-
-		if (x < 0.0f) {
-			r = (x + abs_y) / (abs_y - x); // (3)
-			angle = THREE_QRTR_PI; // (4)
-		} else {
-			r = (x - abs_y) / (x + abs_y); // (1)
-			angle = QRTR_PI; // (2)
-		}
-		angle += (0.1963f * r * r - 0.9817f) * r; // (2 | 4)
-		if (y < 0.0f) {
-			return (-angle); // negate if in quad III or IV
-		} else {
-			return (angle);
-		}
-	}
-
-	private static double acos(double x) {
-//		return Math.acos(x);
-		return acosQuick(x);
-	}
-
-	private static double acosQuick(double x) {
-		return atan2Quick(Math.sqrt((1.0 + x) * (1.0 - x)), x);
-	}
 
 	public Edge(Vertex Vertex1, Vertex Vertex2) {
 		if ((Vertex1.x < Vertex2.x) || (Vertex1.x == Vertex2.x && Vertex1.y > Vertex2.y)) {
@@ -87,19 +56,20 @@ public class Edge extends Constants {
 		}
 		return false;
 	}
-	
-	@Override
-	  public int hashCode() {
-	    long bits0 = Double.doubleToLongBits(leftVertex.x);
-	    bits0 ^= Double.doubleToLongBits(leftVertex.y) * 31;
-	    int hash0 = (((int) bits0) ^ ((int) (bits0  >> 32)));
-	    
-	    long bits1 = Double.doubleToLongBits(rightVertex.x);
-	    bits1 ^= Double.doubleToLongBits(rightVertex.y) * 31;
-	    int hash1 = (((int) bits1) ^ ((int) (bits1  >> 32)));
 
-	    return hash0 ^ hash1;
-	  }
+	@Override
+	public int hashCode() {
+		return leftVertex.hashCode() ^ rightVertex.hashCode(); // direction-agnostic
+//		long bits0 = Double.doubleToLongBits(leftVertex.x);
+//		bits0 ^= Double.doubleToLongBits(leftVertex.y) * 31;
+//		int hash0 = (((int) bits0) ^ ((int) (bits0 >> 32)));
+//
+//		long bits1 = Double.doubleToLongBits(rightVertex.x);
+//		bits1 ^= Double.doubleToLongBits(rightVertex.y) * 31;
+//		int hash1 = (((int) bits1) ^ ((int) (bits1 >> 32)));
+//
+//		return hash0 ^ hash1;
+	}
 
 	// Return a copy of the edge
 	public Edge copy() {
@@ -531,19 +501,11 @@ public class Edge extends Constants {
 		}
 	}
 
-	// Returns the angle from this Edge to eEdge by summing the angles of the
-	// Elements
-	// adjacent Vertex n.
+	/**
+	 * Returns the angle from this Edge to eEdge by summing the angles of the
+	 * elements adjacent to vertex n.
+	 */
 	public double sumAngle(Element sElem, Vertex n, Edge eEdge) {
-//		Msg.debug("Entering sumAngle(..)");
-//		Msg.debug("this: " + descr());
-		if (sElem != null) {
-		}
-		if (n != null) {
-		}
-		if (eEdge != null) {
-		}
-
 		Element curElem = sElem;
 		Edge curEdge = this;
 		double ang = 0, iang = 0;
@@ -551,8 +513,6 @@ public class Edge extends Constants {
 
 		while (curEdge != eEdge && curElem != null) {
 			d = curElem.angle(curEdge, n);
-			// Msg.debug("curEdge= "+curEdge.descr());
-			// Msg.debug("curElem.angle(..) returns "+Math.toDegrees(d));
 			ang += d;
 			curEdge = curElem.neighborEdge(n, curEdge);
 			curElem = curElem.neighbor(curEdge);
@@ -566,15 +526,12 @@ public class Edge extends Constants {
 
 			while (curEdge != eEdge && curElem != null) {
 				d = curElem.angle(curEdge, n);
-				// Msg.debug("curEdge= "+curEdge.descr());
-				// Msg.debug("curElem.angle(..) returns "+Math.toDegrees(d));
 				iang += d;
 				curEdge = curElem.neighborEdge(n, curEdge);
 				curElem = curElem.neighbor(curEdge);
 			}
 			ang = TWO_PI - iang;
 		}
-//		Msg.debug("Leaving sumAngle(..), returning " + Math.toDegrees(ang));
 		return ang;
 	}
 
@@ -599,68 +556,165 @@ public class Edge extends Constants {
 	 * @return a positive value.
 	 */
 	public double computePosAngle(Edge edge, Vertex n) {
-		double a, b, c;
-		if (edge == this) {
-			Msg.warning("Edge.computePosAngle(..): The parameter Edge is the same as this Edge.");
-			return 2 * Math.PI;
-		}
+		Vertex middle = commonVertex(edge);
+		Vertex a = leftVertex == middle ? rightVertex : leftVertex;
+		Vertex b = edge.leftVertex == middle ? edge.rightVertex : edge.leftVertex;
+//		return angleBetween(a, middle, b)+1;
+		return 0;
 
-		if (leftVertex.equals(n)) {
-			if (n.equals(edge.leftVertex)) {
-				c = length(rightVertex, edge.rightVertex);
-			} else if (n.equals(edge.rightVertex)) {
-				c = length(rightVertex, edge.leftVertex);
-			} else {
-				Msg.error("Edge::computePosAngle(..): These edges are not connected.");
-				return 0;
-			}
-		} else if (rightVertex.equals(n)) {
-			if (n.equals(edge.leftVertex)) {
-				c = length(leftVertex, edge.rightVertex);
-			} else if (n.equals(edge.rightVertex)) {
-				c = length(leftVertex, edge.leftVertex);
-			} else {
-				Msg.error("Edge::computePosAngle(..): These edges are not connected.");
-				return 0;
-			}
-		} else {
-			Msg.error("Edge::computePosAngle(..): These edges are not connected.");
-			return 0;
-		}
-		a = len;
-		b = edge.len;
-
-		// acos returns a value in the range [0, PI],
-		// and input *MUST BE STRICTLY* in the range [-1, 1] !!!!!!!!
-		// ^^^^^^^^
-		double itemp = (a * a + b * b - c * c) / (2 * a * b);
-		if (itemp > 1.0) {
-			return 0;
-		} else if (itemp < -1.0) {
-			return Math.PI;
-		} else {
-			return acos(itemp);
-		}
+//		double a, b, c;
+//		if (edge == this) {
+//			Msg.warning("Edge.computePosAngle(..): The parameter Edge is the same as this Edge.");
+//			return 2 * Math.PI;
+//		}
+//
+//		if (leftVertex.equals(n)) {
+//			if (n.equals(edge.leftVertex)) {
+//				c = length(rightVertex, edge.rightVertex);
+//			} else if (n.equals(edge.rightVertex)) {
+//				c = length(rightVertex, edge.leftVertex);
+//			} else {
+//				Msg.error("Edge::computePosAngle(..): These edges are not connected.");
+//				return 0;
+//			}
+//		} else if (rightVertex.equals(n)) {
+//			if (n.equals(edge.leftVertex)) {
+//				c = length(leftVertex, edge.rightVertex);
+//			} else if (n.equals(edge.rightVertex)) {
+//				c = length(leftVertex, edge.leftVertex);
+//			} else {
+//				Msg.error("Edge::computePosAngle(..): These edges are not connected.");
+//				return 0;
+//			}
+//		} else {
+//			Msg.error("Edge::computePosAngle(..): These edges are not connected.");
+//			return 0;
+//		}
+//		a = len;
+//		b = edge.len;
+//
+//		// acos returns a value in the range [0, PI],
+//		// and input *MUST BE STRICTLY* in the range [-1, 1] !!!!!!!!
+//		// ^^^^^^^^
+//		double itemp = (a * a + b * b - c * c) / (2 * a * b);
+//		if (itemp > 1.0) {
+//			return 0;
+//		} else if (itemp < -1.0) {
+//			return Math.PI;
+//		} else {
+//			return acos(itemp);
+//		}
 	}
 
 	/**
-	 * Computes the ccw directed angle between this Edge and Edge edge at Vertex n.
+	 * Computes the CCW-directed angle between this edge and other edge.
 	 * 
 	 * @param edge
 	 * @return a positive value in range [0, 2*PI]
 	 */
 	public double computeCCWAngle(Edge edge) {
-		Vertex n = commonVertex(edge);
-		double temp = computePosAngle(edge, n);
+		Vertex middle = commonVertex(edge);
+		Vertex a = leftVertex == middle ? rightVertex : leftVertex;
+		Vertex b = edge.leftVertex == middle ? edge.rightVertex : edge.leftVertex;
 
-		MyVector thisVector = getVector(n);
-		MyVector edgeVector = edge.getVector(n);
+		return angleBetweenOriented(a, middle, b);
+	}
 
-		if (thisVector.isCWto(edgeVector)) {
-			return temp;
-		} else {
-			return TWO_PI - temp;
+	/**
+	 * Returns the oriented smallest angle between two vectors. The computed angle
+	 * will be in the range (-Pi, Pi]. A positive result corresponds to a
+	 * counterclockwise (CCW) rotation from v1 to v2; a negative result corresponds
+	 * to a clockwise (CW) rotation; a zero result corresponds to no rotation.
+	 *
+	 * @param tip1 the tip of v1
+	 * @param tail the tail of each vector
+	 * @param tip2 the tip of v2
+	 * @return the angle between v1 and v2, relative to v1
+	 */
+	private static double angleBetweenOriented(Vertex tip1, Vertex tail, Vertex tip2) {
+		double a1 = angle(tail, tip1);
+		double a2 = angle(tail, tip2);
+		double angDel = a2 - a1;
+
+		// normalize, maintaining orientation
+		if (angDel <= -Math.PI) {
+			return angDel + TWO_PI;
 		}
+		if (angDel > Math.PI) {
+			return angDel - TWO_PI;
+		}
+		return angDel;
+	}
+
+	/**
+	 * Returns the angle of the vector from p0 to p1, relative to the positive
+	 * X-axis. The angle is normalized to be in the range [ -Pi, Pi ].
+	 *
+	 * @param p0 the initial point of the vector
+	 * @param p1 the terminal point of the vector
+	 * @return the normalized angle (in radians) that p0-p1 makes with the positive
+	 *         x-axis.
+	 */
+	private static double angle(Vertex p0, Vertex p1) {
+		double dx = p1.x - p0.x;
+		double dy = p1.y - p0.y;
+		return atan2Quick(dy, dx);
+	}
+
+	private static double atan2Quick(final double y, final double x) {
+		final double THREE_QRTR_PI = Math.PI * 0.75;
+		final double QRTR_PI = Math.PI * 0.25;
+	
+		double r, angle;
+		final double abs_y = Math.abs(y) + 1e-10f; // kludge to prevent 0/0 condition
+	
+		if (x < 0.0f) {
+			r = (x + abs_y) / (abs_y - x); // (3)
+			angle = THREE_QRTR_PI; // (4)
+		} else {
+			r = (x - abs_y) / (x + abs_y); // (1)
+			angle = QRTR_PI; // (2)
+		}
+		angle += (0.1963f * r * r - 0.9817f) * r; // (2 | 4)
+		if (y < 0.0f) {
+			return (-angle); // negate if in quad III or IV
+		} else {
+			return (angle);
+		}
+	}
+
+	private static double acos(double x) {
+	//		return Math.acos(x);
+			return acosQuick(x);
+		}
+
+	private static double acosQuick(double x) {
+		return atan2Quick(Math.sqrt((1.0 + x) * (1.0 - x)), x);
+	}
+
+	/**
+	 * Computes the unoriented smallest difference between two angles. The angles
+	 * are assumed to be normalized to the range [-Pi, Pi]. The result will be in
+	 * the range [0, Pi].
+	 *
+	 * @param ang1 the angle of one vector (in [-Pi, Pi] )
+	 * @param ang2 the angle of the other vector (in range [-Pi, Pi] )
+	 * @return the angle (in radians) between the two vectors (in range [0, Pi] )
+	 */
+	public static double diff(double ang1, double ang2) {
+		double delAngle;
+
+		if (ang1 < ang2) {
+			delAngle = ang2 - ang1;
+		} else {
+			delAngle = ang1 - ang2;
+		}
+
+		if (delAngle > Math.PI) {
+			delAngle = (2 * Math.PI) - delAngle;
+		}
+
+		return delAngle;
 	}
 
 	// Return a common Vertex for edges this and e
@@ -856,7 +910,7 @@ public class Edge extends Constants {
 
 		Vertex n = this.oppositeVertex(null);
 		Vertex m = this.oppositeVertex(n);
-		
+
 		return new Edge(n, m);
 	}
 
