@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Canvas class which paints the background grid, the vertexs, the edges etc.
+ * The Canvas class which paints the background grid, the vertices, the edges etc.
  */
 
 class GCanvas extends Canvas {

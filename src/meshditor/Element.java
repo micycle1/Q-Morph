@@ -7,13 +7,20 @@ package meshditor;
 
 public abstract class Element extends Constants {
 	
+	/** An array of interior angles */
+	public double[] ang;
+	/** An array of edges */
+	public Edge[] edgeList;
+	/** Vertex used for determining inversion, amonst other things. */
+	Vertex firstVertex;
+	
 	/** @return neighbor element sharing edge e */
 	public abstract Element neighbor(Edge e);
 
 	/** @return local angle inside element at Vertex n */
 	public abstract double angle(Edge e, Vertex n);
 
-	/** Compute & set the angles at the vertexs of the element. */
+	/** Compute & set the angles at the vertices of the element. */
 	public abstract void updateAngles();
 
 	/**
@@ -73,7 +80,7 @@ public abstract class Element extends Constants {
 	public abstract void disconnectEdges();
 
 	/** Create a simple element for testing purposes only. */
-	public abstract Element elementWithExchangedVertexes(Vertex original, Vertex replacement);
+	public abstract Element elementWithExchangedVertices(Vertex original, Vertex replacement);
 
 	/**
 	 * @return true if the quad becomes inverted when Vertex n1 is relocated to pos.
@@ -126,11 +133,4 @@ public abstract class Element extends Constants {
 		double y2 = p2.y - o2.y;
 		return x1 * y2 - x2 * y1;
 	}
-
-	/** An array of interior angles */
-	public double[] ang;
-	/** An array of edges */
-	Edge[] edgeList;
-	/** Vertex used for determining inversion, amonst other things. */
-	Vertex firstVertex;
 }

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class holds information for vertexs, and has methods for the management
- * of issues regarding vertexs.
+ * This class holds information for vertices, and has methods for the management
+ * of issues regarding vertices.
  */
 public class Vertex extends Constants {
 
@@ -16,7 +16,7 @@ public class Vertex extends Constants {
 	public double x, y;
 	/** A valence pattern for this Vertex */
 	public byte[] pattern;
-	// byte state= 0; // For front Vertexes only
+	// byte state= 0; // For front Vertices only
 	List<Edge> edgeList;
 	java.awt.Color color = java.awt.Color.cyan;
 
@@ -38,6 +38,26 @@ public class Vertex extends Constants {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result = 37 * result + hashCode(x);
+		result = 37 * result + hashCode(y);
+		return result;
+	}
+
+	/**
+	 * Computes a hash code for a double value, using the algorithm from Joshua
+	 * Bloch's book <i>Effective Java"</i>
+	 * 
+	 * @param x the value to compute for
+	 * @return a hashcode for x
+	 */
+	private static int hashCode(double x) {
+		long f = Double.doubleToLongBits(x);
+		return (int) (f ^ (f >>> 32));
 	}
 
 	/** @return a "real" copy of this Vertex with a shallow copy of its edgeList. */
@@ -429,10 +449,10 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Note: *ALL* vertexs in a neighboring quad is regarded as neighbors, not only
+	 * Note: *ALL* vertices in a neighboring quad is regarded as neighbors, not only
 	 * those that are directly connected to this Vertex by edges.
 	 * 
-	 * @return a ccw sorted list of the neighboring vertexs to this, but returns
+	 * @return a ccw sorted list of the neighboring vertices to this, but returns
 	 *         null if this Vertex is part of any triangle.
 	 */
 	public Vertex[] ccwSortedNeighbors() {
@@ -487,7 +507,7 @@ public class Vertex extends Constants {
 			}
 		}
 
-		// Sort vertexs in ccw order starting with otherVertex of v0 edge.
+		// Sort vertices in ccw order starting with otherVertex of v0 edge.
 		// Uses the fact that elem initially is the element ccw to v0 around this
 		// Vertex.
 		Vertex[] ccwvertexList = new Vertex[edgeList.size() * 2];
@@ -512,7 +532,7 @@ public class Vertex extends Constants {
 			ccwvertexList[i++] = e.otherVertex(this);
 		}
 
-		Msg.debug("Leaving Vertex.ccwSortedNeighbors(..): # vertexs: " + i);
+		Msg.debug("Leaving Vertex.ccwSortedNeighbors(..): # vertices: " + i);
 		return ccwvertexList;
 	}
 
@@ -594,7 +614,7 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Classic Laplacian smooth. Of course, to be run on internal vertexs only.
+	 * Classic Laplacian smooth. Of course, to be run on internal vertices only.
 	 * 
 	 * @return the vector from the old to the new position.
 	 */
@@ -615,7 +635,7 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Classic Laplacian smooth. Of course, to be run on internal vertexs only.
+	 * Classic Laplacian smooth. Of course, to be run on internal vertices only.
 	 * 
 	 * @return the new position of Vertex
 	 */
@@ -637,7 +657,7 @@ public class Vertex extends Constants {
 
 	/**
 	 * Classic Laplacian smooth, but exclude the given neighbor Vertex from the
-	 * calculation. Of course, to be run on internal vertexs only.
+	 * calculation. Of course, to be run on internal vertices only.
 	 * 
 	 * @param vertex the Vertex to be excluded
 	 * @return the new position of Vertex
@@ -661,7 +681,7 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Run this on internal vertexs (not part of the boundary or front) Does a
+	 * Run this on internal vertices (not part of the boundary or front) Does a
 	 * modified length weighted Laplacian smooth.
 	 * 
 	 * @return a new Vertex with the smoothed position.
@@ -1244,7 +1264,7 @@ public class Vertex extends Constants {
 
 	/**
 	 * Test to see if this Vertex lies in the plane bounded by the two parallel
-	 * lines intersecting the Vertexes of Edge e that are normal to Edge e.
+	 * lines intersecting the Vertices of Edge e that are normal to Edge e.
 	 */
 	public boolean inBoundedPlane(Edge e) {
 		Edge normal1 = e.unitNormalAt(e.leftVertex);
@@ -1265,7 +1285,7 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Return true if the circle intersecting the Vertexes p1, p2, and p3 contains
+	 * Return true if the circle intersecting the Vertices p1, p2, and p3 contains
 	 * this Vertex in its interior. p1, p2, p3, and p4 are ccw sorted. Note that
 	 * testing for convexity of the quad should not be necessary.
 	 */
@@ -1388,43 +1408,43 @@ public class Vertex extends Constants {
 	}
 
 	/** Calculate the valence pattern for this Vertex and its neighbors. */
-	public void createValencePattern(Vertex[] ccwVertexes) {
+	public void createValencePattern(Vertex[] ccwVertices) {
 		Msg.debug("Entering Vertex.createValencePattern(..)");
 		int j = edgeList.size() * 2;
 		if (j >= 128) {
 			Msg.error("Number of edges adjacent Vertex " + descr() + " was greater than expected (" + edgeList.size() + "-2 >= 64)");
 		}
-		byte ccwVertexesSize = (byte) j;
-		pattern = new byte[ccwVertexesSize + 2]; // +2 for size and c.valence()
-		pattern[0] = (byte) (ccwVertexesSize + 2);
+		byte ccwVerticesSize = (byte) j;
+		pattern = new byte[ccwVerticesSize + 2]; // +2 for size and c.valence()
+		pattern[0] = (byte) (ccwVerticesSize + 2);
 		pattern[1] = valence();
 
-		for (int i = 0; i < ccwVertexesSize; i++) {
-			pattern[i + 2] = ccwVertexes[i].valence();
+		for (int i = 0; i < ccwVerticesSize; i++) {
+			pattern[i + 2] = ccwVertices[i].valence();
 		}
 		Msg.debug("Leaving Vertex.createValencePattern(..)");
 	}
 
 	/** Calculate the valence pattern for this Vertex and its neighbors. */
-	public void createValencePattern(byte ccwVertexesSize, Vertex[] ccwVertexes) {
-		Msg.debug("Entering Vertex.createValencePattern(" + ccwVertexesSize + ", Vertex [])");
-		pattern = new byte[ccwVertexesSize + 2]; // +2 for size and c.valence()
-		pattern[0] = (byte) (ccwVertexesSize + 2);
+	public void createValencePattern(byte ccwVerticesSize, Vertex[] ccwVertices) {
+		Msg.debug("Entering Vertex.createValencePattern(" + ccwVerticesSize + ", Vertex [])");
+		pattern = new byte[ccwVerticesSize + 2]; // +2 for size and c.valence()
+		pattern[0] = (byte) (ccwVerticesSize + 2);
 		pattern[1] = valence();
 
-		for (int i = 0; i < ccwVertexesSize; i++) {
+		for (int i = 0; i < ccwVerticesSize; i++) {
 			Msg.debug("...i== " + i);
-			pattern[i + 2] = ccwVertexes[i].valence();
+			pattern[i + 2] = ccwVertices[i].valence();
 		}
 		Msg.debug("Leaving Vertex.createValencePattern(byte, Vertex [])");
 	}
 
 	/**
-	 * Return # of irregular vertexs in the valence pattern (vertexs whose valence!=
+	 * Return # of irregular vertices in the valence pattern (vertices whose valence!=
 	 * 4) Note that calcMyValencePattern() must be called before calling this
 	 * method.
 	 */
-	public int irregNeighborVertexes() {
+	public int irregNeighborVertices() {
 		int count = 0;
 		for (int i = 1; i < pattern[0]; i++) {
 			if (pattern[i] != 4) {
@@ -1552,7 +1572,7 @@ public class Vertex extends Constants {
 
 	/**
 	 * Compare the valence pattern of this Vertex to the special pattern in
-	 * pattern2. Also make sure that the tagged vertexs in vertexPat are vertices.
+	 * pattern2. Also make sure that the tagged vertices in vertexPat are vertices.
 	 * (That is, the interior angles must be greater than any other interior angles
 	 * around this Vertex.) In pattern2, the following codes apply:<br>
 	 * <ul>
@@ -1669,7 +1689,7 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Confirm whether the vertexs having the given interior angles have the correct
+	 * Confirm whether the vertices having the given interior angles have the correct
 	 * vertex pattern.
 	 * 
 	 * @param start     start index for the ang array
@@ -1685,7 +1705,7 @@ public class Vertex extends Constants {
 		do {
 			// Check the corresponding boolean in vertexPat
 			if (vertexPat[k]) {
-				// Compare ang[j] to all other angles at non-vertex vertexs
+				// Compare ang[j] to all other angles at non-vertex vertices
 				i = j + 1;
 				if (i == len) {
 					i = 0;
@@ -1726,9 +1746,9 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Fill the angles array with the angles at the opposite vertexs.
+	 * Fill the angles array with the angles at the opposite vertices.
 	 * 
-	 * @param ccwNeighbors the surrounding vertexs in ccw order
+	 * @param ccwNeighbors the surrounding vertices in ccw order
 	 * @param len          the length of
 	 * @return an array of doubles
 	 */
@@ -1784,7 +1804,7 @@ public class Vertex extends Constants {
 	 * Note that calcMyValencePattern() must be called before calling this method.
 	 * 
 	 * @param pattern2 A valence pattern
-	 * @param bpat     a boolean pattern indicating which vertexs are located on the
+	 * @param bpat     a boolean pattern indicating which vertices are located on the
 	 *                 boundary
 	 * @return If they match then return the true, otherwise return false.
 	 */
@@ -1841,9 +1861,9 @@ public class Vertex extends Constants {
 	 * Note that calcMyValencePattern() must be called before calling this method.
 	 * 
 	 * @param pattern2     A valence pattern
-	 * @param bpat         a boolean pattern indicating which vertexs are located on
+	 * @param bpat         a boolean pattern indicating which vertices are located on
 	 *                     the boundary
-	 * @param ccwNeighbors the neighbor vertexs in ccw order
+	 * @param ccwNeighbors the neighbor vertices in ccw order
 	 * @return If they match then return the true, otherwise return false.
 	 */
 

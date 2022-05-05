@@ -55,7 +55,7 @@ public class GlobalSmooth extends GeomBasics {
 			for (int i = 0; i < N; i++) {
 				oElem = (Element) elements.get(i);
 
-				sElem = oElem.elementWithExchangedVertexes(n, nLPos);
+				sElem = oElem.elementWithExchangedVertices(n, nLPos);
 				sElem.updateDistortionMetric();
 
 				if (oElem.distortionMetric > sElem.distortionMetric) {
@@ -156,11 +156,11 @@ public class GlobalSmooth extends GeomBasics {
 
 			// Estimate the gradient vector g for each element:
 			for (Element oElem : elements) {
-				sElem = oElem.elementWithExchangedVertexes(x, xPX);
+				sElem = oElem.elementWithExchangedVertices(x, xPX);
 				sElem.updateDistortionMetric();
 				oElem.gX = (sElem.distortionMetric - oElem.distortionMetric) / delta;
 
-				sElem = oElem.elementWithExchangedVertexes(x, xPY);
+				sElem = oElem.elementWithExchangedVertices(x, xPY);
 				sElem.updateDistortionMetric();
 				oElem.gY = (sElem.distortionMetric - oElem.distortionMetric) / delta;
 
@@ -206,7 +206,7 @@ public class GlobalSmooth extends GeomBasics {
 				newMinDM = java.lang.Double.MAX_VALUE;
 
 				for (Element oElem : elements) {
-					sElem = oElem.elementWithExchangedVertexes(x, xNew);
+					sElem = oElem.elementWithExchangedVertices(x, xNew);
 					sElem.updateDistortionMetric();
 					oElem.newDistortionMetric = sElem.distortionMetric;
 
@@ -251,7 +251,7 @@ public class GlobalSmooth extends GeomBasics {
 		Msg.debug("Leaving GlobalSmooth.init()");
 	}
 
-	/** Perform the smoothing of the vertexs in a step-wise manner. */
+	/** Perform the smoothing of the vertices in a step-wise manner. */
 	@Override
 	public void step() {
 		Msg.debug("Entering GlobalSmooth.step()");
@@ -265,18 +265,18 @@ public class GlobalSmooth extends GeomBasics {
 		Msg.debug("Entering GlobalSmooth.run()");
 		// Variables
 		int i, j;
-		List<Vertex> vertexs = new ArrayList<>();
+		List<Vertex> vertices = new ArrayList<>();
 		List<Element> elements = new ArrayList<>();
 		Element elem;
 		Triangle t;
 		double curLen, oldX, oldY;
 		Vertex v, v_moved, n;
 
-		// Get the internal vertexs from vertexList.
+		// Get the internal vertices from vertexList.
 		for (i = 0; i < vertexList.size(); i++) {
 			v = (Vertex) vertexList.get(i);
 			if (!v.boundaryVertex()) {
-				vertexs.add(v);
+				vertices.add(v);
 			}
 		}
 
@@ -300,7 +300,7 @@ public class GlobalSmooth extends GeomBasics {
 			}
 		}
 
-		Msg.debug("...Vertexes.size(): " + vertexs.size());
+		Msg.debug("...Vertices.size(): " + vertices.size());
 
 		Edge e;
 
@@ -309,8 +309,8 @@ public class GlobalSmooth extends GeomBasics {
 		boolean VertexMoved;
 		do {
 			VertexMoved = false;
-			for (i = 0; i < vertexs.size(); i++) {
-				v = (Vertex) vertexs.get(i);
+			for (i = 0; i < vertices.size(); i++) {
+				v = (Vertex) vertices.get(i);
 
 				if (v == null) {
 					Msg.debug("... no, Vertex has been removed from list");
@@ -324,19 +324,19 @@ public class GlobalSmooth extends GeomBasics {
 					Msg.debug("...distance moved by CLS is " + distance);
 					if (distance < Constants.MOVETOLERANCE) {
 						Msg.debug("...removing Vertex " + v.descr() + " from list");
-						vertexs.set(i, null);
+						vertices.set(i, null);
 					} else {
 						// Allow the move
 						v.setXY(v_moved);
 						v.update();
 						VertexMoved = true;
 						Msg.debug("...allowing CLS move of Vertex " + v.descr());
-						// Put neighbor vertexs back in list, if they are not already there
+						// Put neighbor vertices back in list, if they are not already there
 						for (j = 0; j < v.edgeList.size(); j++) {
 							e = (Edge) v.edgeList.get(j);
 							n = e.otherVertex(v);
-							if (!n.boundaryVertex() && !vertexs.contains(n)) {
-								vertexs.add(n);
+							if (!n.boundaryVertex() && !vertices.contains(n)) {
+								vertices.add(n);
 							}
 						}
 						// Keep track of the largest distance moved
@@ -369,12 +369,12 @@ public class GlobalSmooth extends GeomBasics {
 						oldY = v.y;
 						v_moved = optBasedSmooth(v, elements);
 						if (v_moved.x != oldX || v_moved.y != oldY) {
-							// Put neighbor vertexs back in list, if they're not there
+							// Put neighbor vertices back in list, if they're not there
 							for (j = 0; j < v.edgeList.size(); j++) {
 								e = (Edge) v.edgeList.get(j);
 								n = e.otherVertex(v);
-								if (!n.boundaryVertex() && !vertexs.contains(n)) {
-									vertexs.add(n);
+								if (!n.boundaryVertex() && !vertices.contains(n)) {
+									vertices.add(n);
 								}
 							}
 							// Keep track of the largest distance moved

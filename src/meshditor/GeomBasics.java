@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -15,14 +17,14 @@ import java.util.List;
  */
 public class GeomBasics extends Constants {
 
-	protected static List<Element> elementList;
+	public static List<Element> elementList;
 	protected static List<Triangle> triangleList;
 	protected static List<Vertex> vertexList;
 	protected static List<Edge> edgeList;
 
 	protected static Vertex leftmost = null, rightmost = null, uppermost = null, lowermost = null;
 
-	protected static boolean step = false;
+	public static boolean step = false;
 
 	protected static TopoCleanup topoCleanup;
 	protected static GlobalSmooth globalSmooth;
@@ -88,10 +90,8 @@ public class GeomBasics extends Constants {
 			curElem.disconnectEdges();
 		}
 
-		Edge curEdge;
-		for (Object element : edgeList) {
-			curEdge = (Edge) element;
-			curEdge.disconnectVertexes();
+		for (Edge curEdge : edgeList) {
+			curEdge.disconnectVertices();
 		}
 
 		Vertex curVertex;
@@ -225,26 +225,26 @@ public class GeomBasics extends Constants {
 		}
 
 		if (no2valents > 0) {
-			s = s + "Number of 2-valent vertexs: " + no2valents + "\n";
+			s = s + "Number of 2-valent vertices: " + no2valents + "\n";
 		}
 		if (no3valents > 0) {
-			s = s + "Number of 3-valent vertexs: " + no3valents + "\n";
+			s = s + "Number of 3-valent vertices: " + no3valents + "\n";
 		}
 		if (no4valents > 0) {
-			s = s + "Number of 4-valent vertexs: " + no4valents + "\n";
+			s = s + "Number of 4-valent vertices: " + no4valents + "\n";
 		}
 		if (no5valents > 0) {
-			s = s + "Number of 5-valent vertexs: " + no5valents + "\n";
+			s = s + "Number of 5-valent vertices: " + no5valents + "\n";
 		}
 		if (no6valents > 0) {
-			s = s + "Number of 6-valent vertexs: " + no6valents + "\n";
+			s = s + "Number of 6-valent vertices: " + no6valents + "\n";
 		}
 		if (noXvalents > 0) {
-			s = s + "Number of vertexs with valence > 6: " + noXvalents + "\n";
+			s = s + "Number of vertices with valence > 6: " + noXvalents + "\n";
 		}
 
 		s = s + "Number of quadrilateral elements: " + nQuads + "\n" + "Number of triangular elements: " + nTris + "\n"
-				+ "Number of edges: " + edgeList.size() + "\n" + "Number of vertexs: " + vertexList.size();
+				+ "Number of edges: " + edgeList.size() + "\n" + "Number of vertices: " + vertexList.size();
 
 		return s;
 	}
@@ -304,7 +304,7 @@ public class GeomBasics extends Constants {
 			}
 
 			for (int j = 0; j < n.edgeList.size(); j++) {
-				e = (Edge) n.edgeList.get(j);
+				e = n.edgeList.get(j);
 				if (e == null) {
 					Msg.warning("Vertex " + n.descr() + " has a null in its edgeList.");
 				} else if (edgeList.indexOf(e) == -1) {
@@ -315,7 +315,7 @@ public class GeomBasics extends Constants {
 
 		Edge e;
 		for (int i = 0; i < edgeList.size(); i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			if (e.leftVertex.edgeList.indexOf(e) == -1) {
 				Msg.warning("leftVertex of edge " + e.descr() + " has not got that edge in its .edgeList");
 			}
@@ -449,7 +449,9 @@ public class GeomBasics extends Constants {
 		ArrayList<double[]> triangles = new ArrayList<>();
 
 		try {
-			fis = new FileInputStream(meshDirectory + meshFilename);
+			String file = "C:\\Users\\micyc\\Documents\\Repositories\\Q-Morph\\examples\\thesis-tri\\difficult.mesh";
+//			String file = meshDirectory + meshFilename;
+			fis = new FileInputStream(file);
 			BufferedReader in = new BufferedReader(new InputStreamReader(fis));
 			double x1, x2, x3, x4, y1, y2, y3, y4;
 			int i = 0;
@@ -493,17 +495,17 @@ public class GeomBasics extends Constants {
 					edge1 = new Edge(Vertex1, Vertex2);
 					if (!edgeList.contains(edge1)) {
 						edgeList.add(edge1);
-						edge1.connectVertexes();
+						edge1.connectVertices();
 					} else {
-						edge1 = (Edge) edgeList.get(edgeList.indexOf(edge1));
+						edge1 = edgeList.get(edgeList.indexOf(edge1));
 					}
 
 					edge2 = new Edge(Vertex1, Vertex3);
 					if (!edgeList.contains(edge2)) {
 						edgeList.add(edge2);
-						edge2.connectVertexes();
+						edge2.connectVertices();
 					} else {
-						edge2 = (Edge) edgeList.get(edgeList.indexOf(edge2));
+						edge2 = edgeList.get(edgeList.indexOf(edge2));
 					}
 
 					if (!Double.isNaN(x4) && !Double.isNaN(y4)) {
@@ -517,17 +519,17 @@ public class GeomBasics extends Constants {
 						edge3 = new Edge(Vertex2, Vertex4);
 						if (!edgeList.contains(edge3)) {
 							edgeList.add(edge3);
-							edge3.connectVertexes();
+							edge3.connectVertices();
 						} else {
-							edge3 = (Edge) edgeList.get(edgeList.indexOf(edge3));
+							edge3 = edgeList.get(edgeList.indexOf(edge3));
 						}
 
 						edge4 = new Edge(Vertex3, Vertex4);
 						if (!edgeList.contains(edge4)) {
 							edgeList.add(edge4);
-							edge4.connectVertexes();
+							edge4.connectVertices();
 						} else {
-							edge4 = (Edge) edgeList.get(edgeList.indexOf(edge4));
+							edge4 = edgeList.get(edgeList.indexOf(edge4));
 						}
 
 						q = new Quad(edge1, edge2, edge3, edge4);
@@ -537,9 +539,9 @@ public class GeomBasics extends Constants {
 						edge3 = new Edge(Vertex2, Vertex3);
 						if (!edgeList.contains(edge3)) {
 							edgeList.add(edge3);
-							edge3.connectVertexes();
+							edge3.connectVertices();
 						} else {
-							edge3 = (Edge) edgeList.get(edgeList.indexOf(edge3));
+							edge3 = edgeList.get(edgeList.indexOf(edge3));
 						}
 
 						t = new Triangle(edge1, edge2, edge3);
@@ -553,11 +555,12 @@ public class GeomBasics extends Constants {
 				Msg.error("Cannot read triangle-mesh data.");
 			}
 		} catch (Exception e) {
-			Msg.error("File " + meshFilename + " not found.");
+//			Msg.error("File " + meshFilename + " not found.");
+			e.printStackTrace();
 		}
 
-		vertexList = usvertexList; // sortVertexes(usvertexList);
-		double[][] ts = triangles.toArray(new double[triangles.size()][3]);
+		vertexList = usvertexList; // sortVertices(usvertexList);
+		double[][] ts = triangles.toArray(new double[triangles.size()][6]);
 		loadTriangleMesh(ts);
 		return elementList;
 	}
@@ -576,7 +579,7 @@ public class GeomBasics extends Constants {
 		elementList = new ArrayList<>();
 		triangleList = new ArrayList<>();
 		edgeList = new ArrayList<>();
-		ArrayList<Vertex> usvertexList = new ArrayList<>(); // unsorted
+		HashMap<Vertex, Vertex> usvertexList = new HashMap<>();
 
 		for (double[] triangle : triangles) {
 			double len1 = 0, len2 = 0, len3 = 0, ang1 = 0, ang2 = 0, ang3 = 0;
@@ -587,30 +590,33 @@ public class GeomBasics extends Constants {
 			double x3 = triangle[4];
 			double y3 = triangle[5];
 
-			Vertex1 = new Vertex(x1, y1);
-			if (!usvertexList.contains(Vertex1)) {
-				usvertexList.add(Vertex1);
-			} else {
-				Vertex1 = usvertexList.get(usvertexList.indexOf(Vertex1));
-			}
-			Vertex2 = new Vertex(x2, y2);
-			if (!usvertexList.contains(Vertex2)) {
-				usvertexList.add(Vertex2);
-			} else {
-				Vertex2 = usvertexList.get(usvertexList.indexOf(Vertex2));
-			}
-			Vertex3 = new Vertex(x3, y3);
-			if (!usvertexList.contains(Vertex3)) {
-				usvertexList.add(Vertex3);
-			} else {
-				Vertex3 = usvertexList.get(usvertexList.indexOf(Vertex3));
-			}
+			final Vertex Vertex1F = new Vertex(x1, y1);
+			Vertex1 = usvertexList.computeIfAbsent(Vertex1F, v -> Vertex1F);
+//			if (!usvertexList.contains(Vertex1)) {
+//				usvertexList.add(Vertex1);
+//			} else {
+//				Vertex1 = usvertexList.get(usvertexList.indexOf(Vertex1));
+//			}
+			final Vertex Vertex2F = new Vertex(x2, y2);
+			Vertex2 = usvertexList.computeIfAbsent(Vertex2F, v -> Vertex2F);
+//			if (!usvertexList.contains(Vertex2)) {
+//				usvertexList.add(Vertex2);
+//			} else {
+//				Vertex2 = usvertexList.get(usvertexList.indexOf(Vertex2));
+//			}
+			final Vertex Vertex3F = new Vertex(x3, y3);
+			Vertex3 = usvertexList.computeIfAbsent(Vertex3F, v -> Vertex3F);
+//			if (!usvertexList.contains(Vertex3)) {
+//				usvertexList.add(Vertex3);
+//			} else {
+//				Vertex3 = usvertexList.get(usvertexList.indexOf(Vertex3));
+//			}
 
 			edge1 = new Edge(Vertex1, Vertex2);
 			if (!edgeList.contains(edge1)) {
 				edgeList.add(edge1);
 			} else {
-				edge1 = (Edge) edgeList.get(edgeList.indexOf(edge1));
+				edge1 = edgeList.get(edgeList.indexOf(edge1));
 			}
 			edge1.leftVertex.connectToEdge(edge1);
 			edge1.rightVertex.connectToEdge(edge1);
@@ -619,7 +625,7 @@ public class GeomBasics extends Constants {
 			if (!edgeList.contains(edge2)) {
 				edgeList.add(edge2);
 			} else {
-				edge2 = (Edge) edgeList.get(edgeList.indexOf(edge2));
+				edge2 = edgeList.get(edgeList.indexOf(edge2));
 			}
 			edge2.leftVertex.connectToEdge(edge2);
 			edge2.rightVertex.connectToEdge(edge2);
@@ -628,7 +634,7 @@ public class GeomBasics extends Constants {
 			if (!edgeList.contains(edge3)) {
 				edgeList.add(edge3);
 			} else {
-				edge3 = (Edge) edgeList.get(edgeList.indexOf(edge3));
+				edge3 = edgeList.get(edgeList.indexOf(edge3));
 			}
 			edge3.leftVertex.connectToEdge(edge3);
 			edge3.rightVertex.connectToEdge(edge3);
@@ -640,12 +646,13 @@ public class GeomBasics extends Constants {
 			}
 
 			t = new Triangle(edge1, edge2, edge3, len1, len2, len3, ang1, ang2, ang3, meshLenOpt, meshAngOpt);
+//			t = new Triangle(triangle);
 			t.connectEdges();
 			triangleList.add(t);
 
 		}
-		vertexList = usvertexList;
-		
+		vertexList = new ArrayList<>(usvertexList.keySet());
+
 		return triangleList;
 	}
 
@@ -701,7 +708,7 @@ public class GeomBasics extends Constants {
 					if (!edgeList.contains(edge1)) {
 						edgeList.add(edge1);
 					} else {
-						edge1 = (Edge) edgeList.get(edgeList.indexOf(edge1));
+						edge1 = edgeList.get(edgeList.indexOf(edge1));
 					}
 					edge1.leftVertex.connectToEdge(edge1);
 					edge1.rightVertex.connectToEdge(edge1);
@@ -710,7 +717,7 @@ public class GeomBasics extends Constants {
 					if (!edgeList.contains(edge2)) {
 						edgeList.add(edge2);
 					} else {
-						edge2 = (Edge) edgeList.get(edgeList.indexOf(edge2));
+						edge2 = edgeList.get(edgeList.indexOf(edge2));
 					}
 					edge2.leftVertex.connectToEdge(edge2);
 					edge2.rightVertex.connectToEdge(edge2);
@@ -719,7 +726,7 @@ public class GeomBasics extends Constants {
 					if (!edgeList.contains(edge3)) {
 						edgeList.add(edge3);
 					} else {
-						edge3 = (Edge) edgeList.get(edgeList.indexOf(edge3));
+						edge3 = edgeList.get(edgeList.indexOf(edge3));
 					}
 					edge3.leftVertex.connectToEdge(edge3);
 					edge3.rightVertex.connectToEdge(edge3);
@@ -747,12 +754,12 @@ public class GeomBasics extends Constants {
 		} catch (Exception e) {
 			Msg.error("File " + meshFilename + " not found.");
 		}
-		vertexList = usvertexList; // sortVertexes(usvertexList);
+		vertexList = usvertexList; // sortVertices(usvertexList);
 		return triangleList;
 	}
 
 	/** A method to read Vertex files. */
-	public static ArrayList<Vertex> loadVertexes() {
+	public static ArrayList<Vertex> loadVertices() {
 		FileInputStream fis;
 		Vertex Vertex1, Vertex2, Vertex3, Vertex4;
 		ArrayList<Vertex> usvertexList = new ArrayList<Vertex>();
@@ -809,7 +816,7 @@ public class GeomBasics extends Constants {
 			Msg.error("File " + meshFilename + " not found.");
 		}
 
-		// vertexList= sortVertexes(usvertexList);
+		// vertexList= sortVertices(usvertexList);
 		vertexList = usvertexList;
 		return usvertexList;
 	}
@@ -818,18 +825,18 @@ public class GeomBasics extends Constants {
 	 * Method for writing to a LaTeX drawing format (need the epic and eepic
 	 * packages).
 	 */
-	public static boolean exportMeshToLaTeX(String filename, int unitlength, double xcorr, double ycorr, boolean visibleVertexes) {
+	public static boolean exportMeshToLaTeX(String filename, int unitlength, double xcorr, double ycorr, boolean visibleVertices) {
 		FileOutputStream fos;
 		Edge edge;
 		Vertex n;
 		int i;
 		ArrayList<Edge> boundary = new ArrayList<Edge>();
 
-		findExtremeVertexes();
+		findExtremeVertices();
 
 		// Collect boundary edges in a list
 		for (i = 0; i < edgeList.size(); i++) {
-			edge = (Edge) edgeList.get(i);
+			edge = edgeList.get(i);
 			if (edge.boundaryEdge()) {
 				boundary.add(edge);
 			}
@@ -863,7 +870,7 @@ public class GeomBasics extends Constants {
 				out.write("\\thicklines");
 				out.newLine();
 				for (i = 0; i < boundary.size(); i++) {
-					edge = (Edge) boundary.get(i);
+					edge = boundary.get(i);
 
 					x1 = edge.leftVertex.x + xcorr;
 					y1 = edge.leftVertex.y + ycorr;
@@ -878,7 +885,7 @@ public class GeomBasics extends Constants {
 				out.write("\\thinlines");
 				out.newLine();
 				for (i = 0; i < edgeList.size(); i++) {
-					edge = (Edge) edgeList.get(i);
+					edge = edgeList.get(i);
 
 					if (!edge.boundaryEdge()) {
 						x1 = edge.leftVertex.x + xcorr;
@@ -891,8 +898,8 @@ public class GeomBasics extends Constants {
 					}
 				}
 
-				// All vertexs...
-				if (visibleVertexes) {
+				// All vertices...
+				if (visibleVertices) {
 					for (i = 0; i < vertexList.size(); i++) {
 						n = vertexList.get(i);
 						out.write("\\put(" + (n.x + xcorr) + "," + (n.y + ycorr) + "){\\circle*{0.1}}");
@@ -1072,8 +1079,8 @@ public class GeomBasics extends Constants {
 		return true;
 	}
 
-	/** Write all vertexs in vertexList to a file. */
-	public static boolean writeVertexes(String filename) {
+	/** Write all vertices in vertexList to a file. */
+	public static boolean writeVertices(String filename) {
 		FileOutputStream fos;
 
 		try {
@@ -1100,9 +1107,9 @@ public class GeomBasics extends Constants {
 		return true;
 	}
 
-	/** Find the leftmost, rightmost, uppermost, and lowermost vertexs. */
-	public static void findExtremeVertexes() {
-		// vertexList= sortVertexes(vertexList);
+	/** Find the leftmost, rightmost, uppermost, and lowermost vertices. */
+	public static void findExtremeVertices() {
+		// vertexList= sortVertices(vertexList);
 		if (vertexList == null || vertexList.size() == 0) {
 			leftmost = null;
 			rightmost = null;
@@ -1137,30 +1144,30 @@ public class GeomBasics extends Constants {
 
 	}
 
-	/** Sort vertexs left to right. Higher y-values are preferred to lower ones. */
-	public static List<Vertex> sortVertexes(List<Vertex> unsortedVertexes) {
-		List<Vertex> sortedVertexes = new ArrayList<>();
+	/** Sort vertices left to right. Higher y-values are preferred to lower ones. */
+	public static List<Vertex> sortVertices(List<Vertex> unsortedVertices) {
+		List<Vertex> sortedVertices = new ArrayList<>();
 		Vertex curVertex, candVertex;
-		while (unsortedVertexes.size() > 0) {
-			curVertex = unsortedVertexes.get(0);
-			for (int i = 1; i < unsortedVertexes.size(); i++) {
-				candVertex = unsortedVertexes.get(i);
+		while (unsortedVertices.size() > 0) {
+			curVertex = unsortedVertices.get(0);
+			for (int i = 1; i < unsortedVertices.size(); i++) {
+				candVertex = unsortedVertices.get(i);
 				if (candVertex.x < curVertex.x || (candVertex.x == curVertex.x && candVertex.y < curVertex.y)) {
 					curVertex = candVertex;
 				}
 			}
-			sortedVertexes.add(curVertex);
-			unsortedVertexes.remove(unsortedVertexes.indexOf(curVertex));
+			sortedVertices.add(curVertex);
+			unsortedVertices.remove(unsortedVertices.indexOf(curVertex));
 		}
 
-		// Find the leftmost, rightmost, uppermost, and lowermost vertexs.
-		leftmost = sortedVertexes.get(0);
-		rightmost = sortedVertexes.get(sortedVertexes.size() - 1);
+		// Find the leftmost, rightmost, uppermost, and lowermost vertices.
+		leftmost = sortedVertices.get(0);
+		rightmost = sortedVertices.get(sortedVertices.size() - 1);
 		uppermost = leftmost;
 		lowermost = leftmost;
 
-		for (int i = 1; i < sortedVertexes.size(); i++) {
-			curVertex = sortedVertexes.get(i);
+		for (int i = 1; i < sortedVertices.size(); i++) {
+			curVertex = sortedVertices.get(i);
 			if (curVertex.y > uppermost.y) {
 				uppermost = curVertex;
 			}
@@ -1169,7 +1176,7 @@ public class GeomBasics extends Constants {
 			}
 		}
 
-		return sortedVertexes;
+		return sortedVertices;
 	}
 
 	private static int cInd = 0;
@@ -1228,14 +1235,13 @@ public class GeomBasics extends Constants {
 
 	public static void printEdgeList(List<Edge> edgeList) {
 		if (Msg.debugMode) {
-			for (Object element : edgeList) {
-				Edge edge = (Edge) element;
+			for (Edge edge : edgeList) {
 				edge.printMe();
 			}
 		}
 	}
 
-	public static void printVertexes(List<Vertex> vertexList) {
+	public static void printVertices(List<Vertex> vertexList) {
 		if (Msg.debugMode) {
 			Msg.debug("vertexList:");
 			for (Vertex vertex : vertexList) {
@@ -1264,7 +1270,7 @@ public class GeomBasics extends Constants {
 	}
 
 	/** */
-	public static void printAnglesAtSurrondingVertexes() {
+	public static void printAnglesAtSurrondingVertices() {
 		Vertex[] neighbors;
 		double[] angles;
 		for (Vertex n : vertexList) {
@@ -1273,7 +1279,7 @@ public class GeomBasics extends Constants {
 				n.createValencePattern(neighbors);
 				angles = n.surroundingAngles(neighbors, n.pattern[0] - 2);
 
-				Msg.debug("Angles at the vertexs surrounding Vertex " + n.descr() + ":");
+				Msg.debug("Angles at the vertices surrounding Vertex " + n.descr() + ":");
 				for (int j = 0; j < n.pattern[0] - 2; j++) {
 					Msg.debug("angles[" + j + "]== " + Math.toDegrees(angles[j]) + " (in degrees)");
 				}
@@ -1308,7 +1314,7 @@ public class GeomBasics extends Constants {
 	}
 
 	/**
-	 * Quad q is to be collapsed. Vertexes n1 and n2 are two opposite vertexs in q.
+	 * Quad q is to be collapsed. Vertices n1 and n2 are two opposite vertices in q.
 	 * This method tries to find a location inside the current q to which n1 and n2
 	 * can safely be relocated and joined without causing any adjacent elements to
 	 * become inverted. The first candidate location is the centroid of the quad. If
@@ -1495,7 +1501,7 @@ public class GeomBasics extends Constants {
 					triangleList.set(triangleList.indexOf(t), null);
 					t.disconnectEdges();
 					edgeList.remove(edgeList.indexOf(e));
-					e.disconnectVertexes();
+					e.disconnectVertices();
 				}
 
 			}

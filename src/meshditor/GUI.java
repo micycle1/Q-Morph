@@ -46,14 +46,14 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		// qm= new QuadMorph(params);
 
 		GeomBasics.loadMesh();
-		GeomBasics.findExtremeVertexes();
+		GeomBasics.findExtremeVertices();
 		// edgeList= GeomBasics.getEdgeList();
 		// vertexList= GeomBasics.getvertexList();
 	}
 
 	/** The filename of the current mesh. */
 	public String filename;
-	/** Boolean indicating that we are currently defining vertexs. */
+	/** Boolean indicating that we are currently defining vertices. */
 	public boolean VertexMode = false;
 	/** Boolean indicating that we are currently defining triangles. */
 	public boolean triangleMode = true;
@@ -81,12 +81,12 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	int scale = 100;
 	MyMouseListener myMouseListener;
 
-	MenuItem newItem, loadMeshItem, loadVertexesItem, saveItem, saveAsItem, saveVertexesItem, saveVertexesAsItem, saveTriAsItem, exportItem,
+	MenuItem newItem, loadMeshItem, loadVerticesItem, saveItem, saveAsItem, saveVerticesItem, saveVerticesAsItem, saveTriAsItem, exportItem,
 			exitItem;
 	MenuItem undoItem, clearEdgesItem;
 	CheckboxMenuItem VertexModeItem, triModeItem, quadModeItem, debugModeItem, stepModeItem;
 	MenuItem consistencyItem, detectInversionItem, printElementsItem, printTrianglesItem, reportMetricsItem, printValencesItem,
-			printValPatItem, printAngAtSurVertexesItem, centroidItem, triCountItem, delauneyItem, qmorphItem, globalCleanUpItem,
+			printValPatItem, printAngAtSurVerticesItem, centroidItem, triCountItem, delauneyItem, qmorphItem, globalCleanUpItem,
 			globalSmoothItem, helpItem, aboutItem;
 
 	MenuShortcut qkey;
@@ -97,11 +97,11 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		fileMenu = new Menu("File");
 		newItem = new MenuItem("New");
 		loadMeshItem = new MenuItem("Load mesh");
-		loadVertexesItem = new MenuItem("Load vertexs");
+		loadVerticesItem = new MenuItem("Load vertices");
 		saveItem = new MenuItem("Save mesh");
 		saveAsItem = new MenuItem("Save mesh as...");
-		saveVertexesItem = new MenuItem("Save vertexs");
-		saveVertexesAsItem = new MenuItem("Save vertexs as...");
+		saveVerticesItem = new MenuItem("Save vertices");
+		saveVerticesAsItem = new MenuItem("Save vertices as...");
 		saveTriAsItem = new MenuItem("Save triangle mesh as...");
 		exportItem = new MenuItem("Export mesh to LaTeX file");
 		exitItem = new MenuItem("Exit");
@@ -110,10 +110,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 		newItem.addActionListener(this);
 		loadMeshItem.addActionListener(this);
-		loadVertexesItem.addActionListener(this);
+		loadVerticesItem.addActionListener(this);
 		saveItem.addActionListener(this);
-		saveVertexesItem.addActionListener(this);
-		saveVertexesAsItem.addActionListener(this);
+		saveVerticesItem.addActionListener(this);
+		saveVerticesAsItem.addActionListener(this);
 		saveAsItem.addActionListener(this);
 		saveTriAsItem.addActionListener(this);
 		exportItem.addActionListener(this);
@@ -121,11 +121,11 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 		fileMenu.add(newItem);
 		fileMenu.add(loadMeshItem);
-		fileMenu.add(loadVertexesItem);
+		fileMenu.add(loadVerticesItem);
 		fileMenu.add(saveItem);
 		fileMenu.add(saveAsItem);
-		fileMenu.add(saveVertexesItem);
-		fileMenu.add(saveVertexesAsItem);
+		fileMenu.add(saveVerticesItem);
+		fileMenu.add(saveVerticesAsItem);
 		fileMenu.add(saveTriAsItem);
 		fileMenu.add(exportItem);
 		fileMenu.addSeparator();
@@ -141,7 +141,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 		modeMenu = new Menu("Mode");
 
-		VertexModeItem = new CheckboxMenuItem("Plot vertexs");
+		VertexModeItem = new CheckboxMenuItem("Plot vertices");
 		VertexModeItem.setState(false);
 		VertexModeItem.addItemListener(this);
 		modeMenu.add(VertexModeItem);
@@ -175,12 +175,12 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		printElementsItem.addActionListener(this);
 		reportMetricsItem = new MenuItem("Report mesh metrics");
 		reportMetricsItem.addActionListener(this);
-		printValencesItem = new MenuItem("Print valences of all vertexs");
+		printValencesItem = new MenuItem("Print valences of all vertices");
 		printValencesItem.addActionListener(this);
-		printValPatItem = new MenuItem("Print valence patterns of all vertexs");
+		printValPatItem = new MenuItem("Print valence patterns of all vertices");
 		printValPatItem.addActionListener(this);
-		printAngAtSurVertexesItem = new MenuItem("Print angles at surrounding vertexs");
-		printAngAtSurVertexesItem.addActionListener(this);
+		printAngAtSurVerticesItem = new MenuItem("Print angles at surrounding vertices");
+		printAngAtSurVerticesItem.addActionListener(this);
 
 		centroidItem = new MenuItem("Create centroid for last quad");
 		centroidItem.addActionListener(this);
@@ -194,7 +194,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		debugMenu.add(reportMetricsItem);
 		debugMenu.add(printValencesItem);
 		debugMenu.add(printValPatItem);
-		debugMenu.add(printAngAtSurVertexesItem);
+		debugMenu.add(printAngAtSurVerticesItem);
 		debugMenu.add(centroidItem);
 		debugMenu.add(triCountItem);
 
@@ -281,13 +281,13 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			GeomBasics.loadMesh();
 			f.setTitle("MeshDitor: " + loadName);
 
-			GeomBasics.findExtremeVertexes();
+			GeomBasics.findExtremeVertices();
 			cvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, scale);
 		}
 	}
 
-	void commandLoadVertexes() {
-		FileDialog fd = new FileDialog(f, "Load vertexs from file", FileDialog.LOAD);
+	void commandLoadVertices() {
+		FileDialog fd = new FileDialog(f, "Load vertices from file", FileDialog.LOAD);
 		fd.setDirectory(GeomBasics.meshDirectory);
 		fd.show();
 		String dir = fd.getDirectory();
@@ -297,10 +297,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			cvas.clear();
 
 			GeomBasics.setParams(loadName, dir, false, false);
-			GeomBasics.loadVertexes();
+			GeomBasics.loadVertices();
 			f.setTitle("MeshDitor: " + loadName);
 
-			GeomBasics.findExtremeVertexes();
+			GeomBasics.findExtremeVertices();
 			cvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, scale);
 		}
 	}
@@ -313,22 +313,22 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		}
 	}
 
-	void commandSaveVertexes() {
+	void commandSaveVertices() {
 		if (filename == null || filename == "") {
-			commandSaveVertexesAs();
+			commandSaveVerticesAs();
 		} else {
 			GeomBasics.writeMesh(GeomBasics.meshDirectory + GeomBasics.meshFilename);
 		}
 	}
 
-	void commandSaveVertexesAs() {
-		FileDialog fd = new FileDialog(f, "Save vertexs to file", FileDialog.SAVE);
+	void commandSaveVerticesAs() {
+		FileDialog fd = new FileDialog(f, "Save vertices to file", FileDialog.SAVE);
 		fd.setDirectory(GeomBasics.meshDirectory);
 		fd.show();
 		String dir = fd.getDirectory();
 		String saveName = fd.getFile();
 		if (dir != null && dir != "" && saveName != null && saveName != "") {
-			GeomBasics.writeVertexes(dir + saveName);
+			GeomBasics.writeVertices(dir + saveName);
 			f.setTitle("MeshDitor: " + saveName);
 			filename = dir + saveName;
 			GeomBasics.setParams(saveName, dir, false, false);
@@ -365,7 +365,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	void commandExportMeshToLaTeX() {
 		int ul;
 		double xcorr, ycorr;
-		boolean visibleVertexes;
+		boolean visibleVertices;
 
 		ExportToLaTeXOptionsDialog ed = new ExportToLaTeXOptionsDialog(f, "Set export parameters", true);
 		ed.show();
@@ -374,14 +374,14 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			ul = ed.getUnitlength();
 			xcorr = ed.getXCorr();
 			ycorr = ed.getYCorr();
-			visibleVertexes = ed.getVisibleVertexes();
+			visibleVertices = ed.getVisibleVertices();
 
 			FileDialog fd = new FileDialog(f, "Export mesh to file", FileDialog.SAVE);
 			fd.setVisible(true);
 			String dir = fd.getDirectory();
 			String saveName = fd.getFile();
 			if (dir != null && dir != "" && saveName != null && saveName != "") {
-				GeomBasics.exportMeshToLaTeX(dir + saveName, ul, xcorr, ycorr, visibleVertexes);
+				GeomBasics.exportMeshToLaTeX(dir + saveName, ul, xcorr, ycorr, visibleVertices);
 			}
 		}
 	}
@@ -458,7 +458,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 			if (!GeomBasics.step) {
 				qm.run();
-				GeomBasics.findExtremeVertexes();
+				GeomBasics.findExtremeVertices();
 				cvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, scale);
 			} else {
 				Msg.debug("Running QMorph.run(..) in step mode");
@@ -512,7 +512,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		String command = (String) e.getItem();
-		if (command.equals("Plot vertexs")) {
+		if (command.equals("Plot vertices")) {
 			commandVertexMode();
 		} else if (command.equals("Construct triangles")) {
 			commandTriMode();
@@ -541,14 +541,14 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			commandNew();
 		} else if (command.equals("Load mesh")) {
 			commandLoadMesh();
-		} else if (command.equals("Load vertexs")) {
-			commandLoadVertexes();
+		} else if (command.equals("Load vertices")) {
+			commandLoadVertices();
 		} else if (command.equals("Save mesh")) {
 			commandSaveMesh();
-		} else if (command.equals("Save vertexs")) {
-			commandSaveVertexes();
-		} else if (command.equals("Save vertexs as...")) {
-			commandSaveVertexesAs();
+		} else if (command.equals("Save vertices")) {
+			commandSaveVertices();
+		} else if (command.equals("Save vertices as...")) {
+			commandSaveVerticesAs();
 		} else if (command.equals("Save mesh as...")) {
 			commandSaveMeshAs();
 		} else if (command.equals("Save triangle mesh as...")) {
@@ -580,12 +580,12 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			GeomBasics.updateMeshMetrics();
 			rd = new MsgDialog(f, "Mesh Metrics Report", GeomBasics.meshMetricsReport(), 80, 18);
 			rd.show();
-		} else if (command.equals("Print valences of all vertexs")) {
+		} else if (command.equals("Print valences of all vertices")) {
 			GeomBasics.printValences();
-		} else if (command.equals("Print valence patterns of all vertexs")) {
+		} else if (command.equals("Print valence patterns of all vertices")) {
 			GeomBasics.printValPatterns();
-		} else if (command.equals("Print angles at surrounding vertexs")) {
-			GeomBasics.printAnglesAtSurrondingVertexes();
+		} else if (command.equals("Print angles at surrounding vertices")) {
+			GeomBasics.printAnglesAtSurrondingVertices();
 		} else if (command.equals("Create centroid for last quad")) {
 
 			Vertex n;
@@ -630,7 +630,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		Vertex[] myvertexList = new Vertex[4];
 		Triangle tri;
 		Quad q;
-		boolean lastActionMergeVertexes = false;
+		boolean lastActionMergeVertices = false;
 		boolean lastActionMoveVertex = false;
 		boolean lastActionNewVertex = false;
 		boolean lastActionNewEdge = false;
@@ -650,7 +650,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			Msg.debug("Entering mouseClicked(..)");
 			Edge b, l, r, t;
 			lastActionMoveVertex = false;
-			lastActionMergeVertexes = false;
+			lastActionMergeVertices = false;
 			lastActionNewVertex = false;
 			lastActionNewEdge = false;
 			lastActionTwoNewEdges = false;
@@ -682,7 +682,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 					edge1 = new Edge(myvertexList[0], myvertexList[1]);
 					if (!GeomBasics.edgeList.contains(edge1)) {
 						GeomBasics.edgeList.add(edge1);
-						edge1.connectVertexes();
+						edge1.connectVertices();
 						nONewEdges++;
 						lastActionNewEdge = true;
 					} else {
@@ -698,7 +698,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 					edge2 = new Edge(myvertexList[1], myvertexList[2]);
 					if (!GeomBasics.edgeList.contains(edge2)) {
 						GeomBasics.edgeList.add(edge2);
-						edge2.connectVertexes();
+						edge2.connectVertices();
 						nONewEdges++;
 						if (nONewEdges >= 2) {
 							lastActionTwoNewEdges = true;
@@ -713,7 +713,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 					edge3 = new Edge(myvertexList[0], myvertexList[2]);
 					if (!GeomBasics.edgeList.contains(edge3)) {
 						GeomBasics.edgeList.add(edge3);
-						edge3.connectVertexes();
+						edge3.connectVertices();
 						nONewEdges++;
 						if (nONewEdges >= 2) {
 							lastActionTwoNewEdges = true;
@@ -742,7 +742,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 					edge2 = new Edge(myvertexList[1], myvertexList[2]);
 					if (!GeomBasics.edgeList.contains(edge2)) {
 						GeomBasics.edgeList.add(edge2);
-						edge2.connectVertexes();
+						edge2.connectVertices();
 						nONewEdges++;
 						lastActionNewEdge = true;
 					} else {
@@ -757,7 +757,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 					edge3 = new Edge(myvertexList[2], myvertexList[3]);
 					if (!GeomBasics.edgeList.contains(edge3)) {
 						GeomBasics.edgeList.add(edge3);
-						edge3.connectVertexes();
+						edge3.connectVertices();
 						nONewEdges++;
 						if (nONewEdges >= 2) {
 							lastActionTwoNewEdges = true;
@@ -772,7 +772,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 					edge4 = new Edge(myvertexList[0], myvertexList[3]);
 					if (!GeomBasics.edgeList.contains(edge4)) {
 						GeomBasics.edgeList.add(edge4);
-						edge4.connectVertexes();
+						edge4.connectVertices();
 						nONewEdges++;
 						if (nONewEdges >= 2) {
 							lastActionTwoNewEdges = true;
@@ -805,7 +805,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						GeomBasics.elementList.add(q);
 						q.connectEdges();
 						/*
-						 * b.connectVertexes(); l.connectVertexes(); r.connectVertexes(); t.connectVertexes();
+						 * b.connectVertices(); l.connectVertices(); r.connectVertices(); t.connectVertices();
 						 */
 						lastActionNewQuad = true;
 					}
@@ -870,7 +870,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 				movingVertex.setXY(x, y);
 				movingVertex.update();
 
-				if (ind != -1) { // We have to merge the vertexs
+				if (ind != -1) { // We have to merge the vertices
 					n = (Vertex) GeomBasics.vertexList.get(ind);
 
 					for (int i = 0; i < n.edgeList.size(); i++) {
@@ -933,9 +933,9 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 					}
 
 					GeomBasics.vertexList.remove(ind);
-					lastActionMergeVertexes = true;
+					lastActionMergeVertices = true;
 				} else {
-					lastActionMergeVertexes = false;
+					lastActionMergeVertices = false;
 				}
 
 				lastActionMoveVertex = true;
@@ -954,7 +954,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			Edge e;
 			int j;
 			if (lastActionMoveVertex) {
-				if (lastActionMergeVertexes) {
+				if (lastActionMergeVertices) {
 					for (int i = 0; i < oldMovingVertex.edgeList.size(); i++) {
 						e = (Edge) oldMovingVertex.edgeList.get(i);
 						j = movingVertex.edgeList.indexOf(e);
@@ -996,14 +996,14 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			}
 			if (lastActionNewEdge) {
 				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
-				e.disconnectVertexes();
+				e.disconnectVertices();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
 			} else if (lastActionTwoNewEdges) {
 				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
-				e.disconnectVertexes();
+				e.disconnectVertices();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
 				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
-				e.disconnectVertexes();
+				e.disconnectVertices();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
 			}
 

@@ -33,7 +33,7 @@ class GControls extends Panel implements ItemListener {
 		this.gui = gui;
 		this.canvas = cvas;
 
-		add(constructStatus = new Label("# of vertexs remaining: "));
+		add(constructStatus = new Label("# of vertices remaining: "));
 		add(clickStatus);
 		add(grid = new Checkbox("Show grid", true));
 		add(axis = new Checkbox("Show axis", true));
@@ -150,10 +150,10 @@ class GControls extends Panel implements ItemListener {
 				method.step(); // Run one more step ...
 
 				if (GeomBasics.leftmost == null) {
-					GeomBasics.findExtremeVertexes();
+					GeomBasics.findExtremeVertices();
 				}
 				// canvas.repaint();
-				// GeomBasics.findExtremeVertexes();
+				// GeomBasics.findExtremeVertices();
 				canvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, gui.scale);
 			} else {
 				md = new MsgDialog(gui.f, "Program message", "You must choose a method first.", 40, 1);

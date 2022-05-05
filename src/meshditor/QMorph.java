@@ -29,7 +29,7 @@ public class QMorph extends GeomBasics {
 	public void init() {
 
 		if (leftmost == null || lowermost == null || rightmost == null || uppermost == null) {
-			findExtremeVertexes();
+			findExtremeVertices();
 		}
 
 		if (doCleanUp) {
@@ -191,7 +191,7 @@ public class QMorph extends GeomBasics {
 	/**
 	 * Count the number of front edges in the new loops created if we were to create
 	 * a new quad with edge b as base edge and one or both of edges l and r were
-	 * promoted to front edges and one or both of their top vertexs were located on
+	 * promoted to front edges and one or both of their top vertices were located on
 	 * the front. Return a byte signifying which, if any, of these loops contains an
 	 * odd number of edges.
 	 *
@@ -715,7 +715,8 @@ public class QMorph extends GeomBasics {
 		Vertex n, nNew, nOld;
 		Edge e, fe1, fe2;
 		Vertex bottomLeft, bottomRight, bottomLeftNew, bottomRightNew, bottomLeftOld, bottomRightOld;
-		ArrayList<Vertex> adjVertexes, adjVertexesNew;
+		List<Vertex> adjVertices;
+		List<Vertex> adjVerticesNew;
 
 		if (q.isFake) {
 
@@ -729,18 +730,18 @@ public class QMorph extends GeomBasics {
 			bottomLeftOld = bottomLeft.copyXY();
 			bottomRightOld = bottomRight.copyXY();
 
-			adjVertexes = q.getAdjVertexes();
-			adjVertexesNew = new ArrayList<Vertex>(adjVertexes.size());
+			adjVertices = q.getAdjVertices();
+			adjVerticesNew = new ArrayList<>(adjVertices.size());
 
-			// Calculate smoothed pos for each element Vertex and those vertexs connected to
+			// Calculate smoothed pos for each element Vertex and those vertices connected to
 			// the element. If the element has become inverted, then repair it.
 
 			topNew = getSmoothedPos(top, q);
 			bottomLeftNew = getSmoothedPos(bottomLeft, q);
 			bottomRightNew = getSmoothedPos(bottomRight, q);
 
-			for (int i = 0; i < adjVertexes.size(); i++) {
-				n = (Vertex) adjVertexes.get(i);
+			for (int i = 0; i < adjVertices.size(); i++) {
+				n = (Vertex) adjVertices.get(i);
 				Msg.debug("...n: " + n.descr());
 				if (n.frontVertex() && !n.boundaryVertex()) {
 					fe1 = n.anotherFrontEdge(null);
@@ -756,11 +757,11 @@ public class QMorph extends GeomBasics {
 						Msg.debug("...tempQ1.commonEdgeAt(n, tempQ2) is null");
 						e = tempQ1.neighborEdge(n, fe1);
 					}
-					adjVertexesNew.add(smoothFrontVertex(n, e.otherVertex(n), tempQ1, fe1, fe2));
+					adjVerticesNew.add(smoothFrontVertex(n, e.otherVertex(n), tempQ1, fe1, fe2));
 				} else if (!n.boundaryVertex()) {
-					adjVertexesNew.add(n.modifiedLWLaplacianSmooth());
+					adjVerticesNew.add(n.modifiedLWLaplacianSmooth());
 				} else {
-					adjVertexesNew.add(n);
+					adjVerticesNew.add(n);
 				}
 			}
 
@@ -791,11 +792,11 @@ public class QMorph extends GeomBasics {
 			// else
 			// bottomRight.updateAngles();
 
-			Msg.debug("...Checking the surrounding vertexs for inversion:");
-			for (int i = 0; i < adjVertexes.size(); i++) {
-				n = (Vertex) adjVertexes.get(i);
+			Msg.debug("...Checking the surrounding vertices for inversion:");
+			for (int i = 0; i < adjVertices.size(); i++) {
+				n = (Vertex) adjVertices.get(i);
 				nOld = n.copyXY();
-				nNew = (Vertex) adjVertexesNew.get(i);
+				nNew = (Vertex) adjVerticesNew.get(i);
 				if (!n.equals(nNew)) {
 					n.moveTo(nNew);
 					inversionCheckAndRepair(n, nOld);
@@ -820,10 +821,10 @@ public class QMorph extends GeomBasics {
 			bottomLeftOld = bottomLeft.copyXY();
 			bottomRightOld = bottomRight.copyXY();
 
-			adjVertexes = q.getAdjVertexes();
-			adjVertexesNew = new ArrayList<Vertex>(adjVertexes.size());
+			adjVertices = q.getAdjVertices();
+			adjVerticesNew = new ArrayList<Vertex>(adjVertices.size());
 
-			// Calculate smoothed pos for each element Vertex and those vertexs connected to
+			// Calculate smoothed pos for each element Vertex and those vertices connected to
 			// the element. If the element has become inverted, then repair it.
 
 			topLeftNew = getSmoothedPos(topLeft, q);
@@ -831,8 +832,8 @@ public class QMorph extends GeomBasics {
 			bottomLeftNew = getSmoothedPos(bottomLeft, q);
 			bottomRightNew = getSmoothedPos(bottomRight, q);
 
-			for (int i = 0; i < adjVertexes.size(); i++) {
-				n = (Vertex) adjVertexes.get(i);
+			for (int i = 0; i < adjVertices.size(); i++) {
+				n = (Vertex) adjVertices.get(i);
 				Msg.debug("...n: " + n.descr());
 				if (n.frontVertex() && !n.boundaryVertex()) {
 					fe1 = n.anotherFrontEdge(null);
@@ -848,11 +849,11 @@ public class QMorph extends GeomBasics {
 						Msg.debug("...tempQ1.commonEdgeAt(n, tempQ2) is null");
 						e = tempQ1.neighborEdge(n, fe1);
 					}
-					adjVertexesNew.add(smoothFrontVertex(n, e.otherVertex(n), tempQ1, fe1, fe2));
+					adjVerticesNew.add(smoothFrontVertex(n, e.otherVertex(n), tempQ1, fe1, fe2));
 				} else if (!n.boundaryVertex()) {
-					adjVertexesNew.add(n.modifiedLWLaplacianSmooth());
+					adjVerticesNew.add(n.modifiedLWLaplacianSmooth());
 				} else {
-					adjVertexesNew.add(n);
+					adjVerticesNew.add(n);
 				}
 			}
 
@@ -892,11 +893,11 @@ public class QMorph extends GeomBasics {
 			// else
 			// bottomRight.updateAngles();
 
-			Msg.debug("...Checking the surrounding vertexs for inversion:");
-			for (int i = 0; i < adjVertexes.size(); i++) {
-				n = (Vertex) adjVertexes.get(i);
+			Msg.debug("...Checking the surrounding vertices for inversion:");
+			for (int i = 0; i < adjVertices.size(); i++) {
+				n = (Vertex) adjVertices.get(i);
 				nOld = n.copyXY();
-				nNew = (Vertex) adjVertexesNew.get(i);
+				nNew = (Vertex) adjVerticesNew.get(i);
 				if (!n.equals(nNew)) {
 					n.moveTo(nNew);
 					inversionCheckAndRepair(n, nOld);
@@ -932,7 +933,7 @@ public class QMorph extends GeomBasics {
 						edgeList.remove(edgeInd);
 					}
 
-					e.tryToDisconnectVertexes();
+					e.tryToDisconnectVertices();
 
 					// Remove the leftVertex if not a vertex of q:
 					if (!q.hasVertex(e.leftVertex)) {
@@ -970,7 +971,7 @@ public class QMorph extends GeomBasics {
 	}
 
 	/**
-	 * "Virus" that removes all triangles and their edges and vertexs inside of this
+	 * "Virus" that removes all triangles and their edges and vertices inside of this
 	 * quad Assumes that only triangles are present, not quads, inside of q
 	 */
 	private void clearQuad(Quad q, Triangle first) {
@@ -1003,7 +1004,7 @@ public class QMorph extends GeomBasics {
 						edgeList.remove(edgeInd);
 					}
 
-					e.tryToDisconnectVertexes();
+					e.tryToDisconnectVertices();
 
 					// Remove the leftVertex if not a vertex of q:
 					if (!q.hasVertex(e.leftVertex)) {
@@ -1491,7 +1492,7 @@ public class QMorph extends GeomBasics {
 		q.replaceEdge(e2, e1);
 		q.replaceEdge(t, e1);
 
-		// Do a local smooth (perhaps the other vertexs involved could need some, too?)
+		// Do a local smooth (perhaps the other vertices involved could need some, too?)
 		Vertex old;
 		Vertex nKNew, nKp1New;
 
@@ -1537,7 +1538,7 @@ public class QMorph extends GeomBasics {
 			shorter = e1;
 		}
 
-		// Get all the edges, vertexs, triangles, etc. and create 4 new edges
+		// Get all the edges, vertices, triangles, etc. and create 4 new edges
 		Vertex mid = longer.midPoint();
 		mid.color = java.awt.Color.blue; // Blue color indicates it was created by split
 		Vertex nKm1 = longer.otherVertex(nK), nKp1 = shorter.otherVertex(nK);
@@ -1559,10 +1560,10 @@ public class QMorph extends GeomBasics {
 			nF = eF.otherVertex(nKm1);
 			eFL = new Edge(mid, nF);
 
-			eFL.connectVertexes();
-			eMidKm1.connectVertexes();
-			eKMid.connectVertexes();
-			eMidTT.connectVertexes();
+			eFL.connectVertices();
+			eMidKm1.connectVertices();
+			eKMid.connectVertices();
+			eMidTT.connectVertices();
 
 			// Update edgeList
 			edgeList.add(eFL);
@@ -1604,7 +1605,7 @@ public class QMorph extends GeomBasics {
 			edgeList.remove(edgeList.indexOf(longer));
 
 			// Update vertexList
-			longer.disconnectVertexes();
+			longer.disconnectVertices();
 			vertexList.add(mid);
 
 			// Update front
@@ -1672,10 +1673,10 @@ public class QMorph extends GeomBasics {
 		eKMid = new Edge(nK, mid);
 		eMidTT = new Edge(mid, tL.oppositeOfEdge(longer));
 
-		eFL.connectVertexes();
-		eMidKm1.connectVertexes();
-		eKMid.connectVertexes();
-		eMidTT.connectVertexes();
+		eFL.connectVertices();
+		eMidKm1.connectVertices();
+		eKMid.connectVertices();
+		eMidTT.connectVertices();
 
 		// Update edgeList
 		edgeList.add(eFL);
@@ -1725,7 +1726,7 @@ public class QMorph extends GeomBasics {
 		clearQuad(q2New, t1New);
 
 		// Update, update, update....
-		longer.disconnectVertexes();
+		longer.disconnectVertices();
 		edgeList.remove(edgeList.indexOf(longer));
 
 		// if (longer.level== level)
@@ -1781,7 +1782,7 @@ public class QMorph extends GeomBasics {
 			shorter = e1;
 		}
 
-		// Get all edges, vertexs, etc. and also create some new edges.
+		// Get all edges, vertices, etc. and also create some new edges.
 		Quad q1 = longer.getQuadElement();
 		Triangle t1 = longer.getTriangleElement();
 
@@ -1796,14 +1797,14 @@ public class QMorph extends GeomBasics {
 		Edge eF = new Edge(nK, c), eFL = new Edge(c, mid), eCOpp = new Edge(c, opposite), eMidTT = new Edge(mid, t1.oppositeOfEdge(longer)),
 				eKMid = new Edge(nK, mid), eMidKm1 = new Edge(mid, nKm1);
 
-		longer.disconnectVertexes();
+		longer.disconnectVertices();
 
-		eF.connectVertexes();
-		eFL.connectVertexes();
-		eCOpp.connectVertexes();
-		eMidTT.connectVertexes();
-		eKMid.connectVertexes();
-		eMidKm1.connectVertexes();
+		eF.connectVertices();
+		eFL.connectVertices();
+		eCOpp.connectVertices();
+		eMidTT.connectVertices();
+		eKMid.connectVertices();
+		eMidKm1.connectVertices();
 
 		q1.disconnectEdges();
 		t1.disconnectEdges();
@@ -2444,7 +2445,7 @@ public class QMorph extends GeomBasics {
 
 			nN.color = java.awt.Color.blue;
 
-			// Pick some more necessay vertexs and edges:
+			// Pick some more necessary vertices and edges:
 			Vertex nO = e0.commonVertex(closest);
 			Vertex nP = e0.commonVertex(otherEdge);
 			Edge eO = neighborTriangle.neighborEdge(nO, e0);
@@ -2457,12 +2458,12 @@ public class QMorph extends GeomBasics {
 			Edge e2 = new Edge(nN, nP);
 
 			// Update "local" edgeLists... at each affected Vertex:
-			eK.connectVertexes();
-			eM.connectVertexes();
-			e1.connectVertexes();
-			e2.connectVertexes();
+			eK.connectVertices();
+			eM.connectVertices();
+			e1.connectVertices();
+			e2.connectVertices();
 
-			e0.disconnectVertexes();
+			e0.disconnectVertices();
 
 			// Update "global" edgeList:
 			edgeList.add(eK);
@@ -2523,7 +2524,7 @@ public class QMorph extends GeomBasics {
 			Msg.debug("recoverEdge returns edge " + edge.descr() + " (shortcut)");
 			return edge;
 		}
-		/* ---- First find the edges connecting vertexs nC and nD: ---- */
+		/* ---- First find the edges connecting vertices nC and nD: ---- */
 		/* (Implementation of algorithm 2 in Owen) */
 		List<Edge> intersectedEdges = new ArrayList<>();
 		Edge eK, eKp1, eI = null, eJ = null, eN, eNp1;
@@ -2539,7 +2540,7 @@ public class QMorph extends GeomBasics {
 		printVectors(V);
 
 		// Aided by V, fill T with elements adjacent nC, in
-		// ccw order (should work even for vertexs with only two edges in their list):
+		// ccw order (should work even for vertices with only two edges in their list):
 		List<Element> T = new ArrayList<>();
 
 		for (int k = 0; k < V.size() - 1; k++) {
@@ -2692,7 +2693,7 @@ public class QMorph extends GeomBasics {
 			double cross1 = cross(na, nc, nb, nc); // The cross product nanc x nbnc
 			double cross2 = cross(na, nd, nb, nd); // The cross product nand x nbnd
 
-			// For a stricly convex quad, the vertexs must be located on different sides of
+			// For a stricly convex quad, the vertices must be located on different sides of
 			// eI:
 			if ((cross1 > 0 && cross2 < 0) || (cross1 < 0 && cross2 > 0) /* q.isStrictlyConvex() */) {
 				// ... but this seems ok

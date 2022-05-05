@@ -11,15 +11,16 @@ public class Msg {
 
 	/** Output an error message and then exit the program. */
 	public static void error(String err) {
-		Frame f = new Frame();
-		MsgDialog errorDialog;
-		Error error = new Error(err);
-		error.printStackTrace();
+		System.err.println(err);
+//		Frame f = new Frame();
+//		MsgDialog errorDialog;
+//		Error error = new Error(err);
+//		error.printStackTrace();
 
-		errorDialog = new MsgDialog(f, "Program error", "Program error.\nSee the log-file for details.", 40, 2);
-		errorDialog.show();
+//		errorDialog = new MsgDialog(f, "Program error", "Program error.\nSee the log-file for details.", 40, 2);
+//		errorDialog.show();
 
-		System.exit(1);
+//		System.exit(1);
 	}
 
 	/** Output a warning message. */

@@ -20,7 +20,7 @@ class TestHalfPlane {
 
 		Triangle t = new Triangle(e1, e2, e3);
 
-		Msg.debug("*** First set of test Vertexes (not in halfplane) ***");
+		Msg.debug("*** First set of test Vertices (not in halfplane) ***");
 		Vertex p1 = new Vertex(7.2, 0.0);
 		Vertex p2 = new Vertex(0.2, -30.0);
 		Vertex p3 = new Vertex(48, 53.2);
@@ -50,7 +50,7 @@ class TestHalfPlane {
 			Msg.debug("p4 correctly detected not to belong to halfplane left of Edge " + e1.descr());
 		}
 
-		Msg.debug("*** Second set of test Vertexes (in halfplane) ***");
+		Msg.debug("*** Second set of test Vertices (in halfplane) ***");
 		p1 = new Vertex(-0.1, 0.0);
 		p2 = new Vertex(-21.3, -123.2);
 		p3 = new Vertex(-0.01, 100.0);

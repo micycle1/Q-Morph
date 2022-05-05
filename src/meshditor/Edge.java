@@ -9,6 +9,36 @@ import java.util.List;
  */
 public class Edge extends Constants {
 	
+	private static double atan2Quick(final double y, final double x) {
+		final double THREE_QRTR_PI = Math.PI * 0.75;
+		final double QRTR_PI = Math.PI * 0.25;
+
+		double r, angle;
+		final double abs_y = Math.abs(y) + 1e-10f; // kludge to prevent 0/0 condition
+
+		if (x < 0.0f) {
+			r = (x + abs_y) / (abs_y - x); // (3)
+			angle = THREE_QRTR_PI; // (4)
+		} else {
+			r = (x - abs_y) / (x + abs_y); // (1)
+			angle = QRTR_PI; // (2)
+		}
+		angle += (0.1963f * r * r - 0.9817f) * r; // (2 | 4)
+		if (y < 0.0f) {
+			return (-angle); // negate if in quad III or IV
+		} else {
+			return (angle);
+		}
+	}
+	
+	private static double acos(double x) {
+		return acosQuick(x);
+	}
+	
+	private static double acosQuick(double x) {
+		return atan2Quick(Math.sqrt ((1.0 + x) * (1.0 - x)), x);
+		}
+	
 	public Edge(Vertex Vertex1, Vertex Vertex2) {
 		if ((Vertex1.x < Vertex2.x) || (Vertex1.x == Vertex2.x && Vertex1.y > Vertex2.y)) {
 			leftVertex = Vertex1;
@@ -148,7 +178,7 @@ public class Edge extends Constants {
 		}
 	}
 
-	// Determine the state bit at both Vertexes and set the left and right side Edges.
+	// Determine the state bit at both Vertices and set the left and right side Edges.
 	// If a state bit is set, then the corresponding front neighbor Edge must get
 	// Edge this as a side Edge at that Vertex. If it is not set, then it must get a
 	// null
@@ -363,9 +393,9 @@ public class Edge extends Constants {
 	// added
 	// to this' edgeList.
 
-	// Assumes that the quad area defined by the three distinct vertexs of the two
+	// Assumes that the quad area defined by the three distinct vertices of the two
 	// edges,
-	// and the Vertex in the top of the triangle adjacent the otherVertexes (of the
+	// and the Vertex in the top of the triangle adjacent the otherVertices (of the
 	// common
 	// Vertex of the two edges), is empty.
 
@@ -447,7 +477,7 @@ public class Edge extends Constants {
 	// the right, btw) at Vertex n (which is leftVertex or rightVertex).
 	// Range: <-180, 180>
 	public double angleAt(Vertex n) {
-		// Math.acos returns values in the range 0.0 through pi, avoiding neg numbers.
+		// acos returns values in the range 0.0 through pi, avoiding neg numbers.
 		// If this is CW to x-axis, then return pos acos, else return neg acos
 		// double x= leftVertex.x-rightVertex.x;
 		// double y= leftVertex.y-rightVertex.y;
@@ -465,20 +495,20 @@ public class Edge extends Constants {
 
 			if (x > 0) {
 				if (y > 0) {
-					return Math.PI + Math.acos(x / hyp);
+					return Math.PI + acos(x / hyp);
 				} else {
-					return Math.PI - Math.acos(x / hyp);
+					return Math.PI - acos(x / hyp);
 				}
 			} else if (y > 0) {
-				return Math.PI + Math.PI - Math.acos(-x / hyp);
+				return Math.PI + Math.PI - acos(-x / hyp);
 			} else {
-				return Math.acos(-x / hyp);
+				return acos(-x / hyp);
 			}
 
 			// double cLen= Math.sqrt(x*x + y*y);
 			/*
-			 * double aLen= Math.sqrt(x*x + y*y); if (y> 0) return -Math.acos((aLen*aLen +
-			 * x*x -y*y)/(2*aLen*Math.abs(x))); else return Math.acos((aLen*aLen + x*x
+			 * double aLen= Math.sqrt(x*x + y*y); if (y> 0) return -acos((aLen*aLen +
+			 * x*x -y*y)/(2*aLen*Math.abs(x))); else return acos((aLen*aLen + x*x
 			 * -y*y)/(2*aLen*Math.abs(x)));
 			 */
 		}
@@ -488,8 +518,8 @@ public class Edge extends Constants {
 	// Elements
 	// adjacent Vertex n.
 	public double sumAngle(Element sElem, Vertex n, Edge eEdge) {
-		Msg.debug("Entering sumAngle(..)");
-		Msg.debug("this: " + descr());
+//		Msg.debug("Entering sumAngle(..)");
+//		Msg.debug("this: " + descr());
 		if (sElem != null) {
 			Msg.debug("sElem: " + sElem.descr());
 		}
@@ -530,7 +560,7 @@ public class Edge extends Constants {
 			}
 			ang = PIx2 - iang;
 		}
-		Msg.debug("Leaving sumAngle(..), returning " + Math.toDegrees(ang));
+//		Msg.debug("Leaving sumAngle(..), returning " + Math.toDegrees(ang));
 		return ang;
 	}
 
@@ -581,7 +611,7 @@ public class Edge extends Constants {
 		a = computeLength(); // len; // try this later...!
 		b = edge.computeLength(); // edge.len; // try this later...!
 
-		// Math.acos returns a value in the range [0, PI],
+		// acos returns a value in the range [0, PI],
 		// and input *MUST BE STRICTLY* in the range [-1, 1] !!!!!!!!
 		// ^^^^^^^^
 		double itemp = (a * a + b * b - c * c) / (2 * a * b);
@@ -590,7 +620,7 @@ public class Edge extends Constants {
 		} else if (itemp < -1.0) {
 			return Math.PI;
 		} else {
-			return Math.acos(itemp);
+			return acos(itemp);
 		}
 	}
 
@@ -632,21 +662,21 @@ public class Edge extends Constants {
 		}
 	}
 
-	// Add this Edge to the vertexs' edgeLists. Careful, there's no safety checks!
-	public void connectVertexes() {
+	// Add this Edge to the vertices' edgeLists. Careful, there's no safety checks!
+	public void connectVertices() {
 		leftVertex.edgeList.add(this);
 		rightVertex.edgeList.add(this);
 	}
 
-	// Remove this Edge from the vertexs' edgeLists. Careful, there's no safety
+	// Remove this Edge from the vertices' edgeLists. Careful, there's no safety
 	// checks!
-	public void disconnectVertexes() {
+	public void disconnectVertices() {
 		leftVertex.edgeList.remove(leftVertex.edgeList.indexOf(this));
 		rightVertex.edgeList.remove(rightVertex.edgeList.indexOf(this));
 	}
 
-	// Remove this Edge from the vertexs' edgeLists. Safety checks...
-	public void tryToDisconnectVertexes() {
+	// Remove this Edge from the vertices' edgeLists. Safety checks...
+	public void tryToDisconnectVertices() {
 		int i;
 		i = leftVertex.edgeList.indexOf(this);
 		if (i != -1) {
@@ -756,7 +786,7 @@ public class Edge extends Constants {
 
 	// Construct an Edge that is a unit normal to this Edge.
 	// (Remember to add the new Vertex to vertexList if you want to keep it.)
-	// nB: one of the vertexs on this edge (leftVertex or rightVertex)
+	// nB: one of the vertices on this edge (leftVertex or rightVertex)
 
 	/*
 	 * C b ____----x ___---- | b=1 ___---- | x----------------------x A c B
@@ -846,8 +876,8 @@ public class Edge extends Constants {
 
 		// Update edgeLists at this.leftVertex and this.rightVertex
 		// and at e.leftVertex and e.rightVertex:
-		disconnectVertexes();
-		e.connectVertexes();
+		disconnectVertices();
+		e.connectVertices();
 
 		Msg.debug("Leaving Edge.swapToAndSetElementsFor(..)");
 	}
@@ -1139,10 +1169,10 @@ public class Edge extends Constants {
 
 	/**
 	 * Halve this Edge by introducing a new Vertex at the midpoint, and create two
-	 * Edges from this midpoint to the each of the two opposite Vertexes of Edge this:
+	 * Edges from this midpoint to the each of the two opposite Vertices of Edge this:
 	 * one in element1 and one in element2. Also create two new Edges from Vertex mid
-	 * to the two Vertexes of Edge this. Create four new Triangles. Update everything
-	 * (also remove this Edge from edgeList and disconnect the vertexs).
+	 * to the two Vertices of Edge this. Create four new Triangles. Update everything
+	 * (also remove this Edge from edgeList and disconnect the vertices).
 	 * 
 	 * @return the new Edge incident with Vertex ben.
 	 */
@@ -1169,12 +1199,12 @@ public class Edge extends Constants {
 		Triangle t21 = new Triangle(diagonal2, e22, eK1);
 		Triangle t22 = new Triangle(diagonal2, e23, eK2);
 
-		// Update the vertexs' edgeLists
-		disconnectVertexes();
-		eK1.connectVertexes();
-		eK2.connectVertexes();
-		diagonal1.connectVertexes();
-		diagonal2.connectVertexes();
+		// Update the vertices' edgeLists
+		disconnectVertices();
+		eK1.connectVertices();
+		eK2.connectVertices();
+		diagonal1.connectVertices();
+		diagonal2.connectVertices();
 
 		// Disconnect old Triangles
 		tri1.disconnectEdges();
@@ -1356,7 +1386,7 @@ public class Edge extends Constants {
 		return curEdge;
 	}
 
-	Vertex leftVertex, rightVertex; // This Edge has these two vertexs
+	public Vertex leftVertex, rightVertex; // This Edge has these two vertices
 	Element element1 = null, element2 = null; // Belongs to these Elements (Quads/Triangles)
 	Edge leftFrontNeighbor, rightFrontNeighbor;
 	int level;

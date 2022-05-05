@@ -23,12 +23,12 @@ public class DelaunayMeshGen extends GeomBasics {
 		this.delaunayCompliant = delaunayCompliant;
 		setCurMethod(this);
 
-		// Perform the steps necessary before inserting the Vertexes in incrDelaunay():
-		// Create the two initial Delaunay triangles from the four most extreme Vertexes.
+		// Perform the steps necessary before inserting the Vertices in incrDelaunay():
+		// Create the two initial Delaunay triangles from the four most extreme Vertices.
 
 		triangleList = new ArrayList();
 		edgeList = new ArrayList();
-		findExtremeVertexes();
+		findExtremeVertices();
 
 		Msg.debug("uppermost= " + uppermost.descr());
 		Msg.debug("lowermost= " + lowermost.descr());
@@ -55,11 +55,11 @@ public class DelaunayMeshGen extends GeomBasics {
 			del2 = new Triangle(edge1, edge3, edge4);
 		}
 
-		edge1.connectVertexes();
-		edge2.connectVertexes();
-		edge3.connectVertexes();
-		edge4.connectVertexes();
-		edge5.connectVertexes();
+		edge1.connectVertices();
+		edge2.connectVertices();
+		edge3.connectVertices();
+		edge4.connectVertices();
+		edge5.connectVertices();
 
 		del1.connectEdges();
 		del2.connectEdges();
@@ -80,7 +80,7 @@ public class DelaunayMeshGen extends GeomBasics {
 		triangleList.add(del2);
 	}
 
-	// Run the implementation on the give set of vertexs. */
+	// Run the implementation on the give set of vertices. */
 	public void run() {
 		Msg.debug("Entering incrDelauney(..)");
 		// Point insertions
@@ -88,7 +88,7 @@ public class DelaunayMeshGen extends GeomBasics {
 		for (Object element : vertexList) {
 			n = (Vertex) element;
 
-			// The extreme vertexs have been inserted already, so we skip them here
+			// The extreme vertices have been inserted already, so we skip them here
 			if (n != leftmost && n != rightmost && n != uppermost && n != lowermost) {
 				insertVertex(n, delaunayCompliant);
 			}
@@ -109,7 +109,7 @@ public class DelaunayMeshGen extends GeomBasics {
 		if (counter < vertexList.size()) {
 			n = (Vertex) vertexList.get(counter);
 			counter++;
-			// The extreme vertexs have been inserted already, so we skip them here
+			// The extreme vertices have been inserted already, so we skip them here
 			while (n == leftmost || n == rightmost || n == uppermost || n == lowermost) {
 				if (counter < vertexList.size()) {
 					n = (Vertex) vertexList.get(counter);
@@ -362,7 +362,7 @@ public class DelaunayMeshGen extends GeomBasics {
 	/**
 	 * Recursive method that deletes the part of the mesh boundary that is no longer
 	 * Delaunay compliant (the "influence region") when a new Vertex has been inserted
-	 * exterior to the current mesh. Also compiles a list of Vertexes in this region.
+	 * exterior to the current mesh. Also compiles a list of Vertices in this region.
 	 * The method must be called for each boundary triangle that is affected by the
 	 * newly inserted Vertex. Some interior triangles are also affected, but you don't
 	 * need to worry about them, because they get deleted automagically by this
@@ -384,13 +384,13 @@ public class DelaunayMeshGen extends GeomBasics {
 
 		if (!q.isStrictlyConvex()) {
 			Msg.debug("Leaving makeDelaunayTriangle(..): non-convex quad");
-			j = irVertexes.indexOf(e.leftVertex);
+			j = irVertices.indexOf(e.leftVertex);
 			if (j == -1) {
-				irVertexes.add(e.leftVertex);
+				irVertices.add(e.leftVertex);
 			}
-			j = irVertexes.indexOf(e.rightVertex);
+			j = irVertices.indexOf(e.rightVertex);
 			if (j == -1) {
-				irVertexes.add(e.rightVertex);
+				irVertices.add(e.rightVertex);
 			}
 
 			return;
@@ -406,17 +406,17 @@ public class DelaunayMeshGen extends GeomBasics {
 		Msg.debug("p3: " + p3.descr());
 
 		if (n.inCircle(p1, p2, p3)) {
-			j = irVertexes.indexOf(p1);
+			j = irVertices.indexOf(p1);
 			if (j == -1) {
-				irVertexes.add(p1);
+				irVertices.add(p1);
 			}
-			j = irVertexes.indexOf(p2);
+			j = irVertices.indexOf(p2);
 			if (j == -1) {
-				irVertexes.add(p2);
+				irVertices.add(p2);
 			}
-			j = irVertexes.indexOf(p3);
+			j = irVertices.indexOf(p3);
 			if (j == -1) {
-				irVertexes.add(p3);
+				irVertices.add(p3);
 			}
 
 			e1 = t.otherEdge(e);
@@ -424,21 +424,21 @@ public class DelaunayMeshGen extends GeomBasics {
 			e2 = t.otherEdge(e, e1);
 			t2 = (Triangle) t.neighbor(e2);
 
-			e.disconnectVertexes();
+			e.disconnectVertices();
 			j = edgeList.indexOf(e);
 			if (j != -1) {
 				edgeList.remove(j);
 			}
 
 			if (t1 == null) {
-				e1.disconnectVertexes();
+				e1.disconnectVertices();
 				j = edgeList.indexOf(e1);
 				if (j != -1) {
 					edgeList.remove(j);
 				}
 			}
 			if (t2 == null) {
-				e2.disconnectVertexes();
+				e2.disconnectVertices();
 				j = edgeList.indexOf(e2);
 				if (j != -1) {
 					edgeList.remove(j);
@@ -457,13 +457,13 @@ public class DelaunayMeshGen extends GeomBasics {
 
 			Msg.debug("Leaving makeDelaunayTriangle(..)... done!");
 		} else {
-			j = irVertexes.indexOf(e.leftVertex);
+			j = irVertices.indexOf(e.leftVertex);
 			if (j == -1) {
-				irVertexes.add(e.leftVertex);
+				irVertices.add(e.leftVertex);
 			}
-			j = irVertexes.indexOf(e.rightVertex);
+			j = irVertices.indexOf(e.rightVertex);
 			if (j == -1) {
-				irVertexes.add(e.rightVertex);
+				irVertices.add(e.rightVertex);
 			}
 
 			Msg.debug("Leaving makeDelaunayTriangle(..), n lies outside circumcircle");
@@ -471,7 +471,7 @@ public class DelaunayMeshGen extends GeomBasics {
 	}
 
 	private boolean inside = false;
-	private ArrayList irVertexes = new ArrayList();
+	private ArrayList irVertices = new ArrayList();
 
 	/**
 	 * Insert a interior/ exterior Vertex and update mesh to remain Delaunay
@@ -546,7 +546,7 @@ public class DelaunayMeshGen extends GeomBasics {
 			Msg.debug("Nr of affected edges on the boundary is " + boundaryEdges.size());
 
 			// From this list, find each triangle in the influence region and delete it.
-			// Also create the list of vertexs in the influence region
+			// Also create the list of vertices in the influence region
 			// makeDelaunayTriangle does the job.
 			for (i = 0; i < boundaryEdges.size(); i++) {
 				e = (Edge) boundaryEdges.get(i);
@@ -556,16 +556,16 @@ public class DelaunayMeshGen extends GeomBasics {
 				}
 			}
 			Msg.debug("Done finding and deleting triangles in the influence region.");
-			Msg.debug("Nr of vertexs in influence region is " + irVertexes.size());
+			Msg.debug("Nr of vertices in influence region is " + irVertices.size());
 
-			// Create new triangles by connecting the vertexs in the
+			// Create new triangles by connecting the vertices in the
 			// influence region to Vertex n:
 
 			// Build initial edgeList for Vertex n
-			for (i = 0; i < irVertexes.size(); i++) {
-				other = (Vertex) irVertexes.get(i);
+			for (i = 0; i < irVertices.size(); i++) {
+				other = (Vertex) irVertices.get(i);
 				e = new Edge(n, other);
-				e.connectVertexes();
+				e.connectVertices();
 				edgeList.add(e);
 				if (other == n0) {
 					b0 = e;
@@ -591,7 +591,7 @@ public class DelaunayMeshGen extends GeomBasics {
 				if (j != -1) {
 					e = (Edge) other.edgeList.get(j);
 				} else {
-					e.connectVertexes();
+					e.connectVertices();
 					edgeList.add(e);
 				}
 
@@ -600,7 +600,7 @@ public class DelaunayMeshGen extends GeomBasics {
 				Msg.debug("Creating new triangle: " + t.descr());
 				t.connectEdges();
 			}
-			irVertexes.clear(); // NB! IMPORTANT!
+			irVertices.clear(); // NB! IMPORTANT!
 		} else if (o instanceof Triangle) {
 			// --- the Vertex is to be inserted inside the current triangulation --- //
 			t = (Triangle) o;
@@ -614,9 +614,9 @@ public class DelaunayMeshGen extends GeomBasics {
 			e2 = new Edge(n, te1.commonVertex(te2));
 			e3 = new Edge(n, te2.commonVertex(te3));
 
-			e1.connectVertexes();
-			e2.connectVertexes();
-			e3.connectVertexes();
+			e1.connectVertices();
+			e2.connectVertices();
+			e3.connectVertices();
 
 			edgeList.add(e1);
 			Msg.debug("ADDING EDGE " + e1.descr() + " to edgeList");
@@ -675,9 +675,9 @@ public class DelaunayMeshGen extends GeomBasics {
 			e3 = new Edge(n, e12.otherVertex(e.leftVertex));
 			e32 = oldt1.neighborEdge(e.rightVertex, e);
 
-			e1.connectVertexes();
-			e2.connectVertexes();
-			e3.connectVertexes();
+			e1.connectVertices();
+			e2.connectVertices();
+			e3.connectVertices();
 			edgeList.add(e1);
 
 			Msg.debug("ADDING EDGE " + e1.descr() + " to edgeList");
@@ -689,14 +689,14 @@ public class DelaunayMeshGen extends GeomBasics {
 			if (oldt2 != null) {
 				e22 = oldt2.neighborEdge(e.leftVertex, e);
 				e4 = new Edge(n, e22.otherVertex(e.leftVertex));
-				e4.connectVertexes();
+				e4.connectVertices();
 				e42 = oldt2.neighborEdge(e.rightVertex, e);
 
 				edgeList.add(e4);
 				Msg.debug("ADDING EDGE " + e4.descr() + " to edgeList");
 			}
 
-			e.disconnectVertexes();
+			e.disconnectVertices();
 			edgeList.remove(edgeList.indexOf(e));
 			Msg.debug("REMOVING EDGE " + e.descr() + " FROM edgeList");
 

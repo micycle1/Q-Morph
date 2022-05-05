@@ -4,6 +4,22 @@ package meshditor;
  * A class holding information for triangles, and with methods for handling issues regarding triangles.
  */
 public class Triangle extends Element {
+	
+	public Triangle(double... vertices) {
+		Vertex v1 = new Vertex(vertices[0], vertices[1]);
+		Vertex v2 = new Vertex(vertices[2], vertices[3]);
+		Vertex v3 = new Vertex(vertices[4], vertices[5]);
+		Edge e1 = new Edge(v1, v2);
+		Edge e2 = new Edge(v2, v3);
+		Edge e3 = new Edge(v3, v1);
+
+		edgeList = new Edge[3];
+		edgeList[0] = e1;
+		edgeList[1] = e2;
+		edgeList[2] = e3;
+		connectEdges();
+		updateAngles();
+	}
 
 	public Triangle(Edge edge1, Edge edge2, Edge edge3) {
 		edgeList = new Edge[3];
@@ -99,12 +115,12 @@ public class Triangle extends Element {
 	// and optBasedSmooth(..))
 	// The triangle created is a copy of this, and each of the edges are also
 	// copies.
-	// One of the vertexs in the triangle has been replaced.
+	// One of the vertices in the triangle has been replaced.
 	// The Edge.repleceVertex(..) method updates the edge length.
 	// *Not tested!!!*
 
 	@Override
-	public Element elementWithExchangedVertexes(Vertex original, Vertex replacement) {
+	public Element elementWithExchangedVertices(Vertex original, Vertex replacement) {
 		Vertex Vertex1 = edgeList[0].leftVertex;
 		Vertex Vertex2 = edgeList[0].rightVertex;
 		Vertex Vertex3 = edgeList[1].rightVertex;
@@ -557,7 +573,7 @@ public class Triangle extends Element {
 		}
 	}
 
-	// We simply check that the vertexs of the element are not collinear.
+	// We simply check that the vertices of the element are not collinear.
 	@Override
 	public boolean areaLargerThan0() {
 		Vertex na = edgeList[0].leftVertex;
@@ -577,7 +593,7 @@ public class Triangle extends Element {
 	}
 
 	// Check if the old pos and the new pos of the Vertex are on different sides
-	// of the vertexs opposite edge.
+	// of the vertices opposite edge.
 	public boolean inverted(Vertex oldN, Vertex newN) {
 		Edge e = oppositeOfVertex(newN);
 		// Check with edge e:
@@ -784,15 +800,16 @@ public class Triangle extends Element {
 
 	@Override
 	public String descr() {
-		Vertex Vertex1, Vertex2, Vertex3;
-		Vertex1 = edgeList[0].leftVertex;
-		Vertex2 = edgeList[0].rightVertex;
-		Vertex3 = edgeList[1].rightVertex;
-		if (Vertex3 == Vertex1 || Vertex3 == Vertex2) {
-			Vertex3 = edgeList[1].leftVertex;
-		}
-
-		return Vertex1.descr() + ", " + Vertex2.descr() + ", " + Vertex3.descr();
+		return "";
+//		Vertex Vertex1, Vertex2, Vertex3;
+//		Vertex1 = edgeList[0].leftVertex;
+//		Vertex2 = edgeList[0].rightVertex;
+//		Vertex3 = edgeList[1].rightVertex;
+//		if (Vertex3 == Vertex1 || Vertex3 == Vertex2) {
+//			Vertex3 = edgeList[1].leftVertex;
+//		}
+//
+//		return Vertex1.descr() + ", " + Vertex2.descr() + ", " + Vertex3.descr();
 	}
 
 	@Override

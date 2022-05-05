@@ -9,6 +9,8 @@ import java.util.List;
  */
 
 public class Quad extends Element {
+	
+	public boolean isFake;
 
 	/** Create ordinary quad */
 	public Quad(Edge baseEdge, Edge leftEdge, Edge rightEdge, Edge topEdge) {
@@ -113,10 +115,9 @@ public class Quad extends Element {
 	}
 
 	/**
-	 * Create a fake quad with 3 different vertexs and edgeList[top]==edgeList[right]
+	 * Create a fake quad with 3 different vertices and edgeList[top]==edgeList[right]
 	 */
 	public Quad(Triangle t) {
-		Vertex n;
 		isFake = true;
 		edgeList = new Edge[4];
 		ang = new double[4];
@@ -133,7 +134,7 @@ public class Quad extends Element {
 		edgeList[top] = edgeList[right];
 
 		firstVertex = t.firstVertex;
-		;
+
 		ang[0] = t.ang[0];
 		ang[1] = t.ang[1];
 		ang[2] = t.ang[2];
@@ -144,8 +145,8 @@ public class Quad extends Element {
 	 * isStrictlyconvex()). Not tested thoroughly!!!
 	 * 
 	 * @param e  is a diagonal edge
-	 * @param n1 the first or the other two vertexs in the quad
-	 * @param n2 the second of the other two vertexs in the quad
+	 * @param n1 the first or the other two vertices in the quad
+	 * @param n2 the second of the other two vertices in the quad
 	 */
 	public Quad(Edge e, Vertex n1, Vertex n2) {
 		Msg.debug("Entering Quad(Edge, Vertex, Vertex)");
@@ -175,7 +176,7 @@ public class Quad extends Element {
 
 	/**
 	 * Constructor to make life easier for elementWithExchangedVertex(..) Create fake
-	 * quad with only three vertexs
+	 * quad with only three vertices
 	 */
 	private Quad(Vertex n1, Vertex n2, Vertex n3, Vertex f) {
 		isFake = true;
@@ -221,7 +222,7 @@ public class Quad extends Element {
 	 * Not tested thoroughly!!!
 	 */
 	@Override
-	public Element elementWithExchangedVertexes(Vertex original, Vertex replacement) {
+	public Element elementWithExchangedVertices(Vertex original, Vertex replacement) {
 		Vertex Vertex1 = edgeList[base].leftVertex;
 		Vertex Vertex2 = edgeList[base].rightVertex;
 		Vertex Vertex3 = edgeList[left].otherVertex(edgeList[base].leftVertex);
@@ -337,32 +338,28 @@ public class Quad extends Element {
 	 * collapsed in a particular manner.
 	 * 
 	 * @param q     the quad to be collapsed
-	 * @param n     a Vertex holding the position for where the joined vertexs are to be
+	 * @param n     a Vertex holding the position for where the joined vertices are to be
 	 *              located
 	 * @param n1    the Vertex in quad q that is to be joined with opposite Vertex n2
 	 * @param n2    the Vertex in quad q that is to be joined with opposite Vertex n1
 	 * @param list1 the list of elements adjacent n1
 	 * @param list2 the list of elements adjacent n2
 	 * @return true if any elements adjacent to quad q becomes inverted when
-	 *         collapsing quad q, joining its two opposite vertexs n1 and n2 to the
+	 *         collapsing quad q, joining its two opposite vertices n1 and n2 to the
 	 *         position held by Vertex n. Vertex n must be located somewhere inside quad
 	 *         q.
 	 */
-	public boolean anyInvertedElementsWhenCollapsed(Vertex n, Vertex n1, Vertex n2, List list1, List list2) {
+	public boolean anyInvertedElementsWhenCollapsed(Vertex n, Vertex n1, Vertex n2, List<Element> list1, List<Element> list2) {
 		Msg.debug("Entering Quad.anyInvertedElementsWhenCollapsed(..)");
-		Element elem;
-		int i;
 
-		for (i = 0; i < list1.size(); i++) {
-			elem = (Element) list1.get(i);
+		for (Element elem : list1) {
 			if (elem != this && elem.invertedWhenVertexRelocated(n1, n)) {
 				Msg.debug("Leaving Quad.anyInvertedElementsWhenCollapsed(..) ret: true");
 				return true;
 			}
 		}
-
-		for (i = 0; i < list2.size(); i++) {
-			elem = (Element) list2.get(i);
+		
+		for (Element elem : list1) {
 			if (elem != this && elem.invertedWhenVertexRelocated(n2, n)) {
 				Msg.debug("Leaving Quad.anyInvertedElementsWhenCollapsed(..) ret: true");
 				return true;
@@ -433,8 +430,8 @@ public class Quad extends Element {
 		Quad q;
 		boolean found = false;
 		Edge e, eI, eJ;
-		ArrayList addList = new ArrayList();
-		ArrayList quadList = new ArrayList();
+		ArrayList<Edge> addList = new ArrayList<Edge>();
+		ArrayList<Element> quadList = new ArrayList<Element>();
 
 		Msg.debug("...nKp1: " + nKp1.descr());
 		Msg.debug("...nKm1: " + nKm1.descr());
@@ -786,21 +783,21 @@ public class Quad extends Element {
 	 * defined as a quad with only one Vertex on the boundary.
 	 */
 	public boolean boundaryDiamond() {
-		int bVertexes = 0;
+		int bVertices = 0;
 		if (edgeList[base].leftVertex.boundaryVertex()) {
-			bVertexes++;
+			bVertices++;
 		}
 		if (edgeList[base].rightVertex.boundaryVertex()) {
-			bVertexes++;
+			bVertices++;
 		}
 		if (edgeList[top].leftVertex.boundaryVertex()) {
-			bVertexes++;
+			bVertices++;
 		}
 		if (edgeList[top].rightVertex.boundaryVertex()) {
-			bVertexes++;
+			bVertices++;
 		}
 
-		if (bVertexes == 1) {
+		if (bVertices == 1) {
 			return true;
 		} else {
 			return false;
@@ -824,7 +821,7 @@ public class Quad extends Element {
 
 	/**
 	 * Method to verify that the quad has an area greater than 0. We simply check
-	 * that the vertexs of the element are not colinear.
+	 * that the vertices of the element are not colinear.
 	 */
 	@Override
 	public boolean areaLargerThan0() {
@@ -855,7 +852,7 @@ public class Quad extends Element {
 
 	/**
 	 * Method to verify that the quad is strictly convex, that is, convex in the
-	 * common sense and in addition demanding that no three Vertexes are colinear.
+	 * common sense and in addition demanding that no three Vertices are colinear.
 	 */
 	public boolean isStrictlyConvex() {
 		Vertex n1 = edgeList[base].leftVertex;
@@ -1467,9 +1464,9 @@ public class Quad extends Element {
 		return triangleList;
 	}
 
-	/** @return a list of all vertexs adjacent to this quad. */
-	public ArrayList getAdjVertexes() {
-		ArrayList vertexList = new ArrayList();
+	/** @return a list of all vertices adjacent to this quad. */
+	public List<Vertex> getAdjVertices() {
+		ArrayList<Vertex> vertexList = new ArrayList<Vertex>();
 		Edge e;
 		Vertex n;
 		Vertex bLVertex = edgeList[base].leftVertex;
@@ -1669,7 +1666,7 @@ public class Quad extends Element {
 	 *         Equilateral quadrilaterals should return the maximum value of 1.
 	 */
 	//
-	// This is a simple sketch of the quadrilateral with vertexs and divided
+	// This is a simple sketch of the quadrilateral with vertices and divided
 	// into four triangles:
 	//
 	// n3__________n4
@@ -1733,7 +1730,7 @@ public class Quad extends Element {
 		Triangle t3 = new Triangle(edgeList[top], edgeList[right], e2);
 		Triangle t4 = new Triangle(edgeList[top], e1, edgeList[left]);
 
-		// Place the firstVertexes correctly
+		// Place the firstVertices correctly
 		t1.firstVertex = firstVertex;
 		if (firstVertex == n1) {
 			t2.firstVertex = n1;
@@ -1778,7 +1775,7 @@ public class Quad extends Element {
 			} else {
 				negval = 3.0;
 			}
-		} else if (ang[0] < DEG_6 || ang[1] < DEG_6 || ang[2] < DEG_6 || ang[3] < DEG_6 || coincidentVertexes(n1, n2, n3, n4)
+		} else if (ang[0] < DEG_6 || ang[1] < DEG_6 || ang[2] < DEG_6 || ang[3] < DEG_6 || coincidentVertices(n1, n2, n3, n4)
 				|| invCount == 2) {
 			negval = 1.0;
 		}
@@ -1787,9 +1784,9 @@ public class Quad extends Element {
 		Msg.debug("Leaving Quad.updateDistortionMetric(): " + distortionMetric);
 	}
 
-	/** Test whether any vertexs of the quad are coincident. */
-	private boolean coincidentVertexes(Vertex n1, Vertex n2, Vertex n3, Vertex n4) {
-		Msg.debug("Entering Quad.coincidentVertexes(..)");
+	/** Test whether any vertices of the quad are coincident. */
+	private boolean coincidentVertices(Vertex n1, Vertex n2, Vertex n3, Vertex n4) {
+		Msg.debug("Entering Quad.coincidentVertices(..)");
 		double x12diff = n2.x - n1.x;
 		double y12diff = n2.y - n1.y;
 		double x13diff = n3.x - n1.x;
@@ -1814,10 +1811,10 @@ public class Quad extends Element {
 		double l34 = Math.sqrt(x34diff * x34diff + y34diff * y34diff);
 
 		if (l12 < COINCTOL || l13 < COINCTOL || l14 < COINCTOL || l23 < COINCTOL || l24 < COINCTOL || l34 < COINCTOL) {
-			Msg.debug("Leaving Quad.coincidentVertexes(..), returning true");
+			Msg.debug("Leaving Quad.coincidentVertices(..), returning true");
 			return true;
 		} else {
-			Msg.debug("Leaving Quad.coincidentVertexes(..), returning false");
+			Msg.debug("Leaving Quad.coincidentVertices(..), returning false");
 			return false;
 		}
 	}
@@ -1903,7 +1900,7 @@ public class Quad extends Element {
 	 * @return true if there are one or more holes present within the four edges
 	 *         defining the quad.
 	 */
-	public boolean containsHole(ArrayList tris) {
+	public boolean containsHole(List<Triangle> tris) {
 		Triangle t;
 
 		if (tris.size() == 0) {
@@ -1950,8 +1947,9 @@ public class Quad extends Element {
 		Vertex2 = edgeList[base].rightVertex;
 		Vertex3 = edgeList[left].otherVertex(Vertex1);
 		Vertex4 = edgeList[right].otherVertex(Vertex2);
-
-		return Vertex1.descr() + ", " + Vertex2.descr() + ", " + Vertex3.descr() + ", " + Vertex4.descr();
+		String v3Desc = Vertex3 == null ? "" : Vertex3.descr();
+		String v4Desc = Vertex4 == null ? "" : Vertex4.descr();
+		return Vertex1.descr() + ", " + Vertex2.descr() + ", " + v3Desc + ", " + v4Desc;
 	}
 
 	/** Output a string representation of the quad. */
@@ -1961,6 +1959,4 @@ public class Quad extends Element {
 				+ Math.toDegrees(ang[1]) + ", ang[2]: " + Math.toDegrees(ang[2]) + ", ang[3]: " + Math.toDegrees(ang[3]) + ", firstVertex is "
 				+ firstVertex.descr());
 	}
-
-	public boolean isFake;
 }
