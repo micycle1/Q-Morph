@@ -287,14 +287,10 @@ public class GeomBasics extends Constants {
 				tris++;
 			}
 		}
-
-		Msg.debug("Counted # of fake quads: " + fakes);
-		Msg.debug("Counted # of triangles: " + tris);
 	}
 
 	/** Output warnings if mesh is not consistent. */
 	public static void consistencyCheck() {
-		Msg.debug("Entering consistencyCheck()");
 		Vertex n;
 		for (int i = 0; i < vertexList.size(); i++) {
 			n = vertexList.get(i);
@@ -392,7 +388,6 @@ public class GeomBasics extends Constants {
 		for (Object element : elementList) {
 			elem = (Element) element;
 			if (elem == null) {
-				Msg.debug("elementList has a null-entry.");
 			} else if (elem instanceof Quad) {
 				q = (Quad) elem;
 
@@ -430,8 +425,6 @@ public class GeomBasics extends Constants {
 				}
 			}
 		}
-
-		Msg.debug("Leaving consistencyCheck()");
 
 	}
 
@@ -1207,12 +1200,10 @@ public class GeomBasics extends Constants {
 	}
 
 	public static void printTriangles(List<Triangle> triangleList) {
-		Msg.debug("triangleList: (size== " + triangleList.size() + ")");
 		printElements(triangleList);
 	}
 
 	public static void printQuads(List<?> quadList) {
-		Msg.debug("quadList: (size== " + quadList.size() + ")");
 		printElements(quadList);
 	}
 
@@ -1226,7 +1217,6 @@ public class GeomBasics extends Constants {
 
 	public static void printVertices(List<Vertex> vertexList) {
 		if (Msg.debugMode) {
-			Msg.debug("vertexList:");
 			for (Vertex vertex : vertexList) {
 				vertex.printMe();
 			}
@@ -1236,7 +1226,6 @@ public class GeomBasics extends Constants {
 	/** */
 	public static void printValences() {
 		for (Vertex n : vertexList) {
-			Msg.debug("Vertex " + n.descr() + " has valence " + n.valence());
 		}
 	}
 
@@ -1247,7 +1236,6 @@ public class GeomBasics extends Constants {
 			if (!n.boundaryVertex()) {
 				neighbors = n.ccwSortedNeighbors();
 				n.createValencePattern(neighbors);
-				Msg.debug("Vertex " + n.descr() + " has valence pattern " + n.valDescr());
 			}
 		}
 	}
@@ -1262,9 +1250,7 @@ public class GeomBasics extends Constants {
 				n.createValencePattern(neighbors);
 				angles = n.surroundingAngles(neighbors, n.pattern[0] - 2);
 
-				Msg.debug("Angles at the vertices surrounding Vertex " + n.descr() + ":");
 				for (int j = 0; j < n.pattern[0] - 2; j++) {
-					Msg.debug("angles[" + j + "]== " + Math.toDegrees(angles[j]) + " (in degrees)");
 				}
 			}
 		}
@@ -1276,7 +1262,6 @@ public class GeomBasics extends Constants {
 	 * @return true if any repairing was neccessary, else return false.
 	 */
 	public static boolean inversionCheckAndRepair(Vertex newN, Vertex oldPos) {
-		Msg.debug("Entering inversionCheckAndRepair(..), Vertex oldPos: " + oldPos.descr());
 		List<Element> elements = newN.adjElements();
 		if (newN.invertedOrZeroAreaElements(elements)) {
 			if (!newN.incrAdjustUntilNotInvertedOrZeroArea(oldPos, elements)) {
@@ -1288,10 +1273,8 @@ public class GeomBasics extends Constants {
 				Msg.error("It seems that an element was inverted initially.");
 				return false;
 			}
-			Msg.debug("Leaving inversionCheckAndRepair(..)");
 			return true;
 		} else {
-			Msg.debug("Leaving inversionCheckAndRepair(..)");
 			return false;
 		}
 	}
@@ -1312,8 +1295,6 @@ public class GeomBasics extends Constants {
 	 *         without inverting any of their adjacent elements.
 	 */
 	public static Vertex safeNewPosWhenCollapsingQuad(Quad q, Vertex n1, Vertex n2) {
-		Msg.debug("Entering safeNewPosWhenCollapsingQuad(..)");
-
 		Vertex n = q.centroid();
 		MyVector back2n1 = new MyVector(n, n1), back2n2 = new MyVector(n, n2);
 		double startX = n.x, startY = n.y;
@@ -1323,13 +1304,11 @@ public class GeomBasics extends Constants {
 		List<Element> l1 = n1.adjElements(), l2 = n2.adjElements();
 
 		if (!q.anyInvertedElementsWhenCollapsed(n, n1, n2, l1, l2)) {
-			Msg.debug("Leaving safeNewPosWhenCollapsingQuad(..): found");
 			return n;
 		}
 
 		// Calculate the parameters for direction n to n1
 		if (Math.abs(xstepn1) < COINCTOL || Math.abs(ystepn1) < COINCTOL) {
-			Msg.debug("...ok, resorting to use of minimum increment");
 			if (Math.abs(back2n1.x) < Math.abs(back2n1.y)) {
 				if (back2n1.x < 0) {
 					xstepn1 = -COINCTOL;
@@ -1367,7 +1346,6 @@ public class GeomBasics extends Constants {
 
 		// Calculate the parameters for direction n to n2
 		if (Math.abs(xstepn2) < COINCTOL || Math.abs(ystepn2) < COINCTOL) {
-			Msg.debug("...ok, resorting to use of minimum increment");
 			if (Math.abs(back2n2.x) < Math.abs(back2n2.y)) {
 				if (back2n2.x < 0) {
 					xstepn2 = -COINCTOL;
@@ -1403,15 +1381,7 @@ public class GeomBasics extends Constants {
 			steps2n2 = 50;
 		}
 
-		Msg.debug("...back2n1.x is: " + back2n1.x);
-		Msg.debug("...back2n1.y is: " + back2n1.y);
-		Msg.debug("...xstepn1 is: " + xstepn1);
-		Msg.debug("...ystepn1 is: " + ystepn1);
-
-		Msg.debug("...back2n2.x is: " + back2n2.x);
-		Msg.debug("...back2n2.y is: " + back2n2.y);
-		Msg.debug("...xstepn2 is: " + xstepn2);
-		Msg.debug("...ystepn2 is: " + ystepn2);
+		
 
 		// Try to find a location
 		for (i = 1; i <= steps2n1 || i <= steps2n2; i++) {
@@ -1419,7 +1389,6 @@ public class GeomBasics extends Constants {
 				n.x = startX + xstepn1 * i;
 				n.y = startY + ystepn1 * i;
 				if (!q.anyInvertedElementsWhenCollapsed(n, n1, n2, l1, l2)) {
-					Msg.debug("Leaving safeNewPosWhenCollapsingQuad(..): found");
 					return n;
 				}
 			}
@@ -1427,13 +1396,11 @@ public class GeomBasics extends Constants {
 				n.x = startX + xstepn2 * i;
 				n.y = startY + ystepn2 * i;
 				if (!q.anyInvertedElementsWhenCollapsed(n, n1, n2, l1, l2)) {
-					Msg.debug("Leaving safeNewPosWhenCollapsingQuad(..): found");
 					return n;
 				}
 			}
 		}
 
-		Msg.debug("Leaving safeNewPosWhenCollapsingQuad(..): not found");
 		return null;
 	}
 
@@ -1443,7 +1410,6 @@ public class GeomBasics extends Constants {
 	 * @return true if any zero area triangles were removed.
 	 */
 	boolean repairZeroAreaTriangles() {
-		Msg.debug("Entering GeomBasics.repairZeroAreaTriangles()");
 		boolean res = false;
 		int j;
 		Triangle t, old1, old2;
@@ -1460,9 +1426,7 @@ public class GeomBasics extends Constants {
 				e2 = t.otherEdge(e, e1);
 				res = true;
 
-				Msg.debug("...longest edge is " + e.descr());
 				if (!e.boundaryEdge()) {
-					Msg.debug("...longest edge not on boundary!");
 					old1 = (Triangle) e.element1;
 					old2 = (Triangle) e.element2;
 					eS = e.getSwappedEdge();
@@ -1480,7 +1444,6 @@ public class GeomBasics extends Constants {
 					// The zero area triangle has its longest edge on the boundary...
 					// Then we can just remove the triangle and the long edge!
 					// Note that we now get a new boundary Vertex...
-					Msg.debug("...longest edge is on boundary!");
 					triangleList.set(triangleList.indexOf(t), null);
 					t.disconnectEdges();
 					edgeList.remove(edgeList.indexOf(e));
@@ -1501,7 +1464,6 @@ public class GeomBasics extends Constants {
 			}
 		} while (i < triangleList.size());
 
-		Msg.debug("Leaving GeomBasics.repairZeroAreaTriangles()");
 		return res;
 	}
 
