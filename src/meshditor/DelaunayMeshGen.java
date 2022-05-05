@@ -208,7 +208,7 @@ public class DelaunayMeshGen extends GeomBasics {
 		Triangle t1 = (Triangle) e.element1;
 		Triangle t2 = (Triangle) e.element2;
 
-		if (t1 == null | t2 == null) {
+		if (t1 == null || t2 == null) {
 			return;
 		}
 

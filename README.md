@@ -18,27 +18,9 @@ To ensure that the implementation works as described, it has been tested on a nu
 
 The meshes are found in the `examples/` directory.
 
-# Building and running
+## Fork
 
-Run `make` to build the source code and documentation.
-
-To start the MeshDitor code, run `java -jar meshditor.jar` in the `bin/`
-directory, or simply run
-
-```bash
-make run
-```
-
-in the `src/` directory. To test the Java Native Interface code, run
-
-```bash
-make jnirun
-```
-
-or go to the `bin/` directory and execute
-
-```bash
-./qmorph
-```
-
-with or without options or parameters.
+* Add java array generics <> + remove casting
+* Perform improvments (geometry math + remove slow debug calls)
+* Load from data (not file)
+* 

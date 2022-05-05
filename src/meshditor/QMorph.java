@@ -66,9 +66,13 @@ public class QMorph extends GeomBasics {
 	public void run() {
 		if (doTri2QuadConversion) {
 			if (!step) {
+				int iters = 0;
 				// The program's main loop from where all the real action originates
-				while (!finished) {
+				while (!finished && iters++ < 100) {
 					step();
+				}
+				if (iters > 100) {
+					Msg.error("exited early");
 				}
 			}
 		} else if (!step) {
@@ -93,7 +97,6 @@ public class QMorph extends GeomBasics {
 		Quad q;
 		Edge e;
 		int i;
-
 		e = Edge.getNextFront(/* frontList, */);
 		if (e != null) {
 			e.getState();

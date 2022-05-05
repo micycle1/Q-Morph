@@ -286,6 +286,8 @@ public class GeomBasics extends Constants {
 				tris++;
 			}
 		}
+		System.out.println("tris: " + tris);
+		System.out.println("fakes: " + fakes);
 	}
 
 	/** Output warnings if mesh is not consistent. */
@@ -442,8 +444,8 @@ public class GeomBasics extends Constants {
 		ArrayList<double[]> triangles = new ArrayList<>();
 
 		try {
-			String file = "C:\\Users\\micyc\\Documents\\Repositories\\Q-Morph\\examples\\thesis-tri\\difficult.mesh";
-//			String file = meshDirectory + meshFilename;
+//			String file = "C:\\Users\\micyc\\Documents\\Repositories\\Q-Morph\\examples\\thesis-tri\\difficult.mesh";
+			String file = meshDirectory + meshFilename;
 			fis = new FileInputStream(file);
 			BufferedReader in = new BufferedReader(new InputStreamReader(fis));
 			double x1, x2, x3, x4, y1, y2, y3, y4;
@@ -602,7 +604,7 @@ public class GeomBasics extends Constants {
 		} catch (Exception e) {
 			Msg.error("File " + meshFilename + " not found.");
 		}
-		vertexList = usvertexList; // sortVertices(usvertexList);
+//		vertexList = usvertexList; // sortVertices(usvertexList);
 		return loadTriangleMesh(triangles.toArray(new double[triangles.size()][6]));
 	}
 
@@ -622,8 +624,6 @@ public class GeomBasics extends Constants {
 		edgeList = new ArrayList<>();
 		Map<Vertex, Vertex> vertexSet = new HashMap<>();
 		Map<Edge, Edge> edgeSet = new HashMap<>();
-		
-		System.out.println("qmorph in: " + triangles.length);
 
 		for (double[] triangle : triangles) {
 			double len1 = 0, len2 = 0, len3 = 0, ang1 = 0, ang2 = 0, ang3 = 0;
@@ -655,16 +655,16 @@ public class GeomBasics extends Constants {
 			edge3 = edgeSet.computeIfAbsent(edge3F, e -> edge3F);
 			edge3.leftVertex.connectToEdge(edge3);
 			edge3.rightVertex.connectToEdge(edge3);
+			edge3.connectVertices();
 
 			t = new Triangle(edge1, edge2, edge3, len1, len2, len3, ang1, ang2, ang3, meshLenOpt, meshAngOpt);
-			// t = new Triangle(triangle);
 			t.connectEdges();
 			triangleList.add(t);
 
 		}
-		vertexList = new ArrayList<>(vertexSet.keySet());
-		edgeList = new ArrayList<>(edgeSet.keySet());
-		System.out.println("qmorph out: " + triangleList.size());
+		vertexList = new ArrayList<>(vertexSet.values());
+		edgeList = new ArrayList<>(edgeSet.values());
+
 		return triangleList;
 	}
 
