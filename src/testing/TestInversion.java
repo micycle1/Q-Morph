@@ -7,9 +7,12 @@ import meshditor.Vertex;
 import meshditor.Quad;
 import meshditor.Triangle;
 
-public class TestInvertion extends Constants {
+public class TestInversion extends Constants {
 
 	public static void main(String[] args) {
+		
+		Msg.debugMode = true;
+		
 		Vertex n1 = new Vertex(0.0, 0.0);
 		Vertex n2 = new Vertex(1.0, 0.0);
 		Vertex n3 = new Vertex(0.0, 1.0);
@@ -30,15 +33,15 @@ public class TestInvertion extends Constants {
 
 		Quad q = new Quad(e1, e2, e3, e4);
 
-		/*
-		 * if (q.inverted(oldN3, n3)) Msg.error("Shit, there's something wrong"); else
-		 * Msg.debug("Yessss, seems to work...newN3 didn't invert quad!!!");
-		 * 
-		 * if (q.inverted(oldN4, n4))
-		 * Msg.debug("Yessss, seems to work...newN4 inverted quad!!!"); else
-		 * Msg.error("Shit, there's something wrong");
-		 * 
-		 */
+//		if (q.inverted(oldN3, n3))
+//			Msg.error("Shit, there's something wrong");
+//		else
+//			Msg.debug("Yessss, seems to work...newN3 didn't invert quad!!!");
+//
+//		if (q.inverted(oldN4, n4))
+//			Msg.debug("Yessss, seems to work...newN4 inverted quad!!!");
+//		else
+//			Msg.error("Shit, there's something wrong");
 
 		// n3.setXY(oldN3);
 		Edge e5 = new Edge(n2, n3);

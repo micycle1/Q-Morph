@@ -9,6 +9,9 @@ import meshditor.Triangle;
 public class TestTriangle extends GeomBasics {
 
 	public static void main(String[] args) {
+		
+		Msg.debugMode = true;
+		
 		Vertex n1 = new Vertex(0, 0);
 		Vertex n2 = new Vertex(3, 0);
 		Vertex n3 = new Vertex(0, 3);
