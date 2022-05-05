@@ -1,10 +1,11 @@
 package meshditor;
 
 /**
- * A class holding information for triangles, and with methods for handling issues regarding triangles.
+ * A class holding information for triangles, and with methods for handling
+ * issues regarding triangles.
  */
 public class Triangle extends Element {
-	
+
 	public Triangle(double... vertices) {
 		Vertex v1 = new Vertex(vertices[0], vertices[1]);
 		Vertex v2 = new Vertex(vertices[2], vertices[3]);
@@ -23,15 +24,15 @@ public class Triangle extends Element {
 
 	public Triangle(Edge edge1, Edge edge2, Edge edge3) {
 		edgeList = new Edge[3];
-	
+
 		if (edge1 == null || edge2 == null || edge3 == null) {
 			Msg.error("Triangle: cannot create Triangle with null Edge.");
 		}
-	
+
 		edgeList[0] = edge1;
 		edgeList[1] = edge2;
 		edgeList[2] = edge3;
-	
+
 		// Make a pointer to the base Vertex that is the origin of vector(edgeList[a])
 		// so that the cross product vector(edgeList[a]) x vector(edgeList[b]) >= 0
 		// where a,b in {1,2}
@@ -39,16 +40,18 @@ public class Triangle extends Element {
 		if (inverted()) {
 			firstVertex = edgeList[0].rightVertex;
 		}
-	
+
 		Edge temp;
 		if (firstVertex == edgeList[0].commonVertex(edgeList[2])) {
 			temp = edgeList[1];
 			edgeList[1] = edgeList[2];
 			edgeList[2] = temp;
 		}
-	
+
 		ang = new double[3];
-		updateAngles();
+//		connectEdges();
+//		updateAttributes();
+		updateLengths();
 	}
 
 	public Triangle(Edge edge1, Edge edge2, Edge edge3, double len1, double len2, double len3, double ang1, double ang2, double ang3,
@@ -200,6 +203,14 @@ public class Triangle extends Element {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = edgeList[0].leftVertex.hashCode();
+		hash ^= edgeList[0].rightVertex.hashCode();
+		hash ^= edgeList[1].rightVertex.hashCode();
+		return hash;
 	}
 
 	@Override
@@ -535,14 +546,6 @@ public class Triangle extends Element {
 			return null;
 		}
 
-		e1commone2 = e1.commonVertex(e2);
-		e1commone3 = e1.commonVertex(e3);
-
-		v2 = new MyVector(e1commone2, e2.otherVertex(e1commone2));
-		v3 = new MyVector(e1commone3, e3.otherVertex(e1commone3));
-		v1Forv2 = new MyVector(e1commone2, e1.otherVertex(e1commone2));
-		v1Forv3 = new MyVector(e1commone3, e1.otherVertex(e1commone3));
-
 		// Positive angles between e1 and each of the other two edges:
 		double ang1, ang2;
 		ang1 = ang[angleIndex(e1, e2)];
@@ -585,8 +588,8 @@ public class Triangle extends Element {
 		}
 
 		/*
-		 * Vertex n= oppositeOfEdge(edgeList[0]); if (n.onLine(edgeList[0])) return false;
-		 * else return true;
+		 * Vertex n= oppositeOfEdge(edgeList[0]); if (n.onLine(edgeList[0])) return
+		 * false; else return true;
 		 */
 	}
 
@@ -711,7 +714,8 @@ public class Triangle extends Element {
 	 */
 	public void updateDistortionMetric(double factor) {
 		double AB = edgeList[0].len, CB = edgeList[1].len, CA = edgeList[2].len;
-		Vertex a = edgeList[2].commonVertex(edgeList[0]), b = edgeList[0].commonVertex(edgeList[1]), c = edgeList[2].commonVertex(edgeList[1]);
+		Vertex a = edgeList[2].commonVertex(edgeList[0]), b = edgeList[0].commonVertex(edgeList[1]),
+				c = edgeList[2].commonVertex(edgeList[1]);
 		MyVector vCA = new MyVector(c, a), vCB = new MyVector(c, b);
 
 		double temp = factor * Math.abs(vCA.cross(vCB)) / (CA * CA + AB * AB + CB * CB);
@@ -794,16 +798,15 @@ public class Triangle extends Element {
 
 	@Override
 	public String descr() {
-		return "";
-//		Vertex Vertex1, Vertex2, Vertex3;
-//		Vertex1 = edgeList[0].leftVertex;
-//		Vertex2 = edgeList[0].rightVertex;
-//		Vertex3 = edgeList[1].rightVertex;
-//		if (Vertex3 == Vertex1 || Vertex3 == Vertex2) {
-//			Vertex3 = edgeList[1].leftVertex;
-//		}
-//
-//		return Vertex1.descr() + ", " + Vertex2.descr() + ", " + Vertex3.descr();
+		Vertex Vertex1, Vertex2, Vertex3;
+		Vertex1 = edgeList[0].leftVertex;
+		Vertex2 = edgeList[0].rightVertex;
+		Vertex3 = edgeList[1].rightVertex;
+		if (Vertex3 == Vertex1 || Vertex3 == Vertex2) {
+			Vertex3 = edgeList[1].leftVertex;
+		}
+
+		return Vertex1.descr() + ", " + Vertex2.descr() + ", " + Vertex3.descr();
 	}
 
 	@Override

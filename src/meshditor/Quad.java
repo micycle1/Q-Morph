@@ -359,6 +359,15 @@ public class Quad extends Element {
 
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		int hash = edgeList[base].leftVertex.hashCode();
+		hash ^= edgeList[base].rightVertex.hashCode();
+		hash ^= edgeList[top].leftVertex.hashCode();
+		hash ^= edgeList[top].rightVertex.hashCode();
+		return hash;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -419,8 +428,8 @@ public class Quad extends Element {
 		Quad q;
 		boolean found = false;
 		Edge e, eI, eJ;
-		ArrayList<Edge> addList = new ArrayList<Edge>();
-		ArrayList<Element> quadList = new ArrayList<Element>();
+		ArrayList<Edge> addList = new ArrayList<>();
+		ArrayList<Element> quadList = new ArrayList<>();
 
 		for (int i = 0; i < nKm1.edgeList.size(); i++) {
 			eI = nKm1.edgeList.get(i);
@@ -462,8 +471,8 @@ public class Quad extends Element {
 			}
 		}
 
-		for (int i = 0; i < addList.size(); i++) {
-			e = addList.get(i);
+		for (Edge element : addList) {
+			e = element;
 			nKp1.edgeList.add(e);
 		}
 
@@ -879,40 +888,6 @@ public class Quad extends Element {
 			return true;
 		} else {
 			return false;
-		}
-	}
-
-	/**
-	 * The quad should be (strictly?) convex for this method to work correctly.
-	 * 
-	 * @return the next ccw oriented Vertex of this Quad.
-	 */
-	public Vertex nextCCWVertexOld(Vertex n) {
-		MyVector v0, v1;
-		Vertex n0, n1;
-
-		if (n == edgeList[base].leftVertex) {
-			n0 = edgeList[base].rightVertex;
-			n1 = edgeList[left].otherVertex(n);
-		} else if (n == edgeList[base].rightVertex) {
-			n0 = edgeList[right].otherVertex(n);
-			n1 = edgeList[base].leftVertex;
-		} else if (n == edgeList[left].otherVertex(edgeList[base].leftVertex)) {
-			n0 = edgeList[base].leftVertex;
-			n1 = edgeList[right].otherVertex(edgeList[base].rightVertex);
-		} else if (n == edgeList[right].otherVertex(edgeList[base].rightVertex)) {
-			n0 = edgeList[base].rightVertex;
-			n1 = edgeList[left].otherVertex(edgeList[base].leftVertex);
-		} else {
-			return null;
-		}
-
-		v0 = new MyVector(n, n0);
-		v1 = new MyVector(n, n1);
-		if (v1.isCWto(v0)) {
-			return n1;
-		} else {
-			return n0;
 		}
 	}
 
@@ -1431,7 +1406,7 @@ public class Quad extends Element {
 
 	/** @return a list of all vertices adjacent to this quad. */
 	public List<Vertex> getAdjVertices() {
-		ArrayList<Vertex> vertexList = new ArrayList<Vertex>();
+		ArrayList<Vertex> vertexList = new ArrayList<>();
 		Edge e;
 		Vertex n;
 		Vertex bLVertex = edgeList[base].leftVertex;

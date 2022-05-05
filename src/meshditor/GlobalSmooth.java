@@ -103,7 +103,6 @@ public class GlobalSmooth extends GeomBasics {
 	 *         to the criteria given in section 4.2 of the article.
 	 */
 	private boolean acceptable(int N, int Nminus, int Nplus, int Nup, int Ndown, int Ninverted, double deltaMy, double theta) {
-
 		if (Nminus == N || Ninverted > 0 || Ndown > Nup || deltaMy < MYMIN || theta > THETAMAX) {
 			return false;
 		} else if (Nplus == N || (Nup > 0 && Ndown == 0) || (Nup >= Ndown && deltaMy > MYMIN)) {
@@ -126,11 +125,11 @@ public class GlobalSmooth extends GeomBasics {
 		double delta = Constants.DELTAFACTOR * maxModDim;
 		Vertex xPX = new Vertex(x.x, x.y), xPY = new Vertex(x.x, x.y), xNew = new Vertex(x.x, x.y);
 		double gX, gY;
-		double minDM, newMinDM = java.lang.Double.MAX_VALUE;
+		double minDM, newMinDM = Double.MAX_VALUE;
 		int iterations = 0;
 
 		do { // Iterate until the min. dist. metric is acceptable
-			minDM = java.lang.Double.MAX_VALUE;
+			minDM = Double.MAX_VALUE;
 			gX = 0.0;
 			gY = 0.0;
 			xPX.setXY(x.x + delta, x.y);
@@ -161,7 +160,7 @@ public class GlobalSmooth extends GeomBasics {
 			// The dot product of two vectors u and v:
 			// u dot v = sqrt(u.x^2 + u.y^2) * sqrt(v.x^2 + v.y^2) * cos(angle(u,v))
 			boolean flag = false;
-			double gamma = java.lang.Double.MAX_VALUE, gammaI = 0, gdotgi, gdotg = gX * gX + gY * gY;
+			double gamma = Double.MAX_VALUE, gammaI = 0, gdotgi, gdotg = gX * gX + gY * gY;
 
 			for (Element oElem : elements) {
 				gdotgi = g.dot(oElem.gX, oElem.gY); // gX * oElem.gX + gY * oElem.gY;
@@ -182,7 +181,7 @@ public class GlobalSmooth extends GeomBasics {
 			xNew.setXY(x.x + gamma * gX, x.y + gamma * gY);
 
 			for (int j = 0; j < 4; j++) {
-				newMinDM = java.lang.Double.MAX_VALUE;
+				newMinDM = Double.MAX_VALUE;
 
 				for (Element oElem : elements) {
 					sElem = oElem.elementWithExchangedVertices(x, xNew);
@@ -280,7 +279,7 @@ public class GlobalSmooth extends GeomBasics {
 		do {
 			VertexMoved = false;
 			for (i = 0; i < vertices.size(); i++) {
-				v = (Vertex) vertices.get(i);
+				v = vertices.get(i);
 
 				if (v == null) {
 					continue;

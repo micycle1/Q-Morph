@@ -3,9 +3,9 @@ package testing;
 import meshditor.Edge;
 import meshditor.Msg;
 import meshditor.MyVector;
-import meshditor.Vertex;
 import meshditor.Quad;
 import meshditor.Triangle;
+import meshditor.Vertex;
 
 class TestHalfPlane {
 

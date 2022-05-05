@@ -6,14 +6,14 @@ package meshditor;
  */
 
 public abstract class Element extends Constants {
-	
+
 	/** An array of interior angles */
 	public double[] ang;
 	/** An array of edges */
 	public Edge[] edgeList;
 	/** Vertex used for determining inversion, amonst other things. */
 	Vertex firstVertex;
-	
+
 	/** @return neighbor element sharing edge e */
 	public abstract Element neighbor(Edge e);
 
@@ -126,7 +126,7 @@ public abstract class Element extends Constants {
 	 * @param p2 endpoint of second vector
 	 * @return the cross product of the two vectors
 	 */
-	protected double cross(Vertex o1, Vertex p1, Vertex o2, Vertex p2) {
+	protected static double cross(Vertex o1, Vertex p1, Vertex o2, Vertex p2) {
 		double x1 = p1.x - o1.x;
 		double x2 = p2.x - o2.x;
 		double y1 = p1.y - o1.y;

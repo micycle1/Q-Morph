@@ -592,7 +592,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			Element elem;
 			int size = GeomBasics.elementList.size();
 			if (size > 0) {
-				elem = (Element) GeomBasics.elementList.get(size - 1);
+				elem = GeomBasics.elementList.get(size - 1);
 				if (elem instanceof Quad) {
 					q = (Quad) elem;
 					n = q.centroid();
@@ -665,7 +665,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 				GeomBasics.vertexList.add(n);
 				lastActionNewVertex = true;
 			} else {
-				n = (Vertex) GeomBasics.vertexList.get(GeomBasics.vertexList.indexOf(n));
+				n = GeomBasics.vertexList.get(GeomBasics.vertexList.indexOf(n));
 			}
 
 			if (!VertexMode) {
@@ -684,7 +684,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						nONewEdges++;
 						lastActionNewEdge = true;
 					} else {
-						edge1 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge1));
+						edge1 = GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge1));
 					}
 				} else if (VertexCnt == 3 && triangleMode) {
 
@@ -705,7 +705,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 							lastActionNewEdge = true;
 						}
 					} else {
-						edge2 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge2));
+						edge2 = GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge2));
 					}
 
 					edge3 = new Edge(myvertexList[0], myvertexList[2]);
@@ -720,7 +720,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 							lastActionNewEdge = true;
 						}
 					} else {
-						edge3 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge3));
+						edge3 = GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge3));
 					}
 
 					tri = new Triangle(edge1, edge2, edge3);
@@ -744,7 +744,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						nONewEdges++;
 						lastActionNewEdge = true;
 					} else {
-						edge2 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge2));
+						edge2 = GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge2));
 					}
 				} else if (VertexCnt == 4 && quadMode) {
 					if (myvertexList[3] == myvertexList[0] || myvertexList[3] == myvertexList[1] || myvertexList[3] == myvertexList[2]) {
@@ -764,7 +764,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 							lastActionNewEdge = true;
 						}
 					} else {
-						edge3 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge3));
+						edge3 = GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge3));
 					}
 
 					edge4 = new Edge(myvertexList[0], myvertexList[3]);
@@ -779,7 +779,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 							lastActionNewEdge = true;
 						}
 					} else {
-						edge4 = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge4));
+						edge4 = GeomBasics.edgeList.get(GeomBasics.edgeList.indexOf(edge4));
 					}
 
 					// Decide which is base, left, right, and top:
@@ -803,7 +803,8 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 						GeomBasics.elementList.add(q);
 						q.connectEdges();
 						/*
-						 * b.connectVertices(); l.connectVertices(); r.connectVertices(); t.connectVertices();
+						 * b.connectVertices(); l.connectVertices(); r.connectVertices();
+						 * t.connectVertices();
 						 */
 						lastActionNewQuad = true;
 					}
@@ -836,7 +837,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			movingVertex = new Vertex(x, y);
 			int j = GeomBasics.vertexList.indexOf(movingVertex);
 			if (j != -1) {
-				movingVertex = (Vertex) GeomBasics.vertexList.get(j);
+				movingVertex = GeomBasics.vertexList.get(j);
 				oldX = movingVertex.x;
 				oldY = movingVertex.y;
 			} else {
@@ -863,10 +864,10 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 				movingVertex.update();
 
 				if (ind != -1) { // We have to merge the vertices
-					n = (Vertex) GeomBasics.vertexList.get(ind);
+					n = GeomBasics.vertexList.get(ind);
 
 					for (int i = 0; i < n.edgeList.size(); i++) {
-						ei = (Edge) n.edgeList.get(i);
+						ei = n.edgeList.get(i);
 						j = movingVertex.edgeList.indexOf(ei);
 						if (j == -1) {
 							ei.replaceVertex(n, movingVertex);
@@ -874,7 +875,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 							// ei.connectTo()
 						} else { // keep only one copy of each edge
 							// if (ei.leftVertex== ei.rightVertex) {
-							ej = (Edge) movingVertex.edgeList.get(j);
+							ej = movingVertex.edgeList.get(j);
 
 							if (ej.element1 != null) {
 								ej.element1.replaceEdge(ej, ei);
@@ -896,7 +897,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 							// Remove the correct edge from "global" edgelist
 							k = GeomBasics.edgeList.indexOf(ej);
-							oldE = (Edge) GeomBasics.edgeList.get(k);
+							oldE = GeomBasics.edgeList.get(k);
 							if (oldE == ei) {
 								k = GeomBasics.edgeList.lastIndexOf(oldE);
 							}
@@ -904,7 +905,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 							// Remove the correct edge from other's edgelist
 							k = other.edgeList.indexOf(ej);
-							oldE = (Edge) other.edgeList.get(k);
+							oldE = other.edgeList.get(k);
 							if (oldE == ei) {
 								k = other.edgeList.lastIndexOf(oldE);
 							}
@@ -943,7 +944,7 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			if (lastActionMoveVertex) {
 				if (lastActionMergeVertices) {
 					for (int i = 0; i < oldMovingVertex.edgeList.size(); i++) {
-						e = (Edge) oldMovingVertex.edgeList.get(i);
+						e = oldMovingVertex.edgeList.get(i);
 						j = movingVertex.edgeList.indexOf(e);
 						if (j != -1) {
 							if (!(e.hasVertex(movingVertex) && e.hasVertex(oldMovingVertex))) {
@@ -982,14 +983,14 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 				GeomBasics.vertexList.remove(GeomBasics.vertexList.size() - 1);
 			}
 			if (lastActionNewEdge) {
-				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
+				e = GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
 				e.disconnectVertices();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
 			} else if (lastActionTwoNewEdges) {
-				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
+				e = GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
 				e.disconnectVertices();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
-				e = (Edge) GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
+				e = GeomBasics.edgeList.get(GeomBasics.edgeList.size() - 1);
 				e.disconnectVertices();
 				GeomBasics.edgeList.remove(GeomBasics.edgeList.size() - 1);
 			}

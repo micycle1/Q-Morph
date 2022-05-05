@@ -6,8 +6,8 @@ import java.util.ArrayList;
  * This class offers methods for incrementally constructing Delaunay triangle
  * meshes.
  */
-
 public class DelaunayMeshGen extends GeomBasics {
+	
 	public DelaunayMeshGen() {
 	}
 
@@ -24,13 +24,12 @@ public class DelaunayMeshGen extends GeomBasics {
 		setCurMethod(this);
 
 		// Perform the steps necessary before inserting the Vertices in incrDelaunay():
-		// Create the two initial Delaunay triangles from the four most extreme Vertices.
+		// Create the two initial Delaunay triangles from the four most extreme
+		// Vertices.
 
-		triangleList = new ArrayList();
-		edgeList = new ArrayList();
+		triangleList = new ArrayList<Triangle>();
+		edgeList = new ArrayList<Edge>();
 		findExtremeVertices();
-
-		
 
 		// The boundary edges
 		Edge edge2 = new Edge(leftmost, uppermost);
@@ -73,12 +72,7 @@ public class DelaunayMeshGen extends GeomBasics {
 
 	// Run the implementation on the give set of vertices. */
 	public void run() {
-		
-		// Point insertions
-		Vertex n;
-		for (Object element : vertexList) {
-			n = (Vertex) element;
-
+		for (Vertex n : vertexList) {
 			// The extreme vertices have been inserted already, so we skip them here
 			if (n != leftmost && n != rightmost && n != uppermost && n != lowermost) {
 				insertVertex(n, delaunayCompliant);
@@ -96,12 +90,12 @@ public class DelaunayMeshGen extends GeomBasics {
 	public void step() {
 		Vertex n;
 		if (counter < vertexList.size()) {
-			n = (Vertex) vertexList.get(counter);
+			n = vertexList.get(counter);
 			counter++;
 			// The extreme vertices have been inserted already, so we skip them here
 			while (n == leftmost || n == rightmost || n == uppermost || n == lowermost) {
 				if (counter < vertexList.size()) {
-					n = (Vertex) vertexList.get(counter);
+					n = vertexList.get(counter);
 					counter++;
 				} else if (counter == vertexList.size()) {
 					counter++;
@@ -122,14 +116,14 @@ public class DelaunayMeshGen extends GeomBasics {
 	 * Find the triangle (in the list) that contains the specified Vertex. A method
 	 * highly inspired by the dart based localization procedure.
 	 * 
-	 * @return the Triangle containing the Vertex, but if the Vertex is located on an
-	 *         Edge, this Edge is returned instead. Set inside= true if found. If
+	 * @return the Triangle containing the Vertex, but if the Vertex is located on
+	 *         an Edge, this Edge is returned instead. Set inside= true if found. If
 	 *         the Vertex is located outside of the current triangulation, then set
 	 *         inside= false and return a boundary triangle that can be seen from
 	 *         the Vertex.
 	 */
 	private Object findTriangleContaining(Vertex newVertex, Triangle start) {
-		
+
 		// The initial "dart" must be ccw in the initial triangle:
 		Triangle ts = start; // d_start
 		Edge es; // d_start
@@ -154,7 +148,6 @@ public class DelaunayMeshGen extends GeomBasics {
 		int hp;
 		while (true) {
 
-			
 			/*
 			 * Msg.debug("Loop nr. "+count++); Msg.debug("newVertex= "+newVertex.descr());
 			 * Msg.debug("Current dart has triangle= "+t.descr());
@@ -184,9 +177,9 @@ public class DelaunayMeshGen extends GeomBasics {
 				}
 			}
 			/*
-			 * else if (hp==0 && newVertex.inBoundedPlane(e)) { // is newVertex actually on Edge
-			 * e? Msg.debug("Leaving findTriangleContaining(..), returning Edge"); inside=
-			 * true; return (Object) e; }
+			 * else if (hp==0 && newVertex.inBoundedPlane(e)) { // is newVertex actually on
+			 * Edge e? Msg.debug("Leaving findTriangleContaining(..), returning Edge");
+			 * inside= true; return (Object) e; }
 			 */
 			else { // try to move to the adjacent triangle
 				online = null;
@@ -324,12 +317,12 @@ public class DelaunayMeshGen extends GeomBasics {
 
 	/**
 	 * Recursive method that deletes the part of the mesh boundary that is no longer
-	 * Delaunay compliant (the "influence region") when a new Vertex has been inserted
-	 * exterior to the current mesh. Also compiles a list of Vertices in this region.
-	 * The method must be called for each boundary triangle that is affected by the
-	 * newly inserted Vertex. Some interior triangles are also affected, but you don't
-	 * need to worry about them, because they get deleted automagically by this
-	 * method.
+	 * Delaunay compliant (the "influence region") when a new Vertex has been
+	 * inserted exterior to the current mesh. Also compiles a list of Vertices in
+	 * this region. The method must be called for each boundary triangle that is
+	 * affected by the newly inserted Vertex. Some interior triangles are also
+	 * affected, but you don't need to worry about them, because they get deleted
+	 * automagically by this method.
 	 *
 	 * @param t a triangle on the boundary that is possibly no longer Delaunay
 	 *          compliant
@@ -422,7 +415,7 @@ public class DelaunayMeshGen extends GeomBasics {
 	}
 
 	private boolean inside = false;
-	private ArrayList irVertices = new ArrayList();
+	private ArrayList<Vertex> irVertices = new ArrayList<Vertex>();
 
 	/**
 	 * Insert a interior/ exterior Vertex and update mesh to remain Delaunay
@@ -433,16 +426,15 @@ public class DelaunayMeshGen extends GeomBasics {
 		Object o;
 		Edge e, e1 = null, e2, e3, e4 = null, e12, e22 = null, e32, e42 = null, eOld, b0 = null, b1 = null;
 		Vertex vertex, nVertex, pVertex, other, other2, n0, n1;
-		ArrayList boundaryEdges = new ArrayList();
+		ArrayList<Edge> boundaryEdges = new ArrayList<Edge>();
 		int i, j;
 		boolean loop = true;
 
 		// Locate the triangle that contains the point
-		o = findTriangleContaining(n, (Triangle) triangleList.get(0));
+		o = findTriangleContaining(n, triangleList.get(0));
 		if (!inside) {
 			// --- the Vertex is to be inserted outside the current triangulation --- //
 			e = (Edge) o;
-			
 
 			// Compile an ordered list of boundary edges that is part of the i. polygon.
 			// First find the leftmost edge of these boundary edges...
@@ -461,7 +453,6 @@ public class DelaunayMeshGen extends GeomBasics {
 					loop = false;
 				}
 			}
-			
 
 			// ... then traverse the boundary edges towards the right, adding one
 			// edge at a time until the rightmost edge is encountered
@@ -486,7 +477,6 @@ public class DelaunayMeshGen extends GeomBasics {
 				}
 			}
 			n1 = vertex; // Most distant Vertex to the right
-			
 
 			// From this list, find each triangle in the influence region and delete it.
 			// Also create the list of vertices in the influence region
@@ -498,7 +488,6 @@ public class DelaunayMeshGen extends GeomBasics {
 					makeDelaunayTriangle(t, e, n);
 				}
 			}
-			
 
 			// Create new triangles by connecting the vertices in the
 			// influence region to Vertex n:
@@ -515,23 +504,21 @@ public class DelaunayMeshGen extends GeomBasics {
 					b1 = e;
 				}
 			}
-			
 
 			// Sort this list of edges in ccw order
 			n.edgeList = n.calcCCWSortedEdgeList(b0, b1);
-			
 
 			// Create each triangle
 			printEdgeList(n.edgeList);
 			for (i = 0; i < n.edgeList.size() - 1; i++) {
-				e1 = (Edge) n.edgeList.get(i);
-				e2 = (Edge) n.edgeList.get(i + 1);
+				e1 = n.edgeList.get(i);
+				e2 = n.edgeList.get(i + 1);
 				other = e1.otherVertex(n);
 				other2 = e2.otherVertex(n);
 				e = new Edge(other, other2);
 				j = other.edgeList.indexOf(e);
 				if (j != -1) {
-					e = (Edge) other.edgeList.get(j);
+					e = other.edgeList.get(j);
 				} else {
 					e.connectVertices();
 					edgeList.add(e);
@@ -545,7 +532,6 @@ public class DelaunayMeshGen extends GeomBasics {
 		} else if (o instanceof Triangle) {
 			// --- the Vertex is to be inserted inside the current triangulation --- //
 			t = (Triangle) o;
-			
 
 			// Make some pointers for its edges
 			Edge te1 = t.edgeList[1], te2 = t.edgeList[2], te3 = t.edgeList[0];
@@ -628,7 +614,6 @@ public class DelaunayMeshGen extends GeomBasics {
 
 			e.disconnectVertices();
 			edgeList.remove(edgeList.indexOf(e));
-			
 
 			// Create the (2 or) 4 new triangles
 			t1 = new Triangle(e1, e12, e3); // This should be correct...

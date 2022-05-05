@@ -8,9 +8,9 @@ import meshditor.Vertex;
 public class TestMyVector extends GeomBasics {
 
 	public static void main(String[] args) {
-		
+
 		Msg.debugMode = true;
-		
+
 		Vertex p0 = new Vertex(0, 0);
 		Vertex p1 = new Vertex(0, 1);
 

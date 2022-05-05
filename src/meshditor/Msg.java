@@ -4,7 +4,7 @@ package meshditor;
  * This class outputs messages to the user.
  */
 public class Msg {
-	
+
 	public static boolean debugMode = false;
 
 	/** Output an error message and then exit the program. */

@@ -15,7 +15,7 @@ import java.util.List;
  *
  */
 public class QMorph extends GeomBasics {
-	
+
 	public QMorph() {
 	}
 
@@ -23,7 +23,6 @@ public class QMorph extends GeomBasics {
 	private boolean finished = false;
 	private int level = 0;
 	private int nrOfFronts = 0;
-	private boolean evenInitNrOfFronts = false;
 
 	/** Initialize the class */
 	public void init() {
@@ -48,21 +47,12 @@ public class QMorph extends GeomBasics {
 
 			repairZeroAreaTriangles();
 
-			if (!verifyTriangleMesh(triangleList)) {
-				Msg.error("This is not an all-triangle mesh.");
-			}
-
 			Edge.clearStateList();
 			frontList = defineInitFronts(edgeList);
 			printEdgeList(frontList);
 			classifyStateOfAllFronts(frontList);
 
 			nrOfFronts = countNOFrontsAtCurLowestLevel(frontList);
-			if ((nrOfFronts & 1) == 0) {
-				evenInitNrOfFronts = true;
-			} else {
-				evenInitNrOfFronts = false;
-			}
 		} else if (doCleanUp) {
 			setCurMethod(topoCleanup);
 			topoCleanup.init();
@@ -76,13 +66,10 @@ public class QMorph extends GeomBasics {
 	public void run() {
 		if (doTri2QuadConversion) {
 			if (!step) {
-				
-
 				// The program's main loop from where all the real action originates
 				while (!finished) {
 					step();
 				}
-
 			}
 		} else if (!step) {
 			// Post-processing methods
@@ -105,11 +92,11 @@ public class QMorph extends GeomBasics {
 	public void step() {
 		Quad q;
 		Edge e;
-		int i, oldBaseState;
+		int i;
 
 		e = Edge.getNextFront(/* frontList, */);
 		if (e != null) {
-			oldBaseState = e.getState();
+			e.getState();
 			if (nrOfFronts <= 0) {
 				level++;
 				nrOfFronts = countNOFrontsAtCurLowestLevel(frontList);
@@ -118,13 +105,13 @@ public class QMorph extends GeomBasics {
 			Edge.printStateLists();
 			q = makeQuad(e);
 			if (q == null) {
-				while (q == null && e != null) {
+				while (q == null) {
 					e.selectable = false;
 					e = Edge.getNextFront();
 					if (e == null) {
 						break;
 					}
-					oldBaseState = e.getState();
+					e.getState();
 					q = makeQuad(e);
 				}
 				Edge.markAllSelectable();
@@ -239,7 +226,6 @@ public class QMorph extends GeomBasics {
 		// First find the front edge where we want to start
 		prev = b;
 		cur = prev.frontNeighborAt(n1);
-		
 
 		// Parse the current loop of fronts:
 		do {
@@ -265,7 +251,6 @@ public class QMorph extends GeomBasics {
 					n4Inn3Loop = true;
 					n3n4Edges = 1;
 				}
-				
 
 				// Parse the n3 loop and count number of edges here
 				do {
@@ -282,7 +267,6 @@ public class QMorph extends GeomBasics {
 				if (!n4Inn3Loop && !otherSide.isFrontEdge() && n4.frontVertex()) { // Case 5 only
 					prev = n4.anotherFrontEdge(null);
 					cur = prev.frontNeighborAt(n4);
-					
 
 					// Parse the n4 loop and count number of edges here
 					do {
@@ -324,12 +308,12 @@ public class QMorph extends GeomBasics {
 		int lowestLevel, count = 0;
 
 		// Get nr of fronts at the lowest level:
-		if (frontList.size() > 0) {
-			cur = (Edge) frontList.get(0);
+		if (!frontList.isEmpty()) {
+			cur = frontList.get(0);
 			lowestLevel = cur.level;
 			count = 1;
 			for (int i = 1; i < frontList.size(); i++) {
-				cur = (Edge) frontList.get(i);
+				cur = frontList.get(i);
 				if (cur.level < lowestLevel) {
 					lowestLevel = cur.level;
 					count = 1;
@@ -339,18 +323,6 @@ public class QMorph extends GeomBasics {
 			}
 		}
 		return count;
-	}
-
-	/** Make sure the triangle mesh consists exclusively of triangles */
-	private boolean verifyTriangleMesh(List<Triangle> triangleList) {
-		Object o;
-		for (Object element : triangleList) {
-			o = element;
-			if (!(o instanceof Triangle)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -364,23 +336,14 @@ public class QMorph extends GeomBasics {
 		Triangle t;
 		Edge top;
 		int index;
-		boolean initL = false, initR = false;
-		Edge[] sideEdges = new Edge[2];
 		Edge leftSide, rightSide;
 		ArrayList<Triangle> tris;
-
-		if (e.leftSide) {
-			initL = true;
-		}
-		if (e.rightSide) {
-			initR = true;
-		}
 
 		q = handleSpecialCases(e);
 		if (q != null) {
 			return q;
 		}
-		sideEdges = makeSideEdges(e);
+		Edge[] sideEdges = makeSideEdges(e);
 		leftSide = sideEdges[0];
 		rightSide = sideEdges[1];
 		if (leftSide.commonVertex(rightSide) != null) {
@@ -389,7 +352,7 @@ public class QMorph extends GeomBasics {
 			t = new Triangle(e, leftSide, rightSide);
 			index = triangleList.indexOf(t);
 			if (index != -1) {
-				t = (Triangle) triangleList.get(index);
+				t = triangleList.get(index);
 			}
 
 			q = new Quad(t);
@@ -458,7 +421,7 @@ public class QMorph extends GeomBasics {
 	 * @return a new Vertex with the smoothed position
 	 */
 	private Vertex smoothFrontVertex(Vertex nK, Vertex nJ, Quad myQ, Edge front1, Edge front2) {
-		List<Element> adjQuads = nK.adjQuads();
+		nK.adjQuads();
 		double tr, ld = 0;
 		Quad q;
 		Vertex newVertex;
@@ -473,7 +436,7 @@ public class QMorph extends GeomBasics {
 
 		Edge eD = new Edge(nK, nJ);
 		if (nK.edgeList.contains(eD)) {
-			eD = (Edge) nK.edgeList.get(nK.edgeList.indexOf(eD));
+			eD = nK.edgeList.get(nK.edgeList.indexOf(eD));
 		}
 
 		if (seqQuads == 2) { // || nK.nrOfFrontEdges()> 2) {
@@ -488,7 +451,7 @@ public class QMorph extends GeomBasics {
 				ld = nK.meanNeighborEdgeLength();
 				newVertex = eD.otherVertexGivenNewLength(ld, nJ);
 			} else if (tr <= 20 && tr > 2.5) {
-				
+
 				// The mean of (some of) the other edges in all the adjacent elements
 				ld = 0;
 				// First add the lengths of edges from Triangles ahead of the front
@@ -539,9 +502,7 @@ public class QMorph extends GeomBasics {
 	Vertex getSmoothedPos(Vertex n, Quad q) {
 		Vertex newN, behind;
 		Edge front1, front2, e;
-		Quad q2, qn;
-		Element neighbor;
-
+		Quad q2;
 		if (q.hasFrontEdgeAt(n) && !n.boundaryVertex()) {
 			if (n == q.edgeList[left].otherVertex(q.edgeList[base].leftVertex)) {
 				if (q.edgeList[top].isFrontEdge()) {
@@ -651,7 +612,8 @@ public class QMorph extends GeomBasics {
 			adjVertices = q.getAdjVertices();
 			adjVerticesNew = new ArrayList<>(adjVertices.size());
 
-			// Calculate smoothed pos for each element Vertex and those vertices connected to
+			// Calculate smoothed pos for each element Vertex and those vertices connected
+			// to
 			// the element. If the element has become inverted, then repair it.
 
 			topNew = getSmoothedPos(top, q);
@@ -659,7 +621,7 @@ public class QMorph extends GeomBasics {
 			bottomRightNew = getSmoothedPos(bottomRight, q);
 
 			for (int i = 0; i < adjVertices.size(); i++) {
-				n = (Vertex) adjVertices.get(i);
+				n = adjVertices.get(i);
 				if (n.frontVertex() && !n.boundaryVertex()) {
 					fe1 = n.anotherFrontEdge(null);
 					fe2 = n.anotherFrontEdge(fe1);
@@ -702,9 +664,9 @@ public class QMorph extends GeomBasics {
 			// bottomRight.updateAngles();
 
 			for (int i = 0; i < adjVertices.size(); i++) {
-				n = (Vertex) adjVertices.get(i);
+				n = adjVertices.get(i);
 				nOld = n.copyXY();
-				nNew = (Vertex) adjVerticesNew.get(i);
+				nNew = adjVerticesNew.get(i);
 				if (!n.equals(nNew)) {
 					n.moveTo(nNew);
 					inversionCheckAndRepair(n, nOld);
@@ -729,9 +691,10 @@ public class QMorph extends GeomBasics {
 			bottomRightOld = bottomRight.copyXY();
 
 			adjVertices = q.getAdjVertices();
-			adjVerticesNew = new ArrayList<Vertex>(adjVertices.size());
+			adjVerticesNew = new ArrayList<>(adjVertices.size());
 
-			// Calculate smoothed pos for each element Vertex and those vertices connected to
+			// Calculate smoothed pos for each element Vertex and those vertices connected
+			// to
 			// the element. If the element has become inverted, then repair it.
 
 			topLeftNew = getSmoothedPos(topLeft, q);
@@ -740,7 +703,7 @@ public class QMorph extends GeomBasics {
 			bottomRightNew = getSmoothedPos(bottomRight, q);
 
 			for (int i = 0; i < adjVertices.size(); i++) {
-				n = (Vertex) adjVertices.get(i);
+				n = adjVertices.get(i);
 				if (n.frontVertex() && !n.boundaryVertex()) {
 					fe1 = n.anotherFrontEdge(null);
 					fe2 = n.anotherFrontEdge(fe1);
@@ -791,9 +754,9 @@ public class QMorph extends GeomBasics {
 			// bottomRight.updateAngles();
 
 			for (int i = 0; i < adjVertices.size(); i++) {
-				n = (Vertex) adjVertices.get(i);
+				n = adjVertices.get(i);
 				nOld = n.copyXY();
-				nNew = (Vertex) adjVerticesNew.get(i);
+				nNew = adjVerticesNew.get(i);
 				if (!n.equals(nNew)) {
 					n.moveTo(nNew);
 					inversionCheckAndRepair(n, nOld);
@@ -813,11 +776,9 @@ public class QMorph extends GeomBasics {
 	 */
 	private void clearQuad(Quad q, ArrayList<Triangle> tris) {
 		int VertexInd, edgeInd, triInd;
-		Vertex vertex;
 		Edge e;
 
-		for (int j = 0; j < tris.size(); j++) {
-			Triangle t = tris.get(j);
+		for (Triangle t : tris) {
 			for (int i = 0; i < 3; i++) {
 				e = t.edgeList[i];
 				if (!q.hasEdge(e)) {
@@ -860,21 +821,19 @@ public class QMorph extends GeomBasics {
 	}
 
 	/**
-	 * "Virus" that removes all triangles and their edges and vertices inside of this
-	 * quad. Assumes that only triangles are present, not quads, inside of q
+	 * "Virus" that removes all triangles and their edges and vertices inside of
+	 * this quad. Assumes that only triangles are present, not quads, inside of q
 	 */
 	private void clearQuad(Quad q, Triangle first) {
 		Element neighbor;
 		Element cur; // triangle
 		ArrayList<Element> n = new ArrayList<>();
-		Edge e;
-		int VertexInd, edgeInd, triInd;
 
 		n.add(first);
 		for (int j = 0; j < n.size(); j++) {
 			cur = n.get(j);
 			for (int i = 0; i < 3; i++) {
-				e = cur.edgeList[i];
+				Edge e = cur.edgeList[i];
 				if (!q.hasEdge(e)) {
 
 					neighbor = cur.neighbor(e);
@@ -882,26 +841,17 @@ public class QMorph extends GeomBasics {
 						n.add(neighbor);
 					}
 
-					edgeInd = edgeList.indexOf(e);
-					if (edgeInd != -1) {
-						edgeList.remove(edgeInd);
-					}
+					edgeList.remove(e);
 
 					e.tryToDisconnectVertices();
 
 					// Remove the leftVertex if not a vertex of q:
 					if (!q.hasVertex(e.leftVertex)) {
-						VertexInd = vertexList.indexOf(e.leftVertex);
-						if (VertexInd != -1) {
-							vertexList.remove(VertexInd);
-						}
+						vertexList.remove(e.leftVertex);
 					}
 					// Remove the rightVertex if not a vertex of q:
 					if (!q.hasVertex(e.rightVertex)) {
-						VertexInd = vertexList.indexOf(e.rightVertex);
-						if (VertexInd != -1) {
-							vertexList.remove(VertexInd);
-						}
+						vertexList.remove(e.rightVertex);
 					}
 
 					e.disconnectFromElement(cur);
@@ -909,11 +859,7 @@ public class QMorph extends GeomBasics {
 					e.disconnectFromElement(cur);
 				}
 			}
-
-			triInd = triangleList.indexOf(cur);
-			if (triInd != -1) {
-				triangleList.remove(triInd);
-			}
+			triangleList.remove(cur);
 
 		}
 		q.connectEdges();
@@ -923,10 +869,9 @@ public class QMorph extends GeomBasics {
 	private int localFakeUpdateFronts(Quad q, int lowestLevel, List<Edge> frontList) {
 		int curLevelEdgesRemoved = 0;
 		Edge e;
-		Element neighbor;
-		List<Edge> needsNewFN = new ArrayList<Edge>();
-		List<Edge> lostFNList = new ArrayList<Edge>();
-		List<Edge> needsReclassification = new ArrayList<Edge>();
+		List<Edge> needsNewFN = new ArrayList<>();
+		List<Edge> lostFNList = new ArrayList<>();
+		List<Edge> needsReclassification = new ArrayList<>();
 
 		Edge.printStateLists();
 
@@ -988,7 +933,7 @@ public class QMorph extends GeomBasics {
 
 		// Set new front neighbors when necessary:
 		for (int i = 0; i < needsNewFN.size(); i++) {
-			e = (Edge) needsNewFN.get(i);
+			e = needsNewFN.get(i);
 			if (e.frontEdge) {
 				if (e.setFrontNeighbors(frontList)) {
 					if (e.hasFalseFrontNeighbor()) {
@@ -1002,12 +947,8 @@ public class QMorph extends GeomBasics {
 			}
 		}
 
-		// Run through the list of Edges that have lost their old frontNeighbor and see
-		// if they need to have their frontNeighbor set again.
-		Edge l, r;
 		for (int i = 0; i < lostFNList.size(); i++) {
-			e = (Edge) lostFNList.get(i);
-
+			e = lostFNList.get(i);
 			if (e.isFrontEdge() && e.hasFalseFrontNeighbor()) {
 				if (e.setFrontNeighbors(frontList)) {
 					if (e.hasFalseFrontNeighbor()) {
@@ -1020,10 +961,9 @@ public class QMorph extends GeomBasics {
 		}
 
 		// Reclassify front edges when necessary:
-		for (Object element : needsReclassification) {
-			e = (Edge) element;
-			e.removeFromStateList();
-			e.classifyStateOfFrontEdge();
+		for (Edge edge : needsReclassification) {
+			edge.removeFromStateList();
+			edge.classifyStateOfFrontEdge();
 		}
 
 		return curLevelEdgesRemoved;
@@ -1089,8 +1029,6 @@ public class QMorph extends GeomBasics {
 
 			// Decide whether the left edge belongs in the frontlist, and act accordingly
 			e = q.edgeList[left];
-			if (e.getTriangleElement() != null) {
-			}
 			if (!e.frontEdge && e.isFrontEdge()) {
 				e.promoteToFront(q.edgeList[base].level + 1, frontList);
 				needsNewFN.add(e);
@@ -1109,9 +1047,6 @@ public class QMorph extends GeomBasics {
 
 			// Decide whether the right edge belongs in the frontlist, and act accordingly
 			e = q.edgeList[right];
-			if (e.getTriangleElement() != null) {
-			}
-
 			if (!e.frontEdge && e.isFrontEdge()) {
 				e.promoteToFront(q.edgeList[base].level + 1, frontList);
 				needsNewFN.add(e);
@@ -1130,7 +1065,7 @@ public class QMorph extends GeomBasics {
 
 			// Set new front neighbors when necessary:
 			for (int i = 0; i < needsNewFN.size(); i++) {
-				e = (Edge) needsNewFN.get(i);
+				e = needsNewFN.get(i);
 				if (e.setFrontNeighbors(frontList)) {
 					if (e.hasFalseFrontNeighbor()) {
 						needsNewFN.add(e);
@@ -1140,11 +1075,8 @@ public class QMorph extends GeomBasics {
 				}
 			}
 
-			// Parse the list of Edges that have lost their old frontNeighbor and see
-			// if they need to have their frontNeighbor set again.
-			Edge l, r;
 			for (int i = 0; i < lostFNList.size(); i++) {
-				e = (Edge) lostFNList.get(i);
+				e = lostFNList.get(i);
 
 				if (e.isFrontEdge() && e.hasFalseFrontNeighbor()) {
 					if (e.setFrontNeighbors(frontList)) {
@@ -1159,7 +1091,7 @@ public class QMorph extends GeomBasics {
 
 			// Reclassify front edges when necessary:
 			for (int i = 0; i < needsReclassification.size(); i++) {
-				e = (Edge) needsReclassification.get(i);
+				e = needsReclassification.get(i);
 
 				if (needsNewFN.contains(e)) {
 				}
@@ -1181,7 +1113,6 @@ public class QMorph extends GeomBasics {
 
 	private List<Edge> defineInitFronts(List<Edge> edgeList) {
 		List<Edge> frontList = new ArrayList<>();
-		Edge leftEdge, rightEdge;
 		for (Edge e : edgeList) {
 			if (e.hasElement(null)) {
 				e.promoteToFront(0, frontList);
@@ -1219,10 +1150,11 @@ public class QMorph extends GeomBasics {
 	/** Performs seaming operation as described in Owen's paper */
 	private Quad doSeam(Edge e1, Edge e2, Vertex nK) {
 		Msg.warning("Entering doSeam(..)...");
-		Quad e1Quad = e1.getQuadElement();
+		e1.getQuadElement();
 		Vertex safePos = null;
 
-		// We must avoid that nKp1 becomes a boundaryVertex because nKp1 is the Vertex that
+		// We must avoid that nKp1 becomes a boundaryVertex because nKp1 is the Vertex
+		// that
 		// is to
 		// be relocated.
 		Edge tmp;
@@ -1242,13 +1174,11 @@ public class QMorph extends GeomBasics {
 		}
 		Triangle ta = (Triangle) e0.element1, tb = (Triangle) e0.element2;
 		Edge et1, et2;
-		Vertex nta = ta.oppositeOfEdge(e0), ntb = tb.oppositeOfEdge(e0), nT;
+		Vertex nta = ta.oppositeOfEdge(e0), ntb = tb.oppositeOfEdge(e0);
 		if (nta.inHalfplane(e0, nK) == 1) {
-			nT = ntb;
 			et1 = tb.neighborEdge(e0.leftVertex, e0);
 			et2 = tb.neighborEdge(e0.rightVertex, e0);
 		} else {
-			nT = nta;
 			et1 = ta.neighborEdge(e0.leftVertex, e0);
 			et2 = ta.neighborEdge(e0.rightVertex, e0);
 		}
@@ -1620,7 +1550,7 @@ public class QMorph extends GeomBasics {
 
 		Vertex nKm1 = longer.otherVertex(nK), nKp1 = shorter.otherVertex(nK), opposite = q1.oppositeVertex(nK);
 
-		Edge frontBeyondKp1 = shorter.frontNeighborAt(nKp1);
+		shorter.frontNeighborAt(nKp1);
 		Edge frontBeyondKm1 = longer.frontNeighborAt(nKm1);
 
 		Edge q1Top = q1.oppositeEdge(longer), q1nK = q1.neighborEdge(nK, longer), eKm1Opp = q1.oppositeEdge(q1nK);
@@ -1737,12 +1667,9 @@ public class QMorph extends GeomBasics {
 
 		if (q11New.inverted()) {
 			Msg.warning("...q11New was inverted initially!!");
-		} else {
 		}
-
 		if (q12New.inverted()) {
 			Msg.warning("...q12New was inverted initially!!");
-		} else {
 		}
 
 		return q12New; // ...so that q12New will be smoothed and updated as well.
@@ -1864,7 +1791,7 @@ public class QMorph extends GeomBasics {
 			if (altRSE.size() > 1) {
 				sideEdges[1] = defineSideEdge(e, e.rightVertex, sideEdges[0], null, altRSE);
 			} else {
-				sideEdges[1] = (Edge) altRSE.get(0);
+				sideEdges[1] = altRSE.get(0);
 			}
 			sideEdges[0].swappable = true;
 		} else if (lState == 0 && rState == 1) {
@@ -1874,7 +1801,7 @@ public class QMorph extends GeomBasics {
 			if (altLSE.size() > 1) {
 				sideEdges[0] = defineSideEdge(e, e.leftVertex, null, sideEdges[1], altLSE);
 			} else {
-				sideEdges[0] = (Edge) altLSE.get(0);
+				sideEdges[0] = altLSE.get(0);
 			}
 			sideEdges[1].swappable = true;
 		} else if (lState == 0 && rState == 0) {
@@ -1882,7 +1809,7 @@ public class QMorph extends GeomBasics {
 			if (altLSE.size() > 1) {
 				sideEdges[0] = defineSideEdge(e, e.leftVertex, null, null, altLSE);
 			} else {
-				sideEdges[0] = (Edge) altLSE.get(0);
+				sideEdges[0] = altLSE.get(0);
 			}
 
 			sideEdges[0].swappable = false;
@@ -1890,7 +1817,7 @@ public class QMorph extends GeomBasics {
 			if (altRSE.size() > 1) {
 				sideEdges[1] = defineSideEdge(e, e.rightVertex, sideEdges[0], null, altRSE);
 			} else {
-				sideEdges[1] = (Edge) altRSE.get(0);
+				sideEdges[1] = altRSE.get(0);
 			}
 			sideEdges[0].swappable = true;
 		}
@@ -1911,8 +1838,6 @@ public class QMorph extends GeomBasics {
 			 * !lSide.frontEdge) || (rSide.otherVertex(e.rightVertex).frontVertex() &&
 			 * !rSide.frontEdge)) ) {
 			 */
-
-			
 
 			// nM (the "otherVertex") lies on an opposing front, and if the side Edge
 			// isn't a front edge, it may only be used if the number of edges on
@@ -1945,16 +1870,16 @@ public class QMorph extends GeomBasics {
 		 * // There are more than one alt side edge for both left and right if
 		 * (altLSE.size()> 1 && altRSE.size()> 1) { e.leftSide= defineSideEdge(e,
 		 * e.leftVertex, PIdiv6, altLSE); e.leftSide.swappable= false; e.rightSide=
-		 * defineSideEdge(e, e.rightVertex, PIdiv6, altRSE); e.leftSide.swappable= true; }
-		 * // Only right side has more than one alt side edge else if (altLSE.size()== 1
-		 * && altRSE.size()> 1) { e.leftSide= (Edge)altLSE.get(0); e.leftSide.swappable=
-		 * false; e.rightSide= defineSideEdge(e, e.rightVertex, PIdiv6, altRSE);
-		 * e.leftSide.swappable= true; } // Only left side has more than one alt side
-		 * edge else if (altLSE.size()>1 && altRSE.size()== 1) { e.rightSide=
-		 * (Edge)altRSE.get(0); e.rightSide.swappable= false; e.leftSide=
-		 * defineSideEdge(e, e.leftVertex, PIdiv6, altLSE); e.rightSide.swappable= true; }
-		 * // Neither left or right has more than one alt side edge else { e.rightSide=
-		 * (Edge)altRSE.get(0); e.leftSide= (Edge)altLSE.get(0); }
+		 * defineSideEdge(e, e.rightVertex, PIdiv6, altRSE); e.leftSide.swappable= true;
+		 * } // Only right side has more than one alt side edge else if (altLSE.size()==
+		 * 1 && altRSE.size()> 1) { e.leftSide= (Edge)altLSE.get(0);
+		 * e.leftSide.swappable= false; e.rightSide= defineSideEdge(e, e.rightVertex,
+		 * PIdiv6, altRSE); e.leftSide.swappable= true; } // Only left side has more
+		 * than one alt side edge else if (altLSE.size()>1 && altRSE.size()== 1) {
+		 * e.rightSide= (Edge)altRSE.get(0); e.rightSide.swappable= false; e.leftSide=
+		 * defineSideEdge(e, e.leftVertex, PIdiv6, altLSE); e.rightSide.swappable= true;
+		 * } // Neither left or right has more than one alt side edge else {
+		 * e.rightSide= (Edge)altRSE.get(0); e.leftSide= (Edge)altLSE.get(0); }
 		 */
 
 		return sideEdges;
@@ -1966,7 +1891,7 @@ public class QMorph extends GeomBasics {
 		List<Edge> list = new ArrayList<>();
 
 		for (int i = 0; i < n.edgeList.size(); i++) {
-			cur = (Edge) n.edgeList.get(i);
+			cur = n.edgeList.get(i);
 			if (cur != baseEdge && cur.bordersToTriangle()) {
 				list.add(cur);
 			}
@@ -1992,7 +1917,6 @@ public class QMorph extends GeomBasics {
 		double curAng, selAng, closestAng;
 		Element curElement, curElement2;
 
-		
 		// Set eF2 and noVertex (a Vertex that must not connect with the edge
 		// which we are trying to find), or if the state bits permits, return the
 		// already found side edge.
@@ -2033,7 +1957,6 @@ public class QMorph extends GeomBasics {
 		}
 
 		double bisected = eF1.sumAngle(curElement, nK, eF2) / 2.0;
-		
 
 		// *TRY* to select an initial edge that is not EF1 or EF2. If that's not
 		// possible, then select EF2. Compute angle between the selected edge and
@@ -2079,16 +2002,13 @@ public class QMorph extends GeomBasics {
 			}
 		}
 
-		if (selAng < EPSILON) {
-			return selected;
-		}
-
-		// According to the algorithm, when nM (the opposite Vertex of nK on the selected
+		// According to the algorithm, when nM (the opposite Vertex of nK on the
+		// selected
 		// Edge) lies on an opposing front, I should allow for a larger angle
 		// (EPSILONLARGER). If that fails, well, the program fails. So EPSILONLARGER
 		// should really be set to a laaaaarge value, or, I could accept all values.
 		// Yeah, that sounds like a good idea:
-		if (selected.otherVertex(nK).frontVertex()) {
+		if ((selAng < EPSILON) || selected.otherVertex(nK).frontVertex()) {
 			// if (selAng < EPSILONLARGER) {
 			return selected;
 			/*
@@ -2098,8 +2018,6 @@ public class QMorph extends GeomBasics {
 			 * ", EPSILONLARGER== "Math.toDegrees(EPSILONLARGER));
 			 */
 		}
-
-		
 
 		// First find the triangle that vK passes through.
 		// This is the plan:
@@ -2155,13 +2073,15 @@ public class QMorph extends GeomBasics {
 		Vertex nM = e0.oppositeVertex(nK);
 		Edge eK = new Edge(nK, nM); // new edge Ek
 
-		// The angle between eF1 and eK has to be less than 180 degrees. The same goes
-		// for the angle between eF2 and selected. Therefore, we can use
-		// computePosAngle here.
+		/*
+		 * The angle between eF1 and eK has to be less than 180 degrees. The same goes
+		 * for the angle between eF2 and selected. Therefore, we can use computePosAngle
+		 * here.
+		 */
 		double beta = Math.abs(bisected - Math.min(eF1.computePosAngle(eK, nK), eF2.computePosAngle(eK, nK)));
 
 		if (beta < EPSILON && eK.len < (eF1.len + eF2.len) * sqrt3div2) {
-			
+
 			// ok, swap edges: remove e0 and introduce eK.... update stuff...
 
 			// Remove old triangles from list...
@@ -2198,9 +2118,6 @@ public class QMorph extends GeomBasics {
 			} else {
 				rK = new Ray(nK, eF2, bisected);
 			}
-
-			// MyVector vK= new MyVector(eF1, nK,bisected, Double.POSITIVE_INFINITY);
-			// (eF1, nK,bisected, Double.POSITIVE_INFINITY);
 
 			MyVector v0 = e0.getVector();
 			Vertex nN = rK.pointIntersectsAt(v0);
@@ -2283,15 +2200,14 @@ public class QMorph extends GeomBasics {
 		printEdgeList(nC.edgeList);
 
 		if (nC.edgeList.contains(S)) {
-			Edge edge = nC.edgeList.get(nC.edgeList.indexOf(S));
-			return edge;
+			return nC.edgeList.get(nC.edgeList.indexOf(S));
 		}
 		/* ---- First find the edges connecting vertices nC and nD: ---- */
 		/* (Implementation of algorithm 2 in Owen) */
 		List<Edge> intersectedEdges = new ArrayList<>();
 		Edge eK, eKp1, eI = null, eJ = null, eN, eNp1;
 		Element tK = null;
-		Triangle tI = null, tIp1;
+		Triangle tI = null;
 		MyVector vK, vKp1 = null, vI;
 		MyVector vS = new MyVector(nC, nD);
 		Vertex nI;
@@ -2305,8 +2221,8 @@ public class QMorph extends GeomBasics {
 		List<Element> T = new ArrayList<>();
 
 		for (int k = 0; k < V.size() - 1; k++) {
-			vK = (MyVector) V.get(k);
-			vKp1 = (MyVector) V.get(k + 1);
+			vK = V.get(k);
+			vKp1 = V.get(k + 1);
 			eK = vK.edge;
 			eKp1 = vKp1.edge;
 
@@ -2322,16 +2238,13 @@ public class QMorph extends GeomBasics {
 
 		// Now, get the element attached to nC that contains a part of S, tI:
 		for (int k = 0; k < T.size(); k++) {
-			vK = (MyVector) V.get(k);
-			vKp1 = (MyVector) V.get(k + 1);
+			vK = V.get(k);
+			vKp1 = V.get(k + 1);
 
-			tK = (Element) T.get(k);
+			tK = T.get(k);
 
 			// We could optimize by using isCWto(..) directly instead of dot(..)
 			// And I can't get the dot(...) to work properly anyway, sooo...
-
-			
-			// Msg.debug("vS.dot(vK)=="+vS.dot(vK)+" and vS.dot(vKp1)=="+vS.dot(vKp1));
 
 			if (!vS.isCWto(vK) && vS.isCWto(vKp1)) {
 				// tI= tK;
@@ -2374,7 +2287,6 @@ public class QMorph extends GeomBasics {
 				eN = tI.nextCCWEdge(eI);
 				eNp1 = tI.nextCWEdge(eI);
 
-				
 				// if (vS.dot(vI)<0) // Not convinced that dot(..) works properly
 				if (vS.isCWto(vI)) {
 					eI = eN;
@@ -2397,38 +2309,28 @@ public class QMorph extends GeomBasics {
 		/* ---- ---- ---- ---- ---- ---- */
 
 		/* ---- Secondly, do the actual recovering of the top edge ---- */
-		if (intersectedEdges.size() == 0) {
+		if (intersectedEdges.isEmpty()) {
 			eJ = S;
 			Msg.warning("recoverEdge: intersectedEdges.size()== 0");
 		} else if (intersectedEdges.size() == 1) {
 			// According to alg. 2 in Owen, intersectedEdges always contains at least
 			// one edge.
-			eI = (Edge) intersectedEdges.get(0);
+			eI = intersectedEdges.get(0);
 			if (eI.equals(S)) {
 				return eI;
 			}
 		}
 
-		
-
-		// When this loop is done, the edge should be recovered
-		Element oldEIElement1, oldEIElement2;
-		ArrayList<Element> removeList = new ArrayList<Element>();
+		ArrayList<Element> removeList = new ArrayList<>();
 		Triangle t;
-		Quad q;
 		int index;
-		int n = intersectedEdges.size();
 		// for (int i=0; i< n; i++) {
 		Element old1, old2;
 		Vertex na, nb, nc, nd;
-		Edge qe1, qe2;
+		while (!intersectedEdges.isEmpty()) {
+			eI = intersectedEdges.get(0);
 
-		while (intersectedEdges.size() > 0) {
-			eI = (Edge) intersectedEdges.get(0);
-			
-
-			// We must avoid creating inverted or degenerate triangles.
-			q = new Quad(eI);
+			new Quad(eI);
 			old1 = eI.element1;
 			old2 = eI.element2;
 
@@ -2469,7 +2371,6 @@ public class QMorph extends GeomBasics {
 				// ... and replace with new ones:
 				triangleList.add((Triangle) eJ.element1);
 				triangleList.add((Triangle) eJ.element2);
-				
 
 				// Update "global" edge list
 				edgeList.remove(edgeList.indexOf(eI));
@@ -2490,13 +2391,12 @@ public class QMorph extends GeomBasics {
 				// We have to give up
 				Msg.warning("Leaving recoverEdge: Cannot swap edge - non-convex quad.");
 
-				for (Object intersectedEdge : intersectedEdges) {
-					eI = (Edge) intersectedEdge;
-					eI.swappable = true;
+				for (Edge intersectedEdge : intersectedEdges) {
+					intersectedEdge.swappable = true;
 				}
 				// Remove all triangles found in the removeList from triangleList:
-				for (int i = 0; i < removeList.size(); i++) {
-					t = (Triangle) removeList.get(i);
+				for (Element element : removeList) {
+					t = (Triangle) element;
 					index = triangleList.indexOf(t);
 					if (index != -1) {
 						triangleList.remove(index);
@@ -2507,13 +2407,7 @@ public class QMorph extends GeomBasics {
 		}
 
 		// Remove all triangles found in the removeList from triangleList:
-		for (int i = 0; i < removeList.size(); i++) {
-			t = (Triangle) removeList.get(i);
-			index = triangleList.indexOf(t);
-			if (index != -1) {
-				triangleList.remove(index);
-			}
-		}
+		triangleList.removeAll(removeList);
 
 		/* ---- ---- ---- ---- ---- ---- */
 
@@ -2523,4 +2417,4 @@ public class QMorph extends GeomBasics {
 		return eJ;
 	}
 
-} // End of class QMorph
+}

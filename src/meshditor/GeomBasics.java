@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -118,17 +117,17 @@ public class GeomBasics extends Constants {
 		if (edgeList != null) {
 			edgeList.clear();
 		} else {
-			edgeList = new ArrayList<Edge>();
+			edgeList = new ArrayList<>();
 		}
 		if (triangleList != null) {
 			triangleList.clear();
 		} else {
-			triangleList = new ArrayList<Triangle>();
+			triangleList = new ArrayList<>();
 		}
 		if (elementList != null) {
 			elementList.clear();
 		} else {
-			elementList = new ArrayList<Element>();
+			elementList = new ArrayList<>();
 		}
 	}
 
@@ -256,7 +255,7 @@ public class GeomBasics extends Constants {
 		Triangle t;
 		int i;
 		for (i = 0; i < elementList.size(); i++) {
-			elem = (Element) elementList.get(i);
+			elem = elementList.get(i);
 			if (elem != null && elem.inverted()) {
 				elem.markEdgesIllegal();
 				Msg.warning("Element " + elem.descr() + " is inverted.");
@@ -265,7 +264,7 @@ public class GeomBasics extends Constants {
 		}
 
 		for (i = 0; i < triangleList.size(); i++) {
-			t = (Triangle) triangleList.get(i);
+			t = triangleList.get(i);
 			if (t != null && t.inverted()) {
 				t.markEdgesIllegal();
 				Msg.warning("Triangle " + t.descr() + " is inverted.");
@@ -566,10 +565,10 @@ public class GeomBasics extends Constants {
 		Edge edge1, edge2, edge3;
 		Triangle t;
 
-		triangleList = new ArrayList<Triangle>();
-		edgeList = new ArrayList<Edge>();
-		ArrayList<Vertex> usvertexList = new ArrayList<Vertex>();
-		
+		triangleList = new ArrayList<>();
+		edgeList = new ArrayList<>();
+		ArrayList<Vertex> usvertexList = new ArrayList<>();
+
 		ArrayList<double[]> triangles = new ArrayList<>();
 
 		try {
@@ -591,71 +590,10 @@ public class GeomBasics extends Constants {
 					y2 = nextDouble(inputLine);
 					x3 = nextDouble(inputLine);
 					y3 = nextDouble(inputLine);
-					
+
 					double[] triangle = new double[] { x1, y1, x2, y2, x3, y3 };
 					triangles.add(triangle);
-
-//					Vertex1 = new Vertex(x1, y1);
-//					if (!usvertexList.contains(Vertex1)) {
-//						usvertexList.add(Vertex1);
-//					} else {
-//						Vertex1 = usvertexList.get(usvertexList.indexOf(Vertex1));
-//					}
-//					Vertex2 = new Vertex(x2, y2);
-//					if (!usvertexList.contains(Vertex2)) {
-//						usvertexList.add(Vertex2);
-//					} else {
-//						Vertex2 = usvertexList.get(usvertexList.indexOf(Vertex2));
-//					}
-//					Vertex3 = new Vertex(x3, y3);
-//					if (!usvertexList.contains(Vertex3)) {
-//						usvertexList.add(Vertex3);
-//					} else {
-//						Vertex3 = usvertexList.get(usvertexList.indexOf(Vertex3));
-//					}
-//
-//					edge1 = new Edge(Vertex1, Vertex2);
-//					if (!edgeList.contains(edge1)) {
-//						edgeList.add(edge1);
-//					} else {
-//						edge1 = edgeList.get(edgeList.indexOf(edge1));
-//					}
-//					edge1.leftVertex.connectToEdge(edge1);
-//					edge1.rightVertex.connectToEdge(edge1);
-//
-//					edge2 = new Edge(Vertex2, Vertex3);
-//					if (!edgeList.contains(edge2)) {
-//						edgeList.add(edge2);
-//					} else {
-//						edge2 = edgeList.get(edgeList.indexOf(edge2));
-//					}
-//					edge2.leftVertex.connectToEdge(edge2);
-//					edge2.rightVertex.connectToEdge(edge2);
-//
-//					edge3 = new Edge(Vertex1, Vertex3);
-//					if (!edgeList.contains(edge3)) {
-//						edgeList.add(edge3);
-//					} else {
-//						edge3 = edgeList.get(edgeList.indexOf(edge3));
-//					}
-//					edge3.leftVertex.connectToEdge(edge3);
-//					edge3.rightVertex.connectToEdge(edge3);
-//
-//					if (meshLenOpt) {
-//						len1 = nextDouble(inputLine);
-//						len2 = nextDouble(inputLine);
-//						len3 = nextDouble(inputLine);
-//					}
-//
-//					if (meshAngOpt) {
-//						ang1 = nextDouble(inputLine);
-//						ang2 = nextDouble(inputLine);
-//						ang3 = nextDouble(inputLine);
-//					}
-//
-//					t = new Triangle(edge1, edge2, edge3, len1, len2, len3, ang1, ang2, ang3, meshLenOpt, meshAngOpt);
-//					t.connectEdges();
-//					triangleList.add(t);
+					
 					inputLine = in.readLine();
 				}
 			} catch (Exception e) {
@@ -669,76 +607,72 @@ public class GeomBasics extends Constants {
 	}
 
 	/**
-		 * 
-		 * @param triangles [t1=[x1,y1,x2,y2,x3,y3], t2=[x1,y1,x2,y2,x3,y3]...]
-		 * @return
-		 */
-		public static List<Triangle> loadTriangleMesh(double[][] triangles) {
-	
-			Vertex Vertex1, Vertex2, Vertex3;
-			Edge edge1, edge2, edge3;
-			Triangle t;
-	
-			elementList = new ArrayList<>();
-			triangleList = new ArrayList<>();
-			edgeList = new ArrayList<>();
-			Map<Vertex, Vertex> vertexSet = new HashMap<>();
-			Map<Edge, Edge> edgeSet = new HashMap<>();
-	
-			for (double[] triangle : triangles) {
-				double len1 = 0, len2 = 0, len3 = 0, ang1 = 0, ang2 = 0, ang3 = 0;
-				double x1 = triangle[0];
-				double y1 = triangle[1];
-				double x2 = triangle[2];
-				double y2 = triangle[3];
-				double x3 = triangle[4];
-				double y3 = triangle[5];
-	
-				final Vertex Vertex1F = new Vertex(x1, y1);
-				Vertex1 = vertexSet.computeIfAbsent(Vertex1F, v -> Vertex1F);
-				final Vertex Vertex2F = new Vertex(x2, y2);
-				Vertex2 = vertexSet.computeIfAbsent(Vertex2F, v -> Vertex2F);
-				final Vertex Vertex3F = new Vertex(x3, y3);
-				Vertex3 = vertexSet.computeIfAbsent(Vertex3F, v -> Vertex3F);
-	
-				final Edge edge1F = new Edge(Vertex1, Vertex2);
-				edge1 = edgeSet.computeIfAbsent(edge1F, e -> edge1F);
-				edge1.leftVertex.connectToEdge(edge1);
-				edge1.rightVertex.connectToEdge(edge1);
-				
-				final Edge edge2F = new Edge(Vertex2, Vertex3);
-				edge2 = edgeSet.computeIfAbsent(edge2F, e -> edge2F);
-				edge2.leftVertex.connectToEdge(edge2);
-				edge2.rightVertex.connectToEdge(edge2);
-				
-				final Edge edge3F = new Edge(Vertex1, Vertex3);
-				edge3 = edgeSet.computeIfAbsent(edge3F, e -> edge3F);
-				edge3.leftVertex.connectToEdge(edge3);
-				edge3.rightVertex.connectToEdge(edge3);
-	
-				if (meshLenOpt) {
-				}
-	
-				if (meshAngOpt) {
-				}
-	
-				t = new Triangle(edge1, edge2, edge3, len1, len2, len3, ang1, ang2, ang3, meshLenOpt, meshAngOpt);
-	//			t = new Triangle(triangle);
-				t.connectEdges();
-				triangleList.add(t);
-	
-			}
-			vertexList = new ArrayList<>(vertexSet.keySet());
-			edgeList = new ArrayList<>(edgeSet.keySet());
-	
-			return triangleList;
+	 * 
+	 * @param triangles [t1=[x1,y1,x2,y2,x3,y3], t2=[x1,y1,x2,y2,x3,y3]...]
+	 * @return
+	 */
+	public static List<Triangle> loadTriangleMesh(double[][] triangles) {
+
+		Vertex Vertex1, Vertex2, Vertex3;
+		Edge edge1, edge2, edge3;
+		Triangle t;
+
+		elementList = new ArrayList<>();
+		triangleList = new ArrayList<>();
+		edgeList = new ArrayList<>();
+		Map<Vertex, Vertex> vertexSet = new HashMap<>();
+		Map<Edge, Edge> edgeSet = new HashMap<>();
+		
+		System.out.println("qmorph in: " + triangles.length);
+
+		for (double[] triangle : triangles) {
+			double len1 = 0, len2 = 0, len3 = 0, ang1 = 0, ang2 = 0, ang3 = 0;
+			double x1 = triangle[0];
+			double y1 = triangle[1];
+			double x2 = triangle[2];
+			double y2 = triangle[3];
+			double x3 = triangle[4];
+			double y3 = triangle[5];
+
+			final Vertex Vertex1F = new Vertex(x1, y1);
+			Vertex1 = vertexSet.computeIfAbsent(Vertex1F, v -> Vertex1F);
+			final Vertex Vertex2F = new Vertex(x2, y2);
+			Vertex2 = vertexSet.computeIfAbsent(Vertex2F, v -> Vertex2F);
+			final Vertex Vertex3F = new Vertex(x3, y3);
+			Vertex3 = vertexSet.computeIfAbsent(Vertex3F, v -> Vertex3F);
+
+			final Edge edge1F = new Edge(Vertex1, Vertex2);
+			edge1 = edgeSet.computeIfAbsent(edge1F, e -> edge1F);
+			edge1.leftVertex.connectToEdge(edge1);
+			edge1.rightVertex.connectToEdge(edge1);
+
+			final Edge edge2F = new Edge(Vertex2, Vertex3);
+			edge2 = edgeSet.computeIfAbsent(edge2F, e -> edge2F);
+			edge2.leftVertex.connectToEdge(edge2);
+			edge2.rightVertex.connectToEdge(edge2);
+
+			final Edge edge3F = new Edge(Vertex1, Vertex3);
+			edge3 = edgeSet.computeIfAbsent(edge3F, e -> edge3F);
+			edge3.leftVertex.connectToEdge(edge3);
+			edge3.rightVertex.connectToEdge(edge3);
+
+			t = new Triangle(edge1, edge2, edge3, len1, len2, len3, ang1, ang2, ang3, meshLenOpt, meshAngOpt);
+			// t = new Triangle(triangle);
+			t.connectEdges();
+			triangleList.add(t);
+
 		}
+		vertexList = new ArrayList<>(vertexSet.keySet());
+		edgeList = new ArrayList<>(edgeSet.keySet());
+		System.out.println("qmorph out: " + triangleList.size());
+		return triangleList;
+	}
 
 	/** A method to read Vertex files. */
 	public static ArrayList<Vertex> loadVertices() {
 		FileInputStream fis;
 		Vertex Vertex1, Vertex2, Vertex3, Vertex4;
-		ArrayList<Vertex> usvertexList = new ArrayList<Vertex>();
+		ArrayList<Vertex> usvertexList = new ArrayList<>();
 
 		try {
 			fis = new FileInputStream(meshDirectory + meshFilename);
@@ -806,7 +740,7 @@ public class GeomBasics extends Constants {
 		Edge edge;
 		Vertex n;
 		int i;
-		ArrayList<Edge> boundary = new ArrayList<Edge>();
+		ArrayList<Edge> boundary = new ArrayList<>();
 
 		findExtremeVertices();
 
@@ -1381,8 +1315,6 @@ public class GeomBasics extends Constants {
 			steps2n2 = 50;
 		}
 
-		
-
 		// Try to find a location
 		for (i = 1; i <= steps2n1 || i <= steps2n2; i++) {
 			if (i <= steps2n1) {
@@ -1419,7 +1351,7 @@ public class GeomBasics extends Constants {
 			if (!(triangleList.get(i) instanceof Triangle)) {
 				continue;
 			}
-			t = (Triangle) triangleList.get(i);
+			t = triangleList.get(i);
 			if (t.zeroArea()) {
 				e = t.longestEdge();
 				e1 = t.otherEdge(e);
@@ -1456,7 +1388,7 @@ public class GeomBasics extends Constants {
 		// Remove those entries that were set to null above.
 		int i = 0;
 		do {
-			t = (Triangle) triangleList.get(i);
+			t = triangleList.get(i);
 			if (t == null) {
 				triangleList.remove(i);
 			} else {

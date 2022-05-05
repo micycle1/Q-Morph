@@ -154,10 +154,10 @@ public class Vertex extends Constants {
 		Edge e, ne;
 		Vertex other1, other2;
 		Quad q;
-		ArrayList<Element> list = new ArrayList<Element>();
+		ArrayList<Element> list = new ArrayList<>();
 
-		for (int i = 0; i < edgeList.size(); i++) {
-			e = edgeList.get(i);
+		for (Edge element : edgeList) {
+			e = element;
 			if (!list.contains(e.element1)) {
 				list.add(e.element1);
 				ne = e.element1.neighborEdge(this, e);
@@ -187,44 +187,6 @@ public class Vertex extends Constants {
 		}
 	}
 
-	/**
-	 * Update all lengths of edges and angles between edges around the Vertex.
-	 * 
-	 * @deprecated This is the old version.
-	 */
-	@Deprecated
-	public void oldupdateEdgeLengthsAndAngles() {
-		Edge curEdge = edgeList.get(0);
-		Element curElem = curEdge.element1;
-		Edge nextEdge = curElem.neighborEdge(this, curEdge);
-		Edge otherEdge;
-		Vertex otherVertex;
-
-		// Parse all edges connected to this Vertex:
-		do {
-			// Set computed lenghts:
-			curEdge.len = curEdge.computeLength();
-			nextEdge.len = nextEdge.computeLength();
-
-			// Set computed angle between current and next edge:
-			curElem.ang[curElem.angleIndex(curEdge, nextEdge)] = curEdge.computePosAngle(nextEdge, this);
-
-			// Set the two other affected angles in current element:
-			otherVertex = curEdge.otherVertex(this);
-			otherEdge = curElem.neighborEdge(otherVertex, curEdge);
-			curElem.ang[curElem.angleIndex(curEdge, otherEdge)] = curEdge.computePosAngle(otherEdge, otherVertex);
-
-			otherVertex = nextEdge.otherVertex(this);
-			otherEdge = curElem.neighborEdge(otherVertex, nextEdge);
-			curElem.ang[curElem.angleIndex(nextEdge, otherEdge)] = nextEdge.computePosAngle(otherEdge, otherVertex);
-
-			// Prepare for next element:
-			curElem = curElem.neighbor(nextEdge);
-			curEdge = nextEdge;
-			nextEdge = curElem.neighborEdge(this, curEdge);
-		} while (curElem != null && curEdge != edgeList.get(0));
-	}
-
 	public double cross(Vertex n) {
 		return x * n.y - n.x * y;
 	}
@@ -244,8 +206,8 @@ public class Vertex extends Constants {
 		ArrayList<MyVector> boundaryVectors = new ArrayList<>();
 		ArrayList<MyVector> vectors = new ArrayList<>();
 		double ang;
-		for (int i = 0; i < edgeList.size(); i++) {
-			e = edgeList.get(i);
+		for (Edge element : edgeList) {
+			e = element;
 			v = e.getVector(this);
 			v.edge = e;
 
@@ -362,8 +324,8 @@ public class Vertex extends Constants {
 		Edge e;
 		ArrayList<MyVector> vectors = new ArrayList<>();
 
-		for (int i = 0; i < edgeList.size(); i++) {
-			e = edgeList.get(i);
+		for (Edge element : edgeList) {
+			e = element;
 			if (e != b0 && e != b1) {
 				v = e.getVector(this);
 				v.edge = e;
@@ -414,8 +376,8 @@ public class Vertex extends Constants {
 		}
 
 		List<Edge> edges = new ArrayList<>(VS.size());
-		for (int i = 0; i < VS.size(); i++) {
-			v = VS.get(i);
+		for (MyVector element : VS) {
+			v = element;
 			edges.add(v.edge);
 		}
 		return edges;
@@ -550,8 +512,8 @@ public class Vertex extends Constants {
 		Edge e;
 		ArrayList<Element> list = new ArrayList<>();
 
-		for (int i = 0; i < edgeList.size(); i++) {
-			e = edgeList.get(i);
+		for (Edge element : edgeList) {
+			e = element;
 			if (e.element1 instanceof Quad && !list.contains(e.element1)) {
 				list.add(e.element1);
 			} else if (e.element2 != null && e.element2 instanceof Quad && !list.contains(e.element2)) {
@@ -569,10 +531,10 @@ public class Vertex extends Constants {
 	// Hmm. Should I include fake quads as well?
 	public List<Element> adjTriangles() {
 		Edge e;
-		ArrayList<Element> list = new ArrayList<Element>();
+		ArrayList<Element> list = new ArrayList<>();
 
-		for (int i = 0; i < edgeList.size(); i++) {
-			e = edgeList.get(i);
+		for (Edge element : edgeList) {
+			e = element;
 			if (e.element1 instanceof Triangle && !list.contains(e.element1)) {
 				list.add(e.element1);
 			} else if (e.element2 != null && e.element2 instanceof Triangle && !list.contains(e.element2)) {
@@ -1221,10 +1183,10 @@ public class Vertex extends Constants {
 	}
 
 	public List<Edge> frontEdgeList() {
-		ArrayList<Edge> list = new ArrayList<Edge>();
+		ArrayList<Edge> list = new ArrayList<>();
 		Edge e;
-		for (int i = 0; i < edgeList.size(); i++) {
-			e = edgeList.get(i);
+		for (Edge element : edgeList) {
+			e = element;
 			if (e.frontEdge) {
 				list.add(e);
 			}

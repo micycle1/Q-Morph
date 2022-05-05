@@ -5,7 +5,7 @@ package meshditor;
  * parameters to the Q-Morph implementation.
  */
 public class Constants {
-	
+
 	/** A boolean indicating whether the triangle to quad conversion should run. */
 	public static boolean doTri2QuadConversion = true;
 	/** A boolean indicating whether the topological cleanup should run. */

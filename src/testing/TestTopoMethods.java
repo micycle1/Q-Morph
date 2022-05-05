@@ -7,7 +7,7 @@ class TestTopoMethods extends GeomBasics {
 
 	public static void main(String[] args) {
 		Msg.debugMode = true;
-		
+
 		Msg.debug("Entering TestTopoMethods.main(..)");
 
 //		byte[] pat1 = { 10, 4, 4, 4, 4, 4, 0, 0, 0, 0 };

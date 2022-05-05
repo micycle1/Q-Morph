@@ -7,9 +7,9 @@ import java.math.BigDecimal;
  * vector-related issues.
  */
 public class MyVector extends Constants {
-	
-	private static final BigDecimal ZERO = new BigDecimal(0.0);
-	
+
+	private static final BigDecimal ZERO = BigDecimal.valueOf(0.0);
+
 	Vertex origin;
 	double x;
 	double y;
@@ -45,7 +45,7 @@ public class MyVector extends Constants {
 	private static double acosQuick(double x) {
 		return atan2Quick(Math.sqrt((1.0 + x) * (1.0 - x)), x);
 	}
-	
+
 	/**
 	 * @param origin the origin of the vector
 	 * @param x      the x component
@@ -155,7 +155,6 @@ public class MyVector extends Constants {
 		} else if (y == 0 && x < 0) {
 			return Math.PI;
 		} else {
-			// double cLen= Math.sqrt(x*x + y*y);
 			double aLen = Math.sqrt(x * x + y * y);
 			if (y > 0) {
 				return acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
@@ -241,9 +240,6 @@ public class MyVector extends Constants {
 		double theta = computePosAngle(v); // computeAngle(v);
 		double aLen = Math.sqrt(x * x + y * y);
 		double bLen = Math.sqrt(v.x * v.x + v.y * v.y);
-		// System.out.println("theta== "+theta+" aLen= "+aLen+" bLen= "+bLen);
-		// System.out.println("Math.cos(theta)== "+Math.cos(theta));
-		// System.out.println("aLen*bLen*Math.cos(theta)=="+aLen*bLen*Math.cos(theta));
 		return aLen * bLen * Math.cos(theta);
 	}
 
@@ -376,12 +372,10 @@ public class MyVector extends Constants {
 			}
 		} else if (v.x < 0 && v.y <= 0) {
 			return false;
-		} else {// if (v.x>=0 && v.y< 0) { // Fourth quadrant
-			if (thisR <= vR) {
-				return true;
-			} else {
-				return false;
-			}
+		} else if (thisR <= vR) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 

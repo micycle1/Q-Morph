@@ -3,16 +3,16 @@ package testing;
 import meshditor.Constants;
 import meshditor.Edge;
 import meshditor.Msg;
-import meshditor.Vertex;
 import meshditor.Quad;
 import meshditor.Triangle;
+import meshditor.Vertex;
 
 public class TestInversion extends Constants {
 
 	public static void main(String[] args) {
-		
+
 		Msg.debugMode = true;
-		
+
 		Vertex n1 = new Vertex(0.0, 0.0);
 		Vertex n2 = new Vertex(1.0, 0.0);
 		Vertex n3 = new Vertex(0.0, 1.0);

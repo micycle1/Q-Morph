@@ -2,11 +2,11 @@ package meshditor;
 
 /** A very simple implementation of a dart. */
 public class Dart {
-	
+
 	public Vertex n;
 	public Edge e;
 	public Element elem;
-	
+
 	public Dart() {
 		n = null;
 		e = null;

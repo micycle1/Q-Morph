@@ -3,11 +3,11 @@ package meshditor;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Canvas class which paints the background grid, the vertices, the edges etc.
+ * The Canvas class which paints the background grid, the vertices, the edges
+ * etc.
  */
 
 class GCanvas extends Canvas {
@@ -196,8 +196,8 @@ class GCanvas extends Canvas {
 
 		// Draw mesh
 		if (edgeList != null) {
-			for (int i = 0; i < edgeList.size(); i++) {
-				e = (Edge) edgeList.get(i);
+			for (Object element : edgeList) {
+				e = (Edge) element;
 
 				if (e.color == java.awt.Color.red) {
 					g.setColor(e.color);

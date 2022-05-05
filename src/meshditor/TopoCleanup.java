@@ -202,7 +202,7 @@ public class TopoCleanup extends GeomBasics {
 		int i, j;
 
 		while (count < elementList.size()) {
-			elem = (Element) elementList.get(count);
+			elem = elementList.get(count);
 
 			if (elem == null || !(elem instanceof Quad)) {
 				count++;
@@ -233,10 +233,10 @@ public class TopoCleanup extends GeomBasics {
 	}
 
 	/**
-	 * The chevron is deleted along with one of its neighbors. A new Vertex is created
-	 * and the deleted quads are replaced with three new ones surrounding the new
-	 * Vertex. The neighbor chosen for deletion is the one that, when replaced by the
-	 * new quads, yields the optimal Vertex valences.
+	 * The chevron is deleted along with one of its neighbors. A new Vertex is
+	 * created and the deleted quads are replaced with three new ones surrounding
+	 * the new Vertex. The neighbor chosen for deletion is the one that, when
+	 * replaced by the new quads, yields the optimal Vertex valences.
 	 * 
 	 * @param q the chevron to be eliminated
 	 */
@@ -473,8 +473,6 @@ public class TopoCleanup extends GeomBasics {
 		vertexList.add(newVertex);
 		vertices.add(newVertex);
 
-		
-
 		// Try smoothing the pos of newVertex:
 		Vertex nOld = new Vertex(newVertex.x, newVertex.y), smoothed = newVertex.laplacianSmooth();
 		if (!newVertex.equals(smoothed)) {
@@ -496,8 +494,8 @@ public class TopoCleanup extends GeomBasics {
 	 * 
 	 * @param q  the first of the two quads to be combined
 	 * @param e  the common edge of q and the second quad
-	 * @param n2 one of the vertices of edge e and whose opposite Vertex in q will not
-	 *           get connected to any new edge.
+	 * @param n2 one of the vertices of edge e and whose opposite Vertex in q will
+	 *           not get connected to any new edge.
 	 */
 	private Dart fill4(Quad q, Edge e, Vertex n2) {
 		Dart d = new Dart();
@@ -660,8 +658,6 @@ public class TopoCleanup extends GeomBasics {
 		for (int i = 1; i < fillPat[0]; i++) {
 			a = fillPat[i];
 
-			
-
 			// Alpha iterators:
 			if (a == 0) {
 				d.n = d.e.otherVertex(d.n);
@@ -792,7 +788,7 @@ public class TopoCleanup extends GeomBasics {
 
 		// First check for the standard patterns:
 		for (i = 0; i < vertices.size(); i++) {
-			c = (Vertex) vertices.get(i);
+			c = vertices.get(i);
 			if (c == null || c.boundaryOrTriangleVertex()) {
 				continue;
 			}
@@ -854,7 +850,7 @@ public class TopoCleanup extends GeomBasics {
 
 		// Then check for the other patterns:
 		for (i = 0; i < vertices.size(); i++) {
-			c = (Vertex) vertices.get(i);
+			c = vertices.get(i);
 			if (c == null || c.boundaryOrTriangleVertex()) {
 				continue;
 			}
@@ -989,7 +985,7 @@ public class TopoCleanup extends GeomBasics {
 		if (!bcaseValPat1Fin) {
 
 			for (i = 0; i < vertices.size(); i++) {
-				n1 = (Vertex) vertices.get(i);
+				n1 = vertices.get(i);
 				if (n1 == null) {
 					continue;
 				}
@@ -1025,7 +1021,7 @@ public class TopoCleanup extends GeomBasics {
 		} else if (!bcaseValPat2Fin) {
 
 			for (i = 0; i < vertices.size(); i++) {
-				n1 = (Vertex) vertices.get(i);
+				n1 = vertices.get(i);
 				if (n1 == null) {
 					continue;
 				}
@@ -1061,11 +1057,8 @@ public class TopoCleanup extends GeomBasics {
 		} else if (!bcaseValPat3Fin) {
 
 			for (i = 0; i < vertices.size(); i++) {
-				n1 = (Vertex) vertices.get(i);
-				if (n1 == null) {
-					continue;
-				}
-				if (n1.boundaryVertex()) {
+				n1 = vertices.get(i);
+				if ((n1 == null) || n1.boundaryVertex()) {
 					continue;
 				}
 
@@ -1091,7 +1084,7 @@ public class TopoCleanup extends GeomBasics {
 			return;
 		} else if (!bcaseValPat4Fin) {
 			for (i = 0; i < vertices.size(); i++) {
-				n1 = (Vertex) vertices.get(i);
+				n1 = vertices.get(i);
 				if (n1 == null) {
 					continue;
 				}
@@ -1117,7 +1110,7 @@ public class TopoCleanup extends GeomBasics {
 			return;
 		} else if (!bcaseTriQFin) {
 			for (i = 0; i < vertices.size(); i++) {
-				n1 = (Vertex) vertices.get(i);
+				n1 = vertices.get(i);
 
 				if (n1 == null) {
 					continue;
@@ -1125,7 +1118,7 @@ public class TopoCleanup extends GeomBasics {
 
 				if (n1.boundaryVertex()) {
 
-					e1 = (Edge) n1.edgeList.get(0);
+					e1 = n1.edgeList.get(0);
 					elem = e1.element1;
 					if (!(elem instanceof Quad)) {
 						continue;
@@ -1218,14 +1211,13 @@ public class TopoCleanup extends GeomBasics {
 		} else if (!bcaseDiamondFin) {
 
 			for (i = 0; i < vertices.size(); i++) {
-				n1 = (Vertex) vertices.get(i);
+				n1 = vertices.get(i);
 
 				if (n1 == null) {
 					continue;
 				}
 
 				if (n1.boundaryVertex() && n1.valence() > 4) {
-					
 
 					// First find a quad having an edge at the boundary at Vertex n1,
 					// or if this does not exist, the find the first quad when looking
@@ -1305,7 +1297,7 @@ public class TopoCleanup extends GeomBasics {
 
 		if (!shape1stTypeFin) {
 			for (i = 0; i < vertices.size(); i++) {
-				n = (Vertex) vertices.get(i);
+				n = vertices.get(i);
 
 				if (n == null) {
 					continue;
@@ -1442,7 +1434,7 @@ public class TopoCleanup extends GeomBasics {
 		}
 
 		while (count < elementList.size()) {
-			elem = (Element) elementList.get(count);
+			elem = elementList.get(count);
 
 			if (elem == null || !(elem instanceof Quad)) {
 				count++;
@@ -1462,7 +1454,7 @@ public class TopoCleanup extends GeomBasics {
 		}
 
 		for (i = 0; i < deleteList.size(); i++) {
-			elem = (Element) deleteList.get(i);
+			elem = deleteList.get(i);
 			elementList.remove(elementList.indexOf(elem));
 		}
 		deleteList.clear();
@@ -1473,8 +1465,8 @@ public class TopoCleanup extends GeomBasics {
 	}
 
 	/**
-	 * Return the dart with Vertex c, the edge connecting c and the Vertex at pos. i in
-	 * neighbors, and the quad with that edge and Vertex at pos. i+1
+	 * Return the dart with Vertex c, the edge connecting c and the Vertex at pos. i
+	 * in neighbors, and the quad with that edge and Vertex at pos. i+1
 	 * 
 	 * @param c         the central Vertex
 	 * @param neighbors array of neighboring vertices to c
@@ -1506,7 +1498,8 @@ public class TopoCleanup extends GeomBasics {
 	 * @param centroid boolean indicating whether to look for a new pos for the
 	 *                 joined vertices somewhere between the original positions,
 	 *                 starting at the centroid of q, or to unconditionally try
-	 *                 using the position of the Vertex in q which is opposite to nK.
+	 *                 using the position of the Vertex in q which is opposite to
+	 *                 nK.
 	 * @return the new current dart.
 	 */
 	private Dart closeQuad(Quad q, Edge e1, Vertex nK, boolean centroid) {
@@ -1554,8 +1547,9 @@ public class TopoCleanup extends GeomBasics {
 	}
 
 	/**
-	 * Create a new quad by "opening" one at the specified Vertex inside the specified
-	 * quad. This effectively results in a splitting of the specified quad.
+	 * Create a new quad by "opening" one at the specified Vertex inside the
+	 * specified quad. This effectively results in a splitting of the specified
+	 * quad.
 	 * 
 	 * @param q  the quad
 	 * @param e  an edge in q (not used by method), but contained in returned dart
