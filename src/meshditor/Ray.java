@@ -16,10 +16,7 @@ public class Ray {
 	public Ray(Vertex origin, Edge relEdge, double angle) {
 		this.origin = origin;
 		double temp = relEdge.angleAt(origin);
-		Msg.debug("relEdge.angleAt(origin)==" + Math.toDegrees(temp) + " degrees");
 		double ang = temp + angle;
-		Msg.debug("Ray(..): relEdge.angleAt(origin)+ angle== " + Math.toDegrees(ang) + " degrees");
-
 		this.x = Math.cos(ang);
 		this.y = Math.sin(ang);
 	}

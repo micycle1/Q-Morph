@@ -35,18 +35,13 @@ public class UI {
 	}
 
 	public static void startMorpher() {
-		Msg.debug("starting...");
-
 		meshditor.GeomBasics.loadTriangleMesh();
 		QMorph qm = new QMorph();
 		GeomBasics.writeQuadMesh("qmesh.dta", GeomBasics.getElementList());
 
-		Msg.debug("frontList:");
 		GeomBasics.printEdgeList(qm.getFrontList());
-		Msg.debug("edgeList:");
 		GeomBasics.printEdgeList(GeomBasics.getEdgeList());
 		Edge.printStateLists();
 		GeomBasics.printQuads(GeomBasics.getElementList());
-		Msg.debug("Done!");
 	}
 }

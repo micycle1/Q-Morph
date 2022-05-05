@@ -54,7 +54,6 @@ public class QMorph extends GeomBasics {
 
 			Edge.clearStateList();
 			frontList = defineInitFronts(edgeList);
-			Msg.debug("Initial front list (size==" + frontList.size() + "):");
 			printEdgeList(frontList);
 			classifyStateOfAllFronts(frontList);
 
@@ -77,9 +76,7 @@ public class QMorph extends GeomBasics {
 	public void run() {
 		if (doTri2QuadConversion) {
 			if (!step) {
-				Msg.debug("---------------------------------------------------");
-				Msg.debug("Main loop goes here.......");
-				Msg.debug("---------------------------------------------------");
+				
 
 				// The program's main loop from where all the real action originates
 				while (!finished) {
@@ -99,7 +96,6 @@ public class QMorph extends GeomBasics {
 				globalSmooth.run();
 			}
 
-			Msg.debug("The final elements are:");
 			printElements(elementList);
 		}
 	}
@@ -120,9 +116,6 @@ public class QMorph extends GeomBasics {
 			}
 
 			Edge.printStateLists();
-			Msg.debug("# of fronts in current frontList: " + frontList.size());
-			Msg.debug("Vi behandler kant: " + e.descr());
-
 			q = makeQuad(e);
 			if (q == null) {
 				while (q == null && e != null) {
@@ -131,7 +124,6 @@ public class QMorph extends GeomBasics {
 					if (e == null) {
 						break;
 					}
-					Msg.debug("Vi behandler kant: " + e.descr());
 					oldBaseState = e.getState();
 					q = makeQuad(e);
 				}
@@ -143,7 +135,6 @@ public class QMorph extends GeomBasics {
 									// local smoothing and update.
 			}
 
-			Msg.debug("frontList:");
 			printEdgeList(frontList);
 			Edge.printStateLists();
 
@@ -151,15 +142,9 @@ public class QMorph extends GeomBasics {
 				localSmooth(q, frontList);
 			}
 			i = localUpdateFronts(q, level, frontList);
-			Msg.debug("O.K.");
-			Msg.debug("Smoothed & updated quad is " + q.descr());
-
-			Msg.debug("frontList:");
 			printEdgeList(frontList);
 			Edge.printStateLists();
 			nrOfFronts -= i;
-			Msg.debug("nr of fronts removed from lowest level: " + i);
-			Msg.debug("nrOfFronts= " + nrOfFronts);
 		} else if (!finished) {
 			// Post-processing methods
 			if (doCleanUp) {
@@ -177,7 +162,6 @@ public class QMorph extends GeomBasics {
 				globalSmooth.run();
 			}
 
-			Msg.debug("The final elements are:");
 			printElements(elementList);
 			finished = true;
 		}
@@ -206,8 +190,6 @@ public class QMorph extends GeomBasics {
 	 *         actually the same.
 	 */
 	private byte oddNOFEdgesInLoopsWithFEdge(Edge b, Edge l, Edge r, boolean lLoop, boolean rLoop) {
-		Msg.debug("Entering oddNOFEdgesInLoopsWithFEdge(..)");
-
 		byte ret = 0;
 		int ln = 0, rn = 0;
 		bothSidesInLoop = false;
@@ -229,7 +211,6 @@ public class QMorph extends GeomBasics {
 			ret += 4;
 		}
 
-		Msg.debug("Leaving oddNOFEdgesInLoopsWithFEdge(..)...");
 		return ret;
 	}
 
@@ -250,11 +231,6 @@ public class QMorph extends GeomBasics {
 	 * @return as described above.
 	 */
 	private int countFrontsInNewLoopAt(Edge b, Edge side, Edge otherSide) {
-		Msg.debug("Entering countFrontsInNewLoopAt(..)");
-		Msg.debug("...b== " + b.descr());
-		Msg.debug("...side== " + side.descr());
-		Msg.debug("...otherSide== " + otherSide.descr());
-
 		Edge cur = null, prev, tmp;
 		Vertex n1 = side.commonVertex(b), n2 = otherSide.commonVertex(b), n3 = side.otherVertex(n1), n4 = otherSide.otherVertex(n2);
 		int count1stLoop = 1, count2ndLoop = 1, count3rdLoop = 1, n3n4Edges = 0, count = 0;
@@ -263,7 +239,7 @@ public class QMorph extends GeomBasics {
 		// First find the front edge where we want to start
 		prev = b;
 		cur = prev.frontNeighborAt(n1);
-		Msg.debug("...cur= " + cur.descr());
+		
 
 		// Parse the current loop of fronts:
 		do {
@@ -271,12 +247,8 @@ public class QMorph extends GeomBasics {
 			prev = cur;
 			cur = tmp;
 			count1stLoop++;
-			Msg.debug("...cur= " + cur.descr());
-
 			if (cur.hasVertex(n1)) { // Case 2,3,4,5 or 6
 				bothSidesInLoop = true;
-				Msg.debug("...both sides in loop");
-
 				prev = n3.anotherFrontEdge(null);
 				cur = prev.frontNeighborAt(n3);
 
@@ -293,7 +265,7 @@ public class QMorph extends GeomBasics {
 					n4Inn3Loop = true;
 					n3n4Edges = 1;
 				}
-				Msg.debug("...cur= " + cur.descr());
+				
 
 				// Parse the n3 loop and count number of edges here
 				do {
@@ -301,8 +273,6 @@ public class QMorph extends GeomBasics {
 					prev = cur;
 					cur = tmp;
 					count2ndLoop++;
-					Msg.debug("...cur= " + cur.descr());
-
 					if (!n4Inn3Loop && cur.hasVertex(n4)) {
 						n4Inn3Loop = true;
 						n3n4Edges = count2ndLoop;
@@ -312,8 +282,7 @@ public class QMorph extends GeomBasics {
 				if (!n4Inn3Loop && !otherSide.isFrontEdge() && n4.frontVertex()) { // Case 5 only
 					prev = n4.anotherFrontEdge(null);
 					cur = prev.frontNeighborAt(n4);
-					Msg.debug("...counting edges in n4-loop (case 5)");
-					Msg.debug("...cur= " + cur.descr());
+					
 
 					// Parse the n4 loop and count number of edges here
 					do {
@@ -321,22 +290,17 @@ public class QMorph extends GeomBasics {
 						prev = cur;
 						cur = tmp;
 						count3rdLoop++;
-						Msg.debug("...cur= " + cur.descr());
 					} while (!cur.hasVertex(n4) /* && count3rdLoop < 300 */);
 				}
 
 				if (n4Inn3Loop && !otherSide.isFrontEdge()) {// Case 2,3
 					count = count1stLoop + count2ndLoop + 1 - n3n4Edges;
-					Msg.debug("...case 2 or 3");
 				} else if (!n4Inn3Loop && otherSide.isFrontEdge()) {// Case 4
 					count = count1stLoop + count2ndLoop;
-					Msg.debug("...case 4");
 				} else if (!n4Inn3Loop && !otherSide.isFrontEdge() && !n4.frontVertex()) {// Case 6
 					count = count1stLoop + count2ndLoop + 2;
-					Msg.debug("...case 6");
 				} else if (!n4Inn3Loop && !otherSide.isFrontEdge() && n4.frontVertex()) {// Case 5
 					count = count1stLoop + count2ndLoop + count3rdLoop + 2;
-					Msg.debug("...case 5");
 				}
 				break;
 			}
@@ -351,14 +315,11 @@ public class QMorph extends GeomBasics {
 			count = count1stLoop + 1; // Add the new edge between n1 and n3
 		}
 
-		Msg.debug("Leaving int countFrontsInNewLoopAt(..), returns " + count);
 		return count;
 	}
 
 	/** Returns the number of front edges at the currently lowest level loop(s). */
 	private int countNOFrontsAtCurLowestLevel(List<Edge> frontList) {
-		Msg.debug("Entering countNOFrontsAtCurLowestLevel(..)");
-
 		Edge cur;
 		int lowestLevel, count = 0;
 
@@ -377,7 +338,6 @@ public class QMorph extends GeomBasics {
 				}
 			}
 		}
-		Msg.debug("Leaving countNOFrontsAtCurLowestLevel(..)");
 		return count;
 	}
 
@@ -400,8 +360,6 @@ public class QMorph extends GeomBasics {
 	 * @return the new quad
 	 */
 	private Quad makeQuad(Edge e) {
-		Msg.debug("Entering makeQuad(..)");
-		Msg.debug("e= " + e.descr());
 		Quad q;
 		Triangle t;
 		Edge top;
@@ -420,21 +378,13 @@ public class QMorph extends GeomBasics {
 
 		q = handleSpecialCases(e);
 		if (q != null) {
-			Msg.debug("Leaving makeQuad(..), returning specialCase quad");
 			return q;
 		}
 		sideEdges = makeSideEdges(e);
 		leftSide = sideEdges[0];
 		rightSide = sideEdges[1];
-		Msg.debug("Left side edge is " + leftSide.descr());
-		Msg.debug("Right side edge is " + rightSide.descr());
-
 		if (leftSide.commonVertex(rightSide) != null) {
 			Msg.warning("Cannot create quad, so we settle with a triangle:");
-
-			Msg.debug("base: " + e.descr());
-			Msg.debug("left: " + leftSide.descr());
-			Msg.debug("right :" + rightSide.descr());
 
 			t = new Triangle(e, leftSide, rightSide);
 			index = triangleList.indexOf(t);
@@ -445,7 +395,6 @@ public class QMorph extends GeomBasics {
 			q = new Quad(t);
 			clearQuad(q, t.edgeList[0].getTriangleElement());
 
-			Msg.debug("Leaving makeQuad(..)");
 			return q;
 		} else {
 			Vertex nC = leftSide.otherVertex(e.leftVertex);
@@ -468,7 +417,6 @@ public class QMorph extends GeomBasics {
 					rightSide.classifyStateOfFrontEdge();
 				}
 
-				Msg.debug("Leaving makeQuad(..), returning null");
 				return null;
 			}
 			q = new Quad(e, leftSide, rightSide, top);
@@ -491,13 +439,11 @@ public class QMorph extends GeomBasics {
 					rightSide.classifyStateOfFrontEdge();
 				}
 
-				Msg.debug("Leaving makeQuad(..), contains hole, returning null");
 				return null;
 			}
 
 			clearQuad(q, tris/* e.getTriangleElement() */);
 			// preSmoothUpdateFronts(q, frontList);
-			Msg.debug("Leaving makeQuad(..)");
 			return q;
 		}
 	}
@@ -512,15 +458,11 @@ public class QMorph extends GeomBasics {
 	 * @return a new Vertex with the smoothed position
 	 */
 	private Vertex smoothFrontVertex(Vertex nK, Vertex nJ, Quad myQ, Edge front1, Edge front2) {
-		Msg.debug("Entering smoothFrontVertex(..)...");
 		List<Element> adjQuads = nK.adjQuads();
 		double tr, ld = 0;
 		Quad q;
 		Vertex newVertex;
 		int n = 0, seqQuads = myQ.nrOfQuadsSharingAnEdgeAt(nK) + 1;
-
-		Msg.debug("nK= " + nK.descr());
-		Msg.debug("nJ= " + nJ.descr());
 
 		if (front1 == null) {
 			Msg.error("front1 is null");
@@ -546,42 +488,34 @@ public class QMorph extends GeomBasics {
 				ld = nK.meanNeighborEdgeLength();
 				newVertex = eD.otherVertexGivenNewLength(ld, nJ);
 			} else if (tr <= 20 && tr > 2.5) {
-				Msg.debug("******************* tr<= 20 && tr> 2.5");
+				
 				// The mean of (some of) the other edges in all the adjacent elements
 				ld = 0;
 				// First add the lengths of edges from Triangles ahead of the front
 				for (Edge e : nK.edgeList) {
 					if (e != eD && e != front1 && e != front2) {
 						ld += e.length();
-						Msg.debug("from edge ahead of the front adding " + e.length());
 						n++;
 					}
 				}
 				// Then add the lengths of edges from the two Quads behind the front
 				q = front1.getQuadElement();
 				ld += q.edgeList[base].length();
-				Msg.debug("adding " + q.edgeList[base].length());
 				if (q.edgeList[left] != eD) {
 					ld += q.edgeList[left].length();
-					Msg.debug("adding " + q.edgeList[left].length());
 				} else {
 					ld += q.edgeList[right].length();
-					Msg.debug("adding " + q.edgeList[right].length());
 				}
 
 				q = front2.getQuadElement();
 				ld += q.edgeList[base].length();
-				Msg.debug("adding " + q.edgeList[base].length());
 				if (q.edgeList[left] != eD) {
 					ld += q.edgeList[left].length();
-					Msg.debug("adding " + q.edgeList[left].length());
 				} else {
 					ld += q.edgeList[right].length();
-					Msg.debug("adding " + q.edgeList[right].length());
 				}
 
 				ld = ld / (4.0 + n);
-				Msg.debug("ld= " + ld);
 				newVertex = eD.otherVertexGivenNewLength(ld, nJ);
 			} else {
 				// Msg.debug("******************* tr<= 2.5");
@@ -591,7 +525,6 @@ public class QMorph extends GeomBasics {
 			newVertex = nK.blackerSmooth(nJ, front1, front2, eD.length());
 		}
 
-		Msg.debug("Leaving smoothFrontVertex(..)...returning " + newVertex.descr());
 		return newVertex;
 	}
 
@@ -604,20 +537,13 @@ public class QMorph extends GeomBasics {
 	 * @param q Quad to which n belongs
 	 */
 	Vertex getSmoothedPos(Vertex n, Quad q) {
-		Msg.debug("Entering getSmoothedPos(..)");
 		Vertex newN, behind;
 		Edge front1, front2, e;
 		Quad q2, qn;
 		Element neighbor;
 
-		Msg.debug("...q: " + q.descr());
-
 		if (q.hasFrontEdgeAt(n) && !n.boundaryVertex()) {
-			Msg.debug("...n:" + n.descr());
 			if (n == q.edgeList[left].otherVertex(q.edgeList[base].leftVertex)) {
-				Msg.debug("...n is left, top");
-				Msg.debug("...q.edgeList[top]:" + q.edgeList[top].descr());
-
 				if (q.edgeList[top].isFrontEdge()) {
 					front1 = q.edgeList[top];
 				} else {
@@ -634,9 +560,6 @@ public class QMorph extends GeomBasics {
 					}
 				}
 			} else if (n == q.edgeList[right].otherVertex(q.edgeList[base].rightVertex)) {
-				Msg.debug("...n is right, top");
-				Msg.debug("...q.edgeList[top]:" + q.edgeList[top].descr());
-
 				if (q.edgeList[top].isFrontEdge()) {
 					front1 = q.edgeList[top];
 				} else {
@@ -653,7 +576,6 @@ public class QMorph extends GeomBasics {
 					}
 				}
 			} else if (n == q.edgeList[base].leftVertex) {
-				Msg.debug("...n is left, base");
 				if (q.edgeList[left].isFrontEdge()) {
 					front1 = q.edgeList[left];
 				} else {
@@ -670,7 +592,6 @@ public class QMorph extends GeomBasics {
 					}
 				}
 			} else if (n == q.edgeList[base].rightVertex) {
-				Msg.debug("...n is right, base");
 				if (q.edgeList[right].isFrontEdge()) {
 					front1 = q.edgeList[right];
 				} else {
@@ -698,10 +619,8 @@ public class QMorph extends GeomBasics {
 		} else if (!n.boundaryVertex()) {
 			newN = n.modifiedLWLaplacianSmooth();
 		} else {
-			Msg.debug("...n: " + n.descr() + " is a boundaryVertex");
 			newN = n;
 		}
-		Msg.debug("Leaving getSmoothedPos(..)");
 		return newN;
 	}
 
@@ -710,7 +629,6 @@ public class QMorph extends GeomBasics {
 	 * smoothed. So is every Vertex directly connected to these.
 	 */
 	private void localSmooth(Quad q, List<Edge> frontList) {
-		Msg.debug("Entering localSmooth(..)");
 		Quad tempQ1, tempQ2;
 		Vertex n, nNew, nOld;
 		Edge e, fe1, fe2;
@@ -742,19 +660,13 @@ public class QMorph extends GeomBasics {
 
 			for (int i = 0; i < adjVertices.size(); i++) {
 				n = (Vertex) adjVertices.get(i);
-				Msg.debug("...n: " + n.descr());
 				if (n.frontVertex() && !n.boundaryVertex()) {
 					fe1 = n.anotherFrontEdge(null);
 					fe2 = n.anotherFrontEdge(fe1);
-					Msg.debug("...fe1: " + fe1.descr());
-					Msg.debug("...fe2: " + fe2.descr());
 					tempQ1 = fe1.getQuadElement();
 					tempQ2 = fe2.getQuadElement();
-					Msg.debug("...tempQ1: " + tempQ1.descr());
-					Msg.debug("...tempQ2: " + tempQ2.descr());
 					e = tempQ1.commonEdgeAt(n, tempQ2);
 					if (e == null) {
-						Msg.debug("...tempQ1.commonEdgeAt(n, tempQ2) is null");
 						e = tempQ1.neighborEdge(n, fe1);
 					}
 					adjVerticesNew.add(smoothFrontVertex(n, e.otherVertex(n), tempQ1, fe1, fe2));
@@ -765,7 +677,6 @@ public class QMorph extends GeomBasics {
 				}
 			}
 
-			Msg.debug("...Checking top for inversion:");
 			if (!top.equals(topNew)) {
 				top.moveTo(topNew);
 				inversionCheckAndRepair(top, topOld);
@@ -774,7 +685,6 @@ public class QMorph extends GeomBasics {
 			// else
 			// top.updateAngles();
 
-			Msg.debug("...Checking bottomLeft for inversion:");
 			if (!bottomLeft.equals(bottomLeftNew)) {
 				bottomLeft.moveTo(bottomLeftNew);
 				inversionCheckAndRepair(bottomLeft, bottomLeftOld);
@@ -783,7 +693,6 @@ public class QMorph extends GeomBasics {
 			// else
 			// bottomLeft.updateAngles();
 
-			Msg.debug("...Checking bottomRight for inversion:");
 			if (!bottomRight.equals(bottomRightNew)) {
 				bottomRight.moveTo(bottomRightNew);
 				inversionCheckAndRepair(bottomRight, bottomRightOld);
@@ -792,7 +701,6 @@ public class QMorph extends GeomBasics {
 			// else
 			// bottomRight.updateAngles();
 
-			Msg.debug("...Checking the surrounding vertices for inversion:");
 			for (int i = 0; i < adjVertices.size(); i++) {
 				n = (Vertex) adjVertices.get(i);
 				nOld = n.copyXY();
@@ -806,7 +714,6 @@ public class QMorph extends GeomBasics {
 				// n.updateAngles();
 			}
 
-			Msg.debug("Leaving localSmooth(..), (fake quad)");
 			return;
 		} else {
 			Vertex topLeft = q.edgeList[left].otherVertex(q.edgeList[base].leftVertex);
@@ -834,19 +741,13 @@ public class QMorph extends GeomBasics {
 
 			for (int i = 0; i < adjVertices.size(); i++) {
 				n = (Vertex) adjVertices.get(i);
-				Msg.debug("...n: " + n.descr());
 				if (n.frontVertex() && !n.boundaryVertex()) {
 					fe1 = n.anotherFrontEdge(null);
 					fe2 = n.anotherFrontEdge(fe1);
-					Msg.debug("...fe1: " + fe1.descr());
-					Msg.debug("...fe2: " + fe2.descr());
 					tempQ1 = fe1.getQuadElement();
 					tempQ2 = fe2.getQuadElement();
-					Msg.debug("...tempQ1: " + tempQ1.descr());
-					Msg.debug("...tempQ2: " + tempQ2.descr());
 					e = tempQ1.commonEdgeAt(n, tempQ2);
 					if (e == null) {
-						Msg.debug("...tempQ1.commonEdgeAt(n, tempQ2) is null");
 						e = tempQ1.neighborEdge(n, fe1);
 					}
 					adjVerticesNew.add(smoothFrontVertex(n, e.otherVertex(n), tempQ1, fe1, fe2));
@@ -857,7 +758,6 @@ public class QMorph extends GeomBasics {
 				}
 			}
 
-			Msg.debug("...Checking topLeft for inversion:");
 			if (!topLeft.equals(topLeftNew)) {
 				topLeft.moveTo(topLeftNew);
 				inversionCheckAndRepair(topLeft, topLeftOld);
@@ -866,7 +766,6 @@ public class QMorph extends GeomBasics {
 			// else
 			// topLeft.updateAngles();
 
-			Msg.debug("...Checking topRight for inversion:");
 			if (!topRight.equals(topRightNew)) {
 				topRight.moveTo(topRightNew);
 				inversionCheckAndRepair(topRight, topRightOld);
@@ -875,7 +774,6 @@ public class QMorph extends GeomBasics {
 			// else
 			// topRight.updateAngles();
 
-			Msg.debug("...Checking bottomLeft for inversion:");
 			if (!bottomLeft.equals(bottomLeftNew)) {
 				bottomLeft.moveTo(bottomLeftNew);
 				inversionCheckAndRepair(bottomLeft, bottomLeftOld);
@@ -884,7 +782,6 @@ public class QMorph extends GeomBasics {
 			// else
 			// bottomLeft.updateAngles();
 
-			Msg.debug("...Checking bottomRight for inversion:");
 			if (!bottomRight.equals(bottomRightNew)) {
 				bottomRight.moveTo(bottomRightNew);
 				inversionCheckAndRepair(bottomRight, bottomRightOld);
@@ -893,7 +790,6 @@ public class QMorph extends GeomBasics {
 			// else
 			// bottomRight.updateAngles();
 
-			Msg.debug("...Checking the surrounding vertices for inversion:");
 			for (int i = 0; i < adjVertices.size(); i++) {
 				n = (Vertex) adjVertices.get(i);
 				nOld = n.copyXY();
@@ -906,8 +802,6 @@ public class QMorph extends GeomBasics {
 				// else
 				// n.updateAngles();
 			}
-
-			Msg.debug("Leaving localSmooth(..)");
 		}
 	}
 
@@ -918,7 +812,6 @@ public class QMorph extends GeomBasics {
 	 * @param tris the list of triangles to be deleted
 	 */
 	private void clearQuad(Quad q, ArrayList<Triangle> tris) {
-		Msg.debug("Entering clearQuad(Quad q)...");
 		int VertexInd, edgeInd, triInd;
 		Vertex vertex;
 		Edge e;
@@ -951,23 +844,19 @@ public class QMorph extends GeomBasics {
 						}
 					}
 
-					Msg.debug("disconnecting t-edge " + e.descr() + " from " + t.descr());
 					e.disconnectFromElement(t);
 				} else {
-					Msg.debug("disconnecting q-edge " + e.descr() + " from " + t.descr());
 					e.disconnectFromElement(t);
 				}
 			}
 
 			triInd = triangleList.indexOf(t);
 			if (triInd != -1) {
-				Msg.debug("...removing triangle " + t.descr() + " from triangleList.");
 				triangleList.remove(triInd);
 			}
 		}
 
 		q.connectEdges();
-		Msg.debug("Leaving clearQuad(Quad q)...");
 	}
 
 	/**
@@ -975,7 +864,6 @@ public class QMorph extends GeomBasics {
 	 * quad Assumes that only triangles are present, not quads, inside of q
 	 */
 	private void clearQuad(Quad q, Triangle first) {
-		Msg.debug("Entering clearQuad(Quad q)...");
 		Element neighbor;
 		Triangle cur;
 		ArrayList<Element> n = new ArrayList<Element>();
@@ -988,8 +876,6 @@ public class QMorph extends GeomBasics {
 		n.add(first);
 		for (int j = 0; j < n.size(); j++) {
 			cur = (Triangle) n.get(j);
-			Msg.debug("...parsing triangle " + cur.descr());
-
 			for (int i = 0; i < 3; i++) {
 				e = cur.edgeList[i];
 				if (!q.hasEdge(e)) {
@@ -1021,28 +907,23 @@ public class QMorph extends GeomBasics {
 						}
 					}
 
-					Msg.debug("disconnecting t-edge " + e.descr() + " from " + cur.descr());
 					e.disconnectFromElement(cur);
 				} else {
-					Msg.debug("disconnecting q-edge " + e.descr() + " from " + cur.descr());
 					e.disconnectFromElement(cur);
 				}
 			}
 
 			triInd = triangleList.indexOf(cur);
 			if (triInd != -1) {
-				Msg.debug("...removing triangle " + cur.descr() + " from triangleList.");
 				triangleList.remove(triInd);
 			}
 
 		}
 		q.connectEdges();
-		Msg.debug("Leaving clearQuad(Quad q)...");
 	}
 
 	/** Updates fronts in fake quads (which are triangles, really) */
 	private int localFakeUpdateFronts(Quad q, int lowestLevel, List<Edge> frontList) {
-		Msg.debug("Entering localFakeUpdateFronts()...");
 		int curLevelEdgesRemoved = 0;
 		Edge e;
 		Element neighbor;
@@ -1050,7 +931,6 @@ public class QMorph extends GeomBasics {
 		List<Edge> lostFNList = new ArrayList<Edge>();
 		List<Edge> needsReclassification = new ArrayList<Edge>();
 
-		Msg.debug("...State of the stateLists before updateFake..:");
 		Edge.printStateLists();
 
 		// Decide whether the base edge belongs in the frontlist, and act accordingly
@@ -1059,7 +939,6 @@ public class QMorph extends GeomBasics {
 			e.promoteToFront(q.edgeList[base].level + 1, frontList);
 			needsNewFN.add(e);
 		} else if (e.frontEdge && !e.isFrontEdge()) {
-			Msg.debug("...removing base edge");
 			if (e.removeFromFront(frontList) && e.level == lowestLevel) {
 				curLevelEdgesRemoved++;
 			}
@@ -1078,7 +957,6 @@ public class QMorph extends GeomBasics {
 			e.promoteToFront(q.edgeList[base].level + 1, frontList);
 			needsNewFN.add(e);
 		} else if (e.frontEdge && !e.isFrontEdge()) {
-			Msg.debug("...removing left edge");
 			if (e.removeFromFront(frontList) && e.level == lowestLevel) {
 				curLevelEdgesRemoved++;
 			}
@@ -1091,7 +969,6 @@ public class QMorph extends GeomBasics {
 			}
 		}
 
-		Msg.debug("...And the state of the stateLists is :)");
 		Edge.printStateLists();
 
 		// Decide whether the right edge belongs in the frontlist, and act accordingly
@@ -1100,12 +977,9 @@ public class QMorph extends GeomBasics {
 			e.promoteToFront(q.edgeList[base].level + 1, frontList);
 			needsNewFN.add(e);
 		} else if (e.frontEdge && !e.isFrontEdge()) {
-			Msg.debug("...removing right edge: " + e.descr());
 			if (e.removeFromFront(frontList) && e.level == lowestLevel) {
 				curLevelEdgesRemoved++;
 			}
-			Msg.debug("...removeFromStateList(..) returns " + e.removeFromStateList());
-			Msg.debug("...And the state of the stateLists is :)");
 			Edge.printStateLists();
 			if (e.leftFrontNeighbor != null && e.leftFrontNeighbor.isFrontEdge()) {
 				lostFNList.add(e.leftFrontNeighbor);
@@ -1121,7 +995,6 @@ public class QMorph extends GeomBasics {
 			if (e.frontEdge) {
 				if (e.setFrontNeighbors(frontList)) {
 					if (e.hasFalseFrontNeighbor()) {
-						Msg.debug("...copying e last (1st loop)");
 						needsNewFN.add(e);
 					} else {
 						needsReclassification.add(e);
@@ -1138,12 +1011,9 @@ public class QMorph extends GeomBasics {
 		for (int i = 0; i < lostFNList.size(); i++) {
 			e = (Edge) lostFNList.get(i);
 
-			Msg.debug("...Checking Edge " + e.descr() + " in lostFNList");
 			if (e.isFrontEdge() && e.hasFalseFrontNeighbor()) {
-				Msg.debug("...Edge " + e.descr() + " has a false frontNeighbor, correcting");
 				if (e.setFrontNeighbors(frontList)) {
 					if (e.hasFalseFrontNeighbor()) {
-						Msg.debug("...copying e last");
 						lostFNList.add(e);
 					} else {
 						needsReclassification.add(e);
@@ -1159,15 +1029,12 @@ public class QMorph extends GeomBasics {
 			e.classifyStateOfFrontEdge();
 		}
 
-		Msg.debug("Leaving localFakeUpdateFronts()...");
 		return curLevelEdgesRemoved;
 	}
 
 	// Do some neccessary updating of the fronts before localSmooth(..) is run
 	private void preSmoothUpdateFronts(Quad q, List<Edge> frontList) {
-		Msg.debug("Entering preSmoothUpdateFronts()...");
 		q.edgeList[top].setFrontNeighbors(frontList);
-		Msg.debug("Leaving preSmoothUpdateFronts()...");
 	}
 
 	/**
@@ -1180,21 +1047,17 @@ public class QMorph extends GeomBasics {
 		if (q.isFake) {
 			return localFakeUpdateFronts(q, lowestLevel, frontList);
 		} else {
-			Msg.debug("Entering localUpdateFronts()...");
 			int curLevelEdgesRemoved = 0;
 			Edge e;
 			List<Edge> lostFNList = new ArrayList<>();
 			List<Edge> needsNewFN = new ArrayList<>();
 			List<Edge> needsReclassification = new ArrayList<>();
 
-			Msg.debug("front edges connected to Vertex " + q.edgeList[top].rightVertex.descr());
 			printEdgeList(q.edgeList[top].rightVertex.frontEdgeList());
 
 			// Remove the base edge from frontList and from one of stateList[0..2]
 			e = q.edgeList[base];
-			Msg.debug("localUpdateFronts(..): base edge " + e.descr());
 			if (e.frontEdge && !e.isFrontEdge()) {
-				Msg.debug("...removing from front");
 				if (e.removeFromFront(frontList) && e.level == lowestLevel) {
 					curLevelEdgesRemoved++;
 				}
@@ -1209,16 +1072,12 @@ public class QMorph extends GeomBasics {
 
 			// Decide whether the top edge belongs in the frontlist, and act accordingly
 			e = q.edgeList[top];
-			Msg.debug("localUpdateFronts(..): top edge " + e.descr());
 			if (e.getTriangleElement() != null) {
-				Msg.debug("top has triangle element");
 			}
 			if (!e.frontEdge && e.isFrontEdge()) {
-				Msg.debug("...promoting to front edge");
 				e.promoteToFront(q.edgeList[base].level + 1, frontList);
 				needsNewFN.add(e);
 			} else if (e.frontEdge && !e.isFrontEdge()) {
-				Msg.debug("...removing from front");
 				if (e.removeFromFront(frontList) && e.level == lowestLevel) {
 					curLevelEdgesRemoved++;
 				}
@@ -1233,16 +1092,12 @@ public class QMorph extends GeomBasics {
 
 			// Decide whether the left edge belongs in the frontlist, and act accordingly
 			e = q.edgeList[left];
-			Msg.debug("localUpdateFronts(..): left edge " + e.descr());
 			if (e.getTriangleElement() != null) {
-				Msg.debug("left has triangle element");
 			}
 			if (!e.frontEdge && e.isFrontEdge()) {
-				Msg.debug("...promoting to front edge");
 				e.promoteToFront(q.edgeList[base].level + 1, frontList);
 				needsNewFN.add(e);
 			} else if (e.frontEdge && !e.isFrontEdge()) {
-				Msg.debug("...removing from front");
 				if (e.removeFromFront(frontList) && e.level == lowestLevel) {
 					curLevelEdgesRemoved++;
 				}
@@ -1257,17 +1112,13 @@ public class QMorph extends GeomBasics {
 
 			// Decide whether the right edge belongs in the frontlist, and act accordingly
 			e = q.edgeList[right];
-			Msg.debug("localUpdateFronts(..): right edge " + e.descr());
 			if (e.getTriangleElement() != null) {
-				Msg.debug("right has triangle element");
 			}
 
 			if (!e.frontEdge && e.isFrontEdge()) {
-				Msg.debug("...promoting to front edge");
 				e.promoteToFront(q.edgeList[base].level + 1, frontList);
 				needsNewFN.add(e);
 			} else if (e.frontEdge && !e.isFrontEdge()) {
-				Msg.debug("...removing from front");
 				if (e.removeFromFront(frontList) && e.level == lowestLevel) {
 					curLevelEdgesRemoved++;
 				}
@@ -1285,7 +1136,6 @@ public class QMorph extends GeomBasics {
 				e = (Edge) needsNewFN.get(i);
 				if (e.setFrontNeighbors(frontList)) {
 					if (e.hasFalseFrontNeighbor()) {
-						Msg.debug("localUpdateFronts(..):copying e last (1st loop)");
 						needsNewFN.add(e);
 					} else {
 						needsReclassification.add(e);
@@ -1302,7 +1152,6 @@ public class QMorph extends GeomBasics {
 				if (e.isFrontEdge() && e.hasFalseFrontNeighbor()) {
 					if (e.setFrontNeighbors(frontList)) {
 						if (e.hasFalseFrontNeighbor()) {
-							Msg.debug("localUpdateFronts(..): copying e last");
 							lostFNList.add(e);
 						} else {
 							needsReclassification.add(e);
@@ -1316,10 +1165,8 @@ public class QMorph extends GeomBasics {
 				e = (Edge) needsReclassification.get(i);
 
 				if (needsNewFN.contains(e)) {
-					Msg.debug("e from needsNewFN");
 				}
 				if (lostFNList.contains(e)) {
-					Msg.debug("e from lostFNList");
 				}
 
 				e.removeFromStateList();
@@ -1331,7 +1178,6 @@ public class QMorph extends GeomBasics {
 			// When Quad::smooth are implemented, I need also
 			// to update *ALL* edges affected by that smoothing
 
-			Msg.debug("Leaving localUpdateFronts()...");
 			return curLevelEdgesRemoved;
 		}
 	}
@@ -1395,7 +1241,6 @@ public class QMorph extends GeomBasics {
 		Edge e0 = recoverEdge(nKm1, nKp1);
 
 		if (e0 == null || e0.element1 instanceof Quad || e0.element2 instanceof Quad) {
-			Msg.debug("Leaving doSeam(..), failure");
 			return null;
 		}
 		Triangle ta = (Triangle) e0.element1, tb = (Triangle) e0.element2;
@@ -1440,7 +1285,6 @@ public class QMorph extends GeomBasics {
 
 		if (safePos == null) {
 			if (q.anyInvertedElementsWhenCollapsed(nKm1, nKp1, nKm1, nKp1.adjElements(), nKm1.adjElements())) {
-				Msg.debug("Leaving closeQuad(..), returning null!");
 				return null;
 			} else {
 				safePos = nKm1.copyXY();
@@ -1448,7 +1292,6 @@ public class QMorph extends GeomBasics {
 		}
 
 		q.firstVertex = null; // indicate that this is not really quad
-		Msg.debug("...quad to be cleared is " + q.descr());
 		clearQuad(q, e1.getTriangleElement());
 		q.disconnectEdges();
 
@@ -1528,7 +1371,6 @@ public class QMorph extends GeomBasics {
 
 	/** Performs the transition seam operation as described in Owen's paper. */
 	private Quad doTransitionSeam(Edge e1, Edge e2, Vertex nK) {
-		Msg.debug("Entering doTransitionSeam(..)");
 		Edge longer, shorter;
 		if (e1.len > e2.len) {
 			longer = e1;
@@ -1552,7 +1394,6 @@ public class QMorph extends GeomBasics {
 		Vertex nF;
 
 		if (q.largestAngle() > DEG_179) {// Then we can't use the approach in the Owen et al paper!
-			Msg.debug("...largest angle of quad > 179 degrees");
 			eF = q.neighborEdge(nKm1, longer);
 			eMidKm1 = new Edge(mid, nKm1);
 			eKMid = new Edge(nK, mid);
@@ -1616,7 +1457,6 @@ public class QMorph extends GeomBasics {
 			eFL.promoteToFront(longer.level, frontList);
 
 			if (frontBeyondKm1 != eF) {
-				Msg.debug("...frontBeyondKm1!= eF");
 				eF.promoteToFront(longer.level, frontList);
 
 				frontBeyondKm1.setFrontNeighbor(eF);
@@ -1636,7 +1476,6 @@ public class QMorph extends GeomBasics {
 
 				nrOfFronts += 2;
 			} else {
-				Msg.debug("...frontBeyondKm1== eF");
 				Edge beyond = eF.frontNeighborAt(nF);
 				eF.removeFromStateList();
 				eF.removeFromFront(frontList);
@@ -1657,11 +1496,9 @@ public class QMorph extends GeomBasics {
 			eKMid.classifyStateOfFrontEdge();
 			eFL.classifyStateOfFrontEdge();
 
-			Msg.debug("...done with most stuff in doTransitionSeam(..)");
 			localSmooth(q1New, frontList);
 			nrOfFronts -= localUpdateFronts(q1New, level, frontList);
 
-			Msg.debug("Leaving doTransitionSeam(..)");
 			return q1New;
 		}
 
@@ -1766,13 +1603,11 @@ public class QMorph extends GeomBasics {
 		localSmooth(q1New, frontList);
 		nrOfFronts -= localUpdateFronts(q1New, level, frontList);
 
-		Msg.debug("Leaving doTransitionSeam(..)");
 		return q2New; // This quad will be added to elementList shortly.
 	}
 
 	/** Performs the transition split operation as described in Owen's paper. */
 	private Quad doTransitionSplit(Edge e1, Edge e2, Vertex nK) {
-		Msg.debug("Entering doTransitionSplit(..)");
 		Edge longer, shorter;
 		if (e1.len > e2.len) {
 			longer = e1;
@@ -1903,23 +1738,16 @@ public class QMorph extends GeomBasics {
 		localSmooth(q11New, frontList);
 		localUpdateFronts(q11New, level, frontList); // Param 4 is dummy
 
-		Msg.debug("...Created 2 new quads:");
-		Msg.debug("...q11New: " + q11New.descr());
-		Msg.debug("...q12New: " + q12New.descr());
-
 		if (q11New.inverted()) {
 			Msg.warning("...q11New was inverted initially!!");
 		} else {
-			Msg.debug("...q11New was not inverted initially (of course)");
 		}
 
 		if (q12New.inverted()) {
 			Msg.warning("...q12New was inverted initially!!");
 		} else {
-			Msg.debug("...q12New was not inverted initially (of course)");
 		}
 
-		Msg.debug("Leaving doTransitionSplit(..)");
 		return q12New; // ...so that q12New will be smoothed and updated as well.
 	}
 
@@ -1943,23 +1771,15 @@ public class QMorph extends GeomBasics {
 	 * @param nQ number of Quads adjacent to Vertex n
 	 */
 	private boolean needsSeam(Edge e1, Edge e2, Vertex n, int nQ) {
-		Msg.debug("Entering needsSeam(..)");
-		Msg.debug("e1= " + e1.descr());
-		Msg.debug("e2= " + e2.descr());
-		Msg.debug("n= " + n.descr());
-		Msg.debug("nQ= " + nQ);
-
 		Element elem;
 		double ang;
 
 		elem = e1.getTriangleElement();
 		if (elem == null) {
-			Msg.debug("Leaving needsSeam(..)");
 			return false;
 		}
 		ang = e1.sumAngle(elem, n, e2);
 
-		Msg.debug("Leaving needsSeam(..)");
 		if (nQ >= 5) {
 			if (ang < EPSILON1) {
 				return true;
@@ -1979,7 +1799,6 @@ public class QMorph extends GeomBasics {
 	 *         chosen.
 	 */
 	private Quad handleSpecialCases(Edge e) {
-		Msg.debug("Entering handleSpecialCases(..)");
 		Quad q = null;
 		Triangle eTri = e.getTriangleElement();
 		if (!e.boundaryEdge() && !e.leftFrontNeighbor.boundaryEdge() && !e.rightFrontNeighbor.boundaryEdge()) {
@@ -2012,7 +1831,6 @@ public class QMorph extends GeomBasics {
 			}
 		}
 
-		Msg.debug("Leaving handleSpecialCases(..)");
 		return q;
 	}
 
@@ -2022,7 +1840,6 @@ public class QMorph extends GeomBasics {
 	 * from makeQuad(Edge)
 	 */
 	private Edge[] makeSideEdges(Edge e) {
-		Msg.debug("Entering makeSideEdges(..)");
 		Edge[] sideEdges = new Edge[2];
 		List<Edge> altLSE;
 		List<Edge> altRSE;
@@ -2035,7 +1852,6 @@ public class QMorph extends GeomBasics {
 			rState = 1;
 		}
 
-		Msg.debug("...lState: " + lState + ", rState:" + rState);
 		if (lState == 1 && rState == 1) { // Then side edges are already set.
 			sideEdges[0] = e.leftFrontNeighbor;
 			sideEdges[1] = e.rightFrontNeighbor;
@@ -2090,8 +1906,6 @@ public class QMorph extends GeomBasics {
 		byte lrc;
 		boolean lLoop = false, rLoop = false;
 
-		Msg.debug("...e.leftSide: " + lSide.descr() + ", e.rightSide: " + rSide.descr());
-
 		if (((lSide.otherVertex(e.leftVertex).frontVertex() && !lSide.isFrontEdge())
 				|| (rSide.otherVertex(e.rightVertex).frontVertex() && !rSide.isFrontEdge()))) {
 
@@ -2101,15 +1915,13 @@ public class QMorph extends GeomBasics {
 			 * !rSide.frontEdge)) ) {
 			 */
 
-			Msg.debug("We're about to close a front loop and...");
+			
 
 			// nM (the "otherVertex") lies on an opposing front, and if the side Edge
 			// isn't a front edge, it may only be used if the number of edges on
 			// each resulting front loop is even.
 			if (lSide.otherVertex(e.leftVertex).frontVertex() && !lSide.isFrontEdge()) {
-				Msg.debug("nM= " + lSide.otherVertex(e.leftVertex).descr() + " lies on an opposing front...");
 			} else {
-				Msg.debug("nM= " + rSide.otherVertex(e.rightVertex).descr() + " lies on an opposing front...");
 			}
 
 			if (/* lSide.getQuadElement()== null && */ !lSide.boundaryEdge() && lSide.otherVertex(e.leftVertex).frontVertex()
@@ -2148,7 +1960,6 @@ public class QMorph extends GeomBasics {
 		 * (Edge)altRSE.get(0); e.leftSide= (Edge)altLSE.get(0); }
 		 */
 
-		Msg.debug("Leaving makeSideEdges(..)");
 		return sideEdges;
 	}
 
@@ -2163,7 +1974,6 @@ public class QMorph extends GeomBasics {
 				list.add(cur);
 			}
 		}
-		Msg.debug("nr of potential side edges at " + n.descr() + " is " + list.size() + ":");
 		printEdgeList(list);
 		if (list.size() > 0) {
 			return list;
@@ -2185,14 +1995,13 @@ public class QMorph extends GeomBasics {
 		double curAng, selAng, closestAng;
 		Element curElement, curElement2;
 
-		Msg.debug("Entering defineSideEdge(..)");
+		
 		// Set eF2 and noVertex (a Vertex that must not connect with the edge
 		// which we are trying to find), or if the state bits permits, return the
 		// already found side edge.
 		if (nK == eF1.leftVertex) {
 			eF2 = eF1.leftFrontNeighbor;
 			if (leftSide != null) { // the left bit set
-				Msg.debug("Leaving defineSideEdge(..): returning edge " + leftSide.descr());
 				return leftSide;
 			}
 			if (rightSide != null) {
@@ -2201,7 +2010,6 @@ public class QMorph extends GeomBasics {
 		} else {
 			eF2 = eF1.rightFrontNeighbor;
 			if (rightSide != null) { // the right bit set
-				Msg.debug("Leaving defineSideEdge(..): returning edge " + rightSide.descr());
 				return rightSide;
 			}
 			if (leftSide != null) {
@@ -2210,7 +2018,6 @@ public class QMorph extends GeomBasics {
 		}
 
 		if (noVertex != null) {
-			Msg.debug("...noVertex= " + noVertex.descr());
 		}
 
 		// Select the neighboring elements ahead of eF1 and eF2
@@ -2229,17 +2036,12 @@ public class QMorph extends GeomBasics {
 		}
 
 		double bisected = eF1.sumAngle(curElement, nK, eF2) / 2.0;
-		Msg.debug("...bisected= " + Math.toDegrees(bisected) + " degrees");
-
-		Msg.debug("...Checking for possible reuse.. ");
+		
 
 		// *TRY* to select an initial edge that is not EF1 or EF2. If that's not
 		// possible, then select EF2. Compute angle between the selected edge and
 		// vector Vk (see figure...uhm). However, the selected edge should not
 		// contain the noVertex.
-
-		Msg.debug("...eF1= " + eF1.descr());
-		Msg.debug("...eF2= " + eF2.descr());
 
 		if (!eF2.hasVertex(noVertex)) {
 			selected = eF2;
@@ -2254,13 +2056,11 @@ public class QMorph extends GeomBasics {
 		}
 
 		if (selected == null) { // If no edges are found that don't contain the noVertex
-			Msg.debug("...selected is not yet selected :-)");
 			selected = eF2; // then we have to select eF2
 			selAng = Math.abs(bisected - eF1.sumAngle(curElement, nK, selected));
 			closest = selected;
 			closestAng = selAng;
 		} else {
-			Msg.debug("...selected *has* been selected: " + selected.descr());
 			selAng = Math.abs(bisected - eF1.sumAngle(curElement, nK, selected));
 			closest = selected;
 			closestAng = selAng;
@@ -2284,11 +2084,7 @@ public class QMorph extends GeomBasics {
 			}
 		}
 
-		Msg.debug("...selected= " + selected.descr());
-
 		if (selAng < EPSILON) {
-			Msg.debug("... reusing edge " + selected.descr());
-			Msg.debug("Leaving defineSideEdge(..): Reusing, EPSILON > " + selAng + " =" + Math.toDegrees(selAng) + " degrees");
 			return selected;
 		}
 
@@ -2299,8 +2095,6 @@ public class QMorph extends GeomBasics {
 		// Yeah, that sounds like a good idea:
 		if (selected.otherVertex(nK).frontVertex()) {
 			// if (selAng < EPSILONLARGER) {
-			Msg.debug("Leaving defineSideEdge(..): nM on front, reusing: " + Math.toDegrees(selAng) + " degrees, returning edge "
-					+ selected.descr());
 			return selected;
 			/*
 			 * } else
@@ -2310,8 +2104,7 @@ public class QMorph extends GeomBasics {
 			 */
 		}
 
-		Msg.debug("defineSideEdge(..): theta > pi/6 (" + Math.toDegrees(selAng) + " degrees)");
-		Msg.debug("defineSideEdge(..): Checking for possible swap.. ");
+		
 
 		// First find the triangle that vK passes through.
 		// This is the plan:
@@ -2331,24 +2124,16 @@ public class QMorph extends GeomBasics {
 		double ang1 = Math.min(a1, a2);
 		double ang2 = Math.max(a1, a2);
 
-		Msg.debug("...ang1=" + Math.toDegrees(ang1));
-		Msg.debug("...ang2=" + Math.toDegrees(ang2));
-
 		if ((bisected >= ang1 && bisected <= ang2) || elem2 == null) { // Does vK go through elem1? or is elem1 the only element connected
 																		// to selected?
-			Msg.debug("...bisected runs through elem1");
 			if (elem1 instanceof Quad) {
-				Msg.debug("Leaving defineSideEdge(..): elem1 is a Quad");
 				return selected; // have to give up
 			}
 			// selInd= elem1.indexOf(selected);
 			// otherInd= elem1.indexOf(otherEdge);
 			bisectTriangle = (Triangle) elem1;
 		} else if (elem2 != null) { // Nope, it seems vK goes through elem2, not elem1.
-			Msg.debug("...bisected runs through elem2");
-
 			if (elem2 instanceof Quad) {
-				Msg.debug("Leaving defineSideEdge(..): elem2 is a Quad");
 				return selected; // have to give up
 			}
 			// selInd= elem2.indexOf(selected);
@@ -2369,7 +2154,6 @@ public class QMorph extends GeomBasics {
 		// I cannot swap, so I just return:
 		Element neighborTriangle = bisectTriangle.neighbor(e0);
 		if (e0.frontEdge || neighborTriangle == null || neighborTriangle instanceof Quad) {
-			Msg.debug("Leaving defineSideEdge(..), returning selected==" + selected.descr());
 			return selected;
 		}
 		// Then, use e0 to get to nM.
@@ -2382,7 +2166,7 @@ public class QMorph extends GeomBasics {
 		double beta = Math.abs(bisected - Math.min(eF1.computePosAngle(eK, nK), eF2.computePosAngle(eK, nK)));
 
 		if (beta < EPSILON && eK.len < (eF1.len + eF2.len) * sqrt3div2) {
-			Msg.debug("... swapping");
+			
 			// ok, swap edges: remove e0 and introduce eK.... update stuff...
 
 			// Remove old triangles from list...
@@ -2399,14 +2183,10 @@ public class QMorph extends GeomBasics {
 			// Update "global" edge list
 			edgeList.remove(edgeList.indexOf(e0));
 			edgeList.add(eK);
-			Msg.debug("...Swapping, beta < EPSILON: " + Math.toDegrees(beta) + " degrees.");
-			Msg.debug("Leaving defineSideEdge(..): returning edge " + eK.descr());
 			return eK;
 		} else {
 			// Then the only way this might work is splitting bisectTriangle
 			// and it's neighbor at edge e0.
-			Msg.debug("... splitting edge " + e0.descr());
-
 			MyVector vEF1 = new MyVector(nK, eF1.otherVertex(nK));
 			MyVector vEF2 = new MyVector(nK, eF2.otherVertex(nK));
 
@@ -2430,13 +2210,6 @@ public class QMorph extends GeomBasics {
 			MyVector v0 = e0.getVector();
 			Vertex nN = rK.pointIntersectsAt(v0);
 			if (nN == null) {
-				Msg.debug("...bisectTriangle:" + bisectTriangle.descr());
-				Msg.debug("...eF1== " + eF1.descr());
-				Msg.debug("...eF2== " + eF2.descr());
-				Msg.debug("...nN== null");
-				Msg.debug("...bisected== " + Math.toDegrees(bisected) + " degrees");
-				Msg.debug("...rK==" + rK.descr());
-				Msg.debug("...v0==" + v0.descr());
 				Msg.error("defineSideEdge(..): Cannot split edge e0==" + e0.descr());
 			}
 			if (!vertexList.contains(nN)) {
@@ -2496,7 +2269,6 @@ public class QMorph extends GeomBasics {
 			td.connectEdges();
 
 			Msg.warning("Splitting is not yet thouroughly tested.");
-			Msg.debug("Leaving defineSideEdge(..), returning edge " + eK.descr());
 			return eK;
 		}
 	}
@@ -2512,16 +2284,11 @@ public class QMorph extends GeomBasics {
 	 *         line segment from nC to nD intersects a Quad or a boundary Edge.
 	 */
 	private Edge recoverEdge(Vertex nC, Vertex nD) {
-		Msg.debug("Entering recoverEdge(Vertex, Vertex)...");
 		Edge S = new Edge(nD, nC);
-		Msg.debug("nC= " + nC.descr());
-		Msg.debug("nD= " + nD.descr());
-
 		printEdgeList(nC.edgeList);
 
 		if (nC.edgeList.contains(S)) {
 			Edge edge = nC.edgeList.get(nC.edgeList.indexOf(S));
-			Msg.debug("recoverEdge returns edge " + edge.descr() + " (shortcut)");
 			return edge;
 		}
 		/* ---- First find the edges connecting vertices nC and nD: ---- */
@@ -2536,7 +2303,6 @@ public class QMorph extends GeomBasics {
 
 		List<MyVector> V = nC.ccwSortedVectorList();
 		V.add(V.get(0)); // First add first edge to end of list to avoid crash in loops
-		Msg.debug("V.size()==" + V.size());
 		printVectors(V);
 
 		// Aided by V, fill T with elements adjacent nC, in
@@ -2550,7 +2316,6 @@ public class QMorph extends GeomBasics {
 			eKp1 = vKp1.edge;
 
 			if (eK == null || eKp1 == null) {
-				Msg.debug("eK eller eKp1 er null......");
 			}
 			if (!T.contains(eK.element1) && (eK.element1 == eKp1.element1 || eK.element1 == eKp1.element2)) {
 				T.add(eK.element1);
@@ -2561,7 +2326,6 @@ public class QMorph extends GeomBasics {
 		}
 
 		// Now, get the element attached to nC that contains a part of S, tI:
-		Msg.debug("T.size()==" + T.size());
 		for (int k = 0; k < T.size(); k++) {
 			vK = (MyVector) V.get(k);
 			vKp1 = (MyVector) V.get(k + 1);
@@ -2571,10 +2335,7 @@ public class QMorph extends GeomBasics {
 			// We could optimize by using isCWto(..) directly instead of dot(..)
 			// And I can't get the dot(...) to work properly anyway, sooo...
 
-			Msg.debug("vS==" + vS.descr());
-			Msg.debug("vK==" + vK.descr());
-			Msg.debug("vKp1==" + vKp1.descr());
-			Msg.debug("tK=" + tK.descr());
+			
 			// Msg.debug("vS.dot(vK)=="+vS.dot(vK)+" and vS.dot(vKp1)=="+vS.dot(vKp1));
 
 			if (!vS.isCWto(vK) && vS.isCWto(vKp1)) {
@@ -2583,12 +2344,9 @@ public class QMorph extends GeomBasics {
 				break; // got it, escape from loop
 			}
 		}
-		Msg.debug("loop okei..");
 		if (tK == null) {
 			Msg.error("Oida.. valgt tK er null");
 		}
-
-		Msg.debug("valgt tK er: " + tK.descr());
 
 		Element elemI, elemIp1;
 		elemI = tK;
@@ -2610,8 +2368,6 @@ public class QMorph extends GeomBasics {
 		while (true) {
 			elemIp1 = elemI.neighbor(eI);
 			// tIp1= (Triangle)elem;
-			Msg.debug("elemIp1= " + elemIp1.descr());
-
 			if (elemIp1.hasVertex(nD)) {
 				break;
 			}
@@ -2623,8 +2379,7 @@ public class QMorph extends GeomBasics {
 				eN = tI.nextCCWEdge(eI);
 				eNp1 = tI.nextCWEdge(eI);
 
-				Msg.debug("eN= " + eN.descr());
-				Msg.debug("eNp1= " + eNp1.descr());
+				
 				// if (vS.dot(vI)<0) // Not convinced that dot(..) works properly
 				if (vS.isCWto(vI)) {
 					eI = eN;
@@ -2655,12 +2410,11 @@ public class QMorph extends GeomBasics {
 			// one edge.
 			eI = (Edge) intersectedEdges.get(0);
 			if (eI.equals(S)) {
-				Msg.debug("Leaving recoverEdge: returns edge " + eI.descr());
 				return eI;
 			}
 		}
 
-		Msg.debug("recoverEdge: intersectedEdges.size()==" + intersectedEdges.size());
+		
 
 		// When this loop is done, the edge should be recovered
 		Element oldEIElement1, oldEIElement2;
@@ -2676,12 +2430,10 @@ public class QMorph extends GeomBasics {
 
 		while (intersectedEdges.size() > 0) {
 			eI = (Edge) intersectedEdges.get(0);
-			Msg.debug("eI= " + eI.descr());
+			
 
 			// We must avoid creating inverted or degenerate triangles.
 			q = new Quad(eI);
-			Msg.debug("eI.element1= " + eI.element1.descr());
-			Msg.debug("eI.element2= " + eI.element2.descr());
 			old1 = eI.element1;
 			old2 = eI.element2;
 
@@ -2697,17 +2449,10 @@ public class QMorph extends GeomBasics {
 			// eI:
 			if ((cross1 > 0 && cross2 < 0) || (cross1 < 0 && cross2 > 0) /* q.isStrictlyConvex() */) {
 				// ... but this seems ok
-				Msg.debug("...cross1: " + cross1);
-				Msg.debug("...cross2: " + cross2);
-
 				eI.swappable = true;
 				eJ = eI.getSwappedEdge();
 
-				Msg.debug("eJ= " + eJ.descr());
 				eI.swapToAndSetElementsFor(eJ);
-
-				Msg.debug("eJ.element1==" + eJ.element1.descr());
-				Msg.debug("eJ.element2==" + eJ.element2.descr());
 
 				if (eJ.element1.inverted()) {
 					Msg.error("eJ.element1 is inverted: " + eJ.element1.descr());
@@ -2720,22 +2465,18 @@ public class QMorph extends GeomBasics {
 				// Add old triangles to removeList...
 				if (!removeList.contains(old1)) {
 					removeList.add(old1);
-					Msg.debug("...adding element " + old1.descr() + " to removeList");
 				}
 
 				if (!removeList.contains(old2)) {
 					removeList.add(old2);
-					Msg.debug("...adding element " + old2.descr() + " to removeList");
 				}
 
 				// ... and replace with new ones:
 				triangleList.add((Triangle) eJ.element1);
-				Msg.debug("Added element: " + eJ.element1.descr());
 				triangleList.add((Triangle) eJ.element2);
-				Msg.debug("Added element: " + eJ.element2.descr());
+				
 
 				// Update "global" edge list
-				Msg.debug("...removing edge " + eI.descr());
 				edgeList.remove(edgeList.indexOf(eI));
 				edgeList.add(eJ);
 
@@ -2743,13 +2484,10 @@ public class QMorph extends GeomBasics {
 				MyVector vEj = new MyVector(eJ.leftVertex, eJ.rightVertex);
 
 				if (!eJ.hasVertex(nC) && !eJ.hasVertex(nD) && vEj.innerpointIntersects(vS)) {
-					Msg.debug("recoverEdge: vEj: " + vEj.descr() + " is innerpoint-intersecting vS: " + vS.descr());
 					intersectedEdges.add(eJ);
 				}
 
 			} else if (intersectedEdges.size() > 1 && eI.swappable) {
-				Msg.debug("recoverEdge(..): ok, moving edge last, eI=" + eI.descr());
-				Msg.debug("Quad is " + q.descr());
 				intersectedEdges.remove(0); // put eI last in the list
 				intersectedEdges.add(eI);
 				eI.swappable = false;
@@ -2766,7 +2504,6 @@ public class QMorph extends GeomBasics {
 					t = (Triangle) removeList.get(i);
 					index = triangleList.indexOf(t);
 					if (index != -1) {
-						Msg.debug("Removing triangle " + t.descr());
 						triangleList.remove(index);
 					}
 				}
@@ -2779,7 +2516,6 @@ public class QMorph extends GeomBasics {
 			t = (Triangle) removeList.get(i);
 			index = triangleList.indexOf(t);
 			if (index != -1) {
-				Msg.debug("Removing triangle " + t.descr());
 				triangleList.remove(index);
 			}
 		}
@@ -2789,8 +2525,6 @@ public class QMorph extends GeomBasics {
 		// eJ should be the recovered edge now, according to fig.6(d) in Owen.
 		// From the swapToAndSetElementsFor(..) method, eJ has already got its
 		// adjacent triangles. So everything should be juuuuust fine by now...
-		Msg.debug("Leaving recoverEdge(Edge e): returns edge " + eJ.descr() + " with element1= " + eJ.element1.descr() + " and element2= "
-				+ eJ.element2.descr());
 		return eJ;
 	}
 

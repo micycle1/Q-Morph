@@ -422,20 +422,14 @@ public class MyVector extends Constants {
 				}
 
 			} else {
-				Msg.debug(this.descr() + " doesn't intersect " + d1.descr() + " (1)");
 				return false;
 			}
 		} else {
 			double s = delta.cross(d1) / d0crossd1;
 			double t = delta.cross(d0) / d0crossd1;
-			Msg.debug("s: " + s);
-			Msg.debug("t: " + t);
-
 			if (t < 0 || t > 1 || s < 0 || s > 1) {// Intersects not at an Edge point
-				Msg.debug(this.descr() + " doesn't intersect " + d1.descr() + " (2)");
 				return false; // (but on the lines extending the Edges)
 			} else {
-				Msg.debug(this.descr() + " intersects " + d1.descr() + " (2)");
 				return true; // Intersects at an Edge point
 			}
 		}
@@ -449,14 +443,12 @@ public class MyVector extends Constants {
 		double d0crossd1 = d0.cross(d1);
 
 		if (d0crossd1 == 0) { // Non-intersecting and parallel OR intersect in an interval
-			Msg.debug(this.descr() + " doesn't point intersect " + d1.descr() + " (1)");
 			return false;
 		} else {
 			double s = delta.cross(d1) / d0crossd1;
 			double t = delta.cross(d0) / d0crossd1;
 
 			if (t < 0 || t > 1 || s < 0 || s > 1) {// Intersects not at an Edge point
-				Msg.debug(this.descr() + " doesn't point intersect " + d1.descr() + " (2)");
 				return false; // (but on the lines extending the Edges)
 			} else {
 				return true; // Intersects at an Edge point
@@ -476,24 +468,18 @@ public class MyVector extends Constants {
 		if (d0.origin.equals(d1.origin) || (d0.origin.x == d1.origin.x + d1.x && d0.origin.y == d1.origin.y + d1.y)
 				|| (d0.origin.x + d0.x == d1.origin.x && d0.origin.y + d0.y == d1.origin.y)
 				|| (d0.origin.x + d0.x == d1.origin.x + d1.x && d0.origin.y + d0.y == d1.origin.y + d1.y)) {
-			Msg.debug(descr() + " doesn't intersect innerpoint of " + d1.descr() + " (0)");
 			return false;
 		}
 
 		double d0crossd1 = d0.cross(d1);
 
 		if (d0crossd1 == 0) { // Non-intersecting and parallel OR intersect in an interval
-			Msg.debug(this.descr() + " doesn't intersect in inner point of " + d1.descr() + " (1)");
 			return false;
 		} else {
 			double s = delta.cross(d1) / d0crossd1;
 			double t = delta.cross(d0) / d0crossd1;
 
-			Msg.debug("innerpointIntersects(..): s: " + s);
-			Msg.debug("innerpointIntersects(..): t: " + t);
-
 			if (t <= 0 || t >= 1 || s <= 0 || s >= 1) {
-				Msg.debug(this.descr() + " doesn't innerintersect " + d1.descr() + " (2)");
 				return false; // Intersects not at an Edge point (but possibly an interval)
 			} else {
 				return true; // Intersects at an Edge point

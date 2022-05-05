@@ -149,8 +149,6 @@ public class Quad extends Element {
 	 * @param n2 the second of the other two vertices in the quad
 	 */
 	public Quad(Edge e, Vertex n1, Vertex n2) {
-		Msg.debug("Entering Quad(Edge, Vertex, Vertex)");
-		Msg.debug("e= " + e.descr() + ", n1= " + n1.descr() + ", n2= " + n2.descr());
 		isFake = false;
 		edgeList = new Edge[4];
 
@@ -164,9 +162,6 @@ public class Quad extends Element {
 			edgeList[right] = new Edge(edgeList[base].rightVertex, edgeList[top].otherVertex(e.rightVertex));
 			edgeList[left] = new Edge(edgeList[base].leftVertex, e.rightVertex);
 		}
-
-		Msg.debug("New quad is " + descr());
-		Msg.debug("Leaving Quad(Edge, Vertex, Vertex)");
 
 		firstVertex = edgeList[base].leftVertex;
 		if (inverted()) {
@@ -288,7 +283,6 @@ public class Quad extends Element {
 	 */
 	@Override
 	public boolean invertedWhenVertexRelocated(Vertex n1, Vertex n2) {
-		Msg.debug("Entering Quad.invertedWhenVertexRelocated(..)");
 		Vertex thisFirstVertex = firstVertex;
 		Vertex a = edgeList[base].leftVertex, b = edgeList[base].rightVertex, c = edgeList[right].otherVertex(b), d = edgeList[left].otherVertex(a);
 
@@ -325,7 +319,6 @@ public class Quad extends Element {
 			okays = 4 - okays;
 		}
 
-		Msg.debug("Leaving Quad.invertedWhenVertexRelocated(..), okays: " + okays);
 		if (okays >= 3) {
 			return false;
 		} else {
@@ -350,23 +343,18 @@ public class Quad extends Element {
 	 *         q.
 	 */
 	public boolean anyInvertedElementsWhenCollapsed(Vertex n, Vertex n1, Vertex n2, List<Element> list1, List<Element> list2) {
-		Msg.debug("Entering Quad.anyInvertedElementsWhenCollapsed(..)");
-
 		for (Element elem : list1) {
 			if (elem != this && elem.invertedWhenVertexRelocated(n1, n)) {
-				Msg.debug("Leaving Quad.anyInvertedElementsWhenCollapsed(..) ret: true");
 				return true;
 			}
 		}
 		
 		for (Element elem : list1) {
 			if (elem != this && elem.invertedWhenVertexRelocated(n2, n)) {
-				Msg.debug("Leaving Quad.anyInvertedElementsWhenCollapsed(..) ret: true");
 				return true;
 			}
 		}
 
-		Msg.debug("Leaving Quad.anyInvertedElementsWhenCollapsed(..) ret: false");
 		return false;
 	}
 
@@ -424,7 +412,6 @@ public class Quad extends Element {
 	 * @param e2 second edge, and the neighbor to edge e1 in this quad
 	 */
 	public void closeQuad(Edge e1, Edge e2) {
-		Msg.debug("Entering Quad.closeQuad(..)");
 		Vertex nK = e1.commonVertex(e2);
 		Vertex nKp1 = e1.otherVertex(nK), nKm1 = e2.otherVertex(nK), other;
 		Quad q;
@@ -433,29 +420,20 @@ public class Quad extends Element {
 		ArrayList<Edge> addList = new ArrayList<Edge>();
 		ArrayList<Element> quadList = new ArrayList<Element>();
 
-		Msg.debug("...nKp1: " + nKp1.descr());
-		Msg.debug("...nKm1: " + nKm1.descr());
-
 		for (int i = 0; i < nKm1.edgeList.size(); i++) {
 			eI = (Edge) nKm1.edgeList.get(i);
 			other = eI.otherVertex(nKm1);
-			Msg.debug("...eI== " + eI.descr());
-
 			for (int j = 0; j < nKp1.edgeList.size(); j++) {
 				eJ = (Edge) nKp1.edgeList.get(j);
 
 				if (other == eJ.otherVertex(nKp1)) {
 					found = true;
-					Msg.debug("...eI is connected to eJ== " + eJ.descr());
-
 					other.edgeList.remove(other.edgeList.indexOf(eI));
 
 					if (eI.element1 != null) {
 						if (eI.element1.firstVertex == nKm1) {
 							eI.element1.firstVertex = nKp1; // Don't forget firstVertex!!
 						}
-						Msg.debug("... replacing eI with eJ in eI.element1");
-
 						eI.element1.replaceEdge(eI, eJ);
 						eJ.connectToElement(eI.element1);
 						if (eI.element1 instanceof Quad) {
@@ -467,15 +445,12 @@ public class Quad extends Element {
 			}
 
 			if (!found) {
-				Msg.debug("...none of nKp1's edges connected to eI");
 				if (eI.element1 != null && eI.element1.firstVertex == nKm1) {
 					eI.element1.firstVertex = nKp1; // Don't forget firstVertex!!
 				}
 				if (eI.element2 != null && eI.element2.firstVertex == nKm1) {
 					eI.element2.firstVertex = nKp1; // Don't forget firstVertex!!
 				}
-
-				Msg.debug("...replacing " + nKm1.descr() + " with " + nKp1.descr() + " on edge " + eI.descr());
 
 				nKm1.edgeList.set(i, null);
 				eI.replaceVertex(nKm1, nKp1);
@@ -496,8 +471,6 @@ public class Quad extends Element {
 		}
 
 		nKm1.edgeList.clear();
-
-		Msg.debug("Leaving Quad.closeQuad(..)");
 	}
 
 	/**
@@ -508,7 +481,6 @@ public class Quad extends Element {
 	 * @param e2 second common edge
 	 */
 	public Quad combine(Quad q, Edge e1, Edge e2) {
-		Msg.debug("Entering Quad.combine(Quad, ..)");
 		Quad quad;
 		Edge e, edges[] = new Edge[4];
 		int i;
@@ -548,7 +520,6 @@ public class Quad extends Element {
 
 		// A triangle (fake quad) will have edges[2]== edges[3].
 		quad = new Quad(edges[0], edges[1], edges[2], edges[3]);
-		Msg.debug("Leaving Quad.combine(Quad, ..)");
 		return quad;
 	}
 
@@ -560,7 +531,6 @@ public class Quad extends Element {
 	 * @param e2 second common edge
 	 */
 	public Triangle combine(Triangle t, Edge e1, Edge e2) {
-		Msg.debug("Entering Quad.combine(Triangle, ..)");
 		Triangle tri;
 		Edge e, edges[] = new Edge[3];
 		int i;
@@ -593,7 +563,6 @@ public class Quad extends Element {
 		}
 
 		tri = new Triangle(edges[0], edges[1], edges[2]);
-		Msg.debug("Leaving Quad.combine(Triangle t, ..)");
 		return tri;
 	}
 
@@ -988,11 +957,9 @@ public class Quad extends Element {
 	 * top and right is at pos 3 in the ang array.
 	 */
 	public void updateLR() {
-		Msg.debug("Entering Quad.updateLR()");
 		Edge temp;
 		double dt0, dt1, dt2, dt3;
 		if (!edgeList[left].hasVertex(edgeList[base].leftVertex)) {
-			Msg.debug("...updating");
 			temp = edgeList[left];
 			edgeList[left] = edgeList[right];
 			edgeList[right] = temp;
@@ -1007,7 +974,6 @@ public class Quad extends Element {
 			ang[2] = dt3;
 			ang[3] = dt2;
 		}
-		Msg.debug("Leaving Quad.updateLR()");
 	}
 
 	/**
@@ -1137,7 +1103,6 @@ public class Quad extends Element {
 	/** Method to test whether the quad is inverted. */
 	@Override
 	public boolean inverted() {
-		Msg.debug("Entering Quad.inverted()");
 		if (isFake) {
 
 			Vertex a, b, c;
@@ -1149,7 +1114,6 @@ public class Quad extends Element {
 				c = edgeList[right].otherVertex(a);
 			}
 
-			Msg.debug("Leaving Quad.inverted() (fake)");
 			if (cross(a, c, b, c) < 0) {
 				return true;
 			} else {
@@ -1178,7 +1142,6 @@ public class Quad extends Element {
 			okays = 4 - okays;
 		}
 
-		Msg.debug("Leaving Quad.inverted(), okays: " + okays);
 		if (okays >= 3) {
 			return false;
 		} else {
@@ -1189,7 +1152,6 @@ public class Quad extends Element {
 	/** Method to test whether the quad is inverted or its area is zero. */
 	@Override
 	public boolean invertedOrZeroArea() {
-		Msg.debug("Entering Quad.invertedOrZeroArea()");
 		if (isFake) {
 
 			Vertex a, b, c;
@@ -1201,7 +1163,6 @@ public class Quad extends Element {
 				c = edgeList[right].otherVertex(a);
 			}
 
-			Msg.debug("Leaving Quad.invertedOrZeroArea() (fake)");
 			if (cross(a, c, b, c) <= 0) {
 				return true;
 			} else {
@@ -1230,7 +1191,6 @@ public class Quad extends Element {
 			okays = 4 - okays;
 		}
 
-		Msg.debug("Leaving Quad.invertedOrZeroArea(), okays: " + okays);
 		if (okays >= 3) {
 			return false;
 		} else {
@@ -1247,12 +1207,9 @@ public class Quad extends Element {
 	 */
 	@Override
 	public boolean concavityAt(Vertex n) {
-		Msg.debug("Entering Quad.concavityAt(..)");
 		if (ang[angleIndex(n)] >= Math.PI) {
-			Msg.debug("Leaving Quad.concavityAt(..), returning true");
 			return true;
 		} else {
-			Msg.debug("Leaving Quad.concavityAt(..), returning false");
 			return false;
 		}
 	}
@@ -1695,8 +1652,6 @@ public class Quad extends Element {
 	// n1
 	@Override
 	public void updateDistortionMetric() {
-		Msg.debug("Entering Quad.updateDistortionMetric()");
-
 		if (isFake) {
 			double AB = edgeList[base].len, CB = edgeList[left].len, CA = edgeList[right].len;
 
@@ -1711,7 +1666,6 @@ public class Quad extends Element {
 				distortionMetric = temp;
 			}
 
-			Msg.debug("Leaving Quad.updateDistortionMetric(): " + distortionMetric);
 			return;
 		}
 
@@ -1781,12 +1735,10 @@ public class Quad extends Element {
 		}
 
 		distortionMetric = alphaMin - negval;
-		Msg.debug("Leaving Quad.updateDistortionMetric(): " + distortionMetric);
 	}
 
 	/** Test whether any vertices of the quad are coincident. */
 	private boolean coincidentVertices(Vertex n1, Vertex n2, Vertex n3, Vertex n4) {
-		Msg.debug("Entering Quad.coincidentVertices(..)");
 		double x12diff = n2.x - n1.x;
 		double y12diff = n2.y - n1.y;
 		double x13diff = n3.x - n1.x;
@@ -1811,10 +1763,8 @@ public class Quad extends Element {
 		double l34 = Math.sqrt(x34diff * x34diff + y34diff * y34diff);
 
 		if (l12 < COINCTOL || l13 < COINCTOL || l14 < COINCTOL || l23 < COINCTOL || l24 < COINCTOL || l34 < COINCTOL) {
-			Msg.debug("Leaving Quad.coincidentVertices(..), returning true");
 			return true;
 		} else {
-			Msg.debug("Leaving Quad.coincidentVertices(..), returning false");
 			return false;
 		}
 	}
@@ -1868,7 +1818,6 @@ public class Quad extends Element {
 	 * @return a list of triangles contained within the four edges of this quad.
 	 */
 	public ArrayList<Triangle> trianglesContained(Triangle first) {
-		Msg.debug("Entering trianglesContained(..)");
 		ArrayList<Triangle> tris = new ArrayList<>();
 		Element neighbor;
 		Triangle cur;
@@ -1877,8 +1826,6 @@ public class Quad extends Element {
 		tris.add(first);
 		for (int j = 0; j < tris.size(); j++) {
 			cur = tris.get(j);
-			Msg.debug("...parsing triangle " + cur.descr());
-
 			for (int i = 0; i < 3; i++) {
 				e = cur.edgeList[i];
 				if (!hasEdge(e)) {
@@ -1889,7 +1836,6 @@ public class Quad extends Element {
 				}
 			}
 		}
-		Msg.debug("Leaving trianglesContained(..)");
 		return tris;
 	}
 

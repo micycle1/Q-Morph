@@ -32,7 +32,6 @@ public class GlobalSmooth extends GeomBasics {
 	 * @return the smoothed position of Vertex n.
 	 */
 	private Vertex constrainedLaplacianSmooth(Vertex n) {
-		Msg.debug("Entering constrainedLaplacianSmooth(..)");
 		List<Element> elements = n.adjElements();
 		Element oElem, sElem;
 		MyVector vL = n.laplacianMoveVector();
@@ -91,7 +90,6 @@ public class GlobalSmooth extends GeomBasics {
 
 			if (acceptable(N, Nminus, Nplus, Nup, Ndown, Ninverted, deltaMy, theta)) {
 				// Return the proposed new position for Vertex n
-				Msg.debug("Leaving constrainedLaplacianSmooth(..), successful");
 				return nLPos;
 			} else {
 				vL = vL.div(2.0);
@@ -100,7 +98,6 @@ public class GlobalSmooth extends GeomBasics {
 		}
 
 		// Return the old position
-		Msg.debug("Leaving constrainedLaplacianSmooth(..), failure");
 		return n;
 	}
 
@@ -110,16 +107,6 @@ public class GlobalSmooth extends GeomBasics {
 	 */
 	private boolean acceptable(int N, int Nminus, int Nplus, int Nup, int Ndown, int Ninverted, double deltaMy, double theta) {
 
-		Msg.debug("Entering acceptable(..)");
-		Msg.debug("... N:" + N);
-		Msg.debug("... Nminus:" + Nminus);
-		Msg.debug("... Nplus:" + Nplus);
-		Msg.debug("... Nup:" + Nup);
-		Msg.debug("... Ndown:" + Ndown);
-		Msg.debug("... Ninverted:" + Ninverted);
-		Msg.debug("... deltaMy:" + deltaMy);
-		Msg.debug("... theta:" + theta);
-		Msg.debug("Leaving acceptable(..)");
 		if (Nminus == N || Ninverted > 0 || Ndown > Nup || deltaMy < MYMIN || theta > THETAMAX) {
 			return false;
 		} else if (Nplus == N || (Nup > 0 && Ndown == 0) || (Nup >= Ndown && deltaMy > MYMIN)) {
@@ -138,7 +125,6 @@ public class GlobalSmooth extends GeomBasics {
 	 *         position of Vertex n.
 	 */
 	private Vertex optBasedSmooth(Vertex x, List<Element> elements) {
-		Msg.debug("Entering optBasedSmooth(..)");
 		Element sElem;
 		double delta = Constants.DELTAFACTOR * maxModDim;
 		Vertex xPX = new Vertex(x.x, x.y), xPY = new Vertex(x.x, x.y), xNew = new Vertex(x.x, x.y);
@@ -147,7 +133,6 @@ public class GlobalSmooth extends GeomBasics {
 		int iterations = 0;
 
 		do { // Iterate until the min. dist. metric is acceptable
-			Msg.debug("...iterations== " + iterations);
 			minDM = java.lang.Double.MAX_VALUE;
 			gX = 0.0;
 			gY = 0.0;
@@ -171,7 +156,7 @@ public class GlobalSmooth extends GeomBasics {
 					gY = oElem.gY;
 				}
 			}
-			Msg.debug("...step 1 okay");
+			
 
 			// Which yields the final gradient vector g:
 			MyVector g = new MyVector(x, gX, gY);
@@ -197,7 +182,7 @@ public class GlobalSmooth extends GeomBasics {
 				gamma = GAMMA; // I suppose something in the range (0, 1] so 0.8 is ok?
 			}
 
-			Msg.debug("...step 2 okay");
+			
 
 			// Attempt the move x= x + gamma * g:
 			xNew.setXY(x.x + gamma * gX, x.y + gamma * gY);
@@ -233,13 +218,10 @@ public class GlobalSmooth extends GeomBasics {
 					oElem.distortionMetric = oElem.newDistortionMetric; // TODO ???
 				}
 			} else {
-				Msg.debug("Leaving optBasedSmooth(..)");
 				return x;
 			}
-			Msg.debug("...step 3 okay");
 		} while (minDM <= OBSTOL && iterations++ <= 3); // Set max # of iterations
 
-		Msg.debug("Leaving optBasedSmooth(..)");
 		return x;
 	}
 
@@ -247,22 +229,18 @@ public class GlobalSmooth extends GeomBasics {
 
 	/** Initialize the object. */
 	public void init() {
-		Msg.debug("Entering GlobalSmooth.init()");
-		Msg.debug("Leaving GlobalSmooth.init()");
 	}
 
 	/** Perform the smoothing of the vertices in a step-wise manner. */
 	@Override
 	public void step() {
-		Msg.debug("Entering GlobalSmooth.step()");
 		run();
 		setCurMethod(null);
-		Msg.debug("Leaving GlobalSmooth.step()");
 	}
 
 	/** The overall smoothing algorithm from section 3 in the paper. */
 	public void run() {
-		Msg.debug("Entering GlobalSmooth.run()");
+		
 		// Variables
 		int i, j;
 		List<Vertex> vertices = new ArrayList<>();
@@ -300,8 +278,6 @@ public class GlobalSmooth extends GeomBasics {
 			}
 		}
 
-		Msg.debug("...Vertices.size(): " + vertices.size());
-
 		Edge e;
 
 		double distance, maxMoveDistance = 0.0;
@@ -313,24 +289,20 @@ public class GlobalSmooth extends GeomBasics {
 				v = (Vertex) vertices.get(i);
 
 				if (v == null) {
-					Msg.debug("... no, Vertex has been removed from list");
 					continue;
 				}
 
-				Msg.debug("...processing Vertex " + v.descr());
 				if (!v.movedByOBS) {
 					v_moved = constrainedLaplacianSmooth(v);
 					distance = v.length(v_moved);
-					Msg.debug("...distance moved by CLS is " + distance);
 					if (distance < Constants.MOVETOLERANCE) {
-						Msg.debug("...removing Vertex " + v.descr() + " from list");
 						vertices.set(i, null);
 					} else {
 						// Allow the move
 						v.setXY(v_moved);
 						v.update();
 						VertexMoved = true;
-						Msg.debug("...allowing CLS move of Vertex " + v.descr());
+						
 						// Put neighbor vertices back in list, if they are not already there
 						for (j = 0; j < v.edgeList.size(); j++) {
 							e = (Edge) v.edgeList.get(j);
@@ -352,7 +324,7 @@ public class GlobalSmooth extends GeomBasics {
 					}
 				}
 				if (niter >= 2) {
-					Msg.debug("...niter>= 2");
+					
 					// Find minimum distortion metric for the elements adjacent Vertex v
 					elements = v.adjElements();
 					elem = (Element) elements.get(0);
@@ -363,7 +335,6 @@ public class GlobalSmooth extends GeomBasics {
 							minDistMetric = elem.distortionMetric;
 						}
 					}
-					Msg.debug("...minDistMetric== " + minDistMetric);
 					if (minDistMetric <= OBSTOL) {
 						oldX = v.x;
 						oldY = v.y;
@@ -379,7 +350,6 @@ public class GlobalSmooth extends GeomBasics {
 							}
 							// Keep track of the largest distance moved
 							distance = v_moved.length(oldX, oldY);
-							Msg.debug("...distance moved by OBS is " + distance);
 							if (distance > maxMoveDistance) {
 								maxMoveDistance = distance;
 							}
@@ -399,7 +369,6 @@ public class GlobalSmooth extends GeomBasics {
 			}
 			niter++;
 		} while (VertexMoved && maxMoveDistance >= 1.75 * MOVETOLERANCE && niter < MAXITER);
-		Msg.debug("Leaving GlobalSmooth.run(), niter==" + niter);
 	}
 
 } // End of class GlobalSmooth

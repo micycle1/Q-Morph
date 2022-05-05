@@ -158,7 +158,6 @@ public class Edge extends Constants {
 	// Quad with Edge e as base Edge. Return the frontNeighbor if so, else null.
 	// elem== null if n.boundaryVertex()== true
 	public Edge evalPotSideEdge(Edge frontNeighbor, Vertex n) {
-		Msg.debug("Entering Edge.evalPotSideEdge(..)");
 		Element tri = getTriangleElement(), quad = getQuadElement();
 		double ang;
 
@@ -168,9 +167,6 @@ public class Edge extends Constants {
 			ang = PIx2 - sumAngle(quad, n, frontNeighbor);
 		}
 
-		Msg.debug("sumAngle(..) between " + descr() + " and " + frontNeighbor.descr() + ": " + Math.toDegrees(ang));
-
-		Msg.debug("Leaving Edge.evalPotSideEdge(..)");
 		if (ang < PIx3div4) { // if (ang< PIdiv2+EPSILON) // Could this be better?
 			return frontNeighbor;
 		} else {
@@ -187,8 +183,6 @@ public class Edge extends Constants {
 	// this: the edge to be classified (gets a state value, and is added to a
 	// statelist)
 	public void classifyStateOfFrontEdge() {
-		Msg.debug("Entering Edge.classifyStateOfFrontEdge()");
-		Msg.debug("this: " + descr());
 		final Edge lfn = leftFrontNeighbor, rfn = rightFrontNeighbor;
 
 		Edge l, r;
@@ -231,7 +225,6 @@ public class Edge extends Constants {
 
 		// Add this to a stateList:
 		stateList[getState()].add(this);
-		Msg.debug("Leaving Edge.classifyStateOfFrontEdge()");
 	}
 
 	public boolean isLargeTransition(Edge e) {
@@ -521,13 +514,10 @@ public class Edge extends Constants {
 //		Msg.debug("Entering sumAngle(..)");
 //		Msg.debug("this: " + descr());
 		if (sElem != null) {
-			Msg.debug("sElem: " + sElem.descr());
 		}
 		if (n != null) {
-			Msg.debug("n: " + n.descr());
 		}
 		if (eEdge != null) {
-			Msg.debug("eEdge: " + eEdge.descr());
 		}
 
 		Element curElem = sElem;
@@ -808,12 +798,8 @@ public class Edge extends Constants {
 	// = yB + xdiff/c
 	//
 	public Edge unitNormalAt(Vertex n) {
-		Msg.debug("Entering Edge.unitNormalAt(..)");
-
 		double xdiff = rightVertex.x - leftVertex.x;
 		double ydiff = rightVertex.y - leftVertex.y;
-
-		Msg.debug("this: " + descr() + ", n: " + n.descr());
 
 		double c = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 
@@ -822,7 +808,6 @@ public class Edge extends Constants {
 
 		Vertex newVertex = new Vertex(xn, yn);
 
-		Msg.debug("Leaving Edge.unitNormalAt(..)");
 		return new Edge(n, newVertex);
 	}
 
@@ -848,15 +833,11 @@ public class Edge extends Constants {
 	 * with getSwappedEdge())
 	 */
 	public void swapToAndSetElementsFor(Edge e) {
-		Msg.debug("Entering Edge.swapToAndSetElementsFor(..)");
 		if (element1 == null || element2 == null) {
 			Msg.error("Edge.swapToAndSetElementsFor(..): both elements not set");
 		}
 
-		Msg.debug("element1: " + element1.descr());
-		Msg.debug("element2: " + element2.descr());
-
-		Msg.debug("...this: " + descr());
+		
 		// extract the outer edges
 		ArrayList edges = new ArrayList();
 
@@ -878,8 +859,6 @@ public class Edge extends Constants {
 		// and at e.leftVertex and e.rightVertex:
 		disconnectVertices();
 		e.connectVertices();
-
-		Msg.debug("Leaving Edge.swapToAndSetElementsFor(..)");
 	}
 
 	public MyVector getVector() {
@@ -961,8 +940,6 @@ public class Edge extends Constants {
 		} else if (n.equals(rightVertex)) {
 			return leftVertex;
 		} else {
-			Msg.debug("this: " + descr());
-			Msg.debug("n: " + n.descr());
 			Msg.error("Edge.otherVertex(Vertex): n is not on this edge");
 			return null;
 		}
@@ -1010,12 +987,10 @@ public class Edge extends Constants {
 	 * and continues on the other side.
 	 */
 	public boolean noTrianglesInOrbit(Edge e, Quad startQ) {
-		Msg.debug("Entering Edge.noTrianglesInOrbit(..)");
 		Edge curEdge = this;
 		Element curElem = startQ;
 		Vertex n = commonVertex(e);
 		if (n == null) {
-			Msg.debug("Leaving Edge.noTrianglesInOrbit(..), returns false");
 			return false;
 		}
 		if (curEdge.boundaryEdge()) {
@@ -1024,7 +999,6 @@ public class Edge extends Constants {
 		}
 		do {
 			if (curElem instanceof Triangle) {
-				Msg.debug("Leaving Edge.noTrianglesInOrbit(..), returns false");
 				return false;
 			}
 			curEdge = curElem.neighborEdge(n, curEdge);
@@ -1036,7 +1010,6 @@ public class Edge extends Constants {
 			}
 		} while (curEdge != e);
 
-		Msg.debug("Leaving Edge.noTrianglesInOrbit(..), returns true");
 		return true;
 	}
 
@@ -1098,8 +1071,6 @@ public class Edge extends Constants {
 				rightEdge = (Edge) element;
 				curAng = sumAngle(t, rightVertex, rightEdge);
 
-				Msg.debug(
-						"findRightFrontNeighbor(): Angle between edge this: " + descr() + " and edge " + rightEdge.descr() + ": " + curAng);
 				if (curAng < candAng) {
 					candAng = curAng;
 					candidate = rightEdge;
@@ -1108,7 +1079,6 @@ public class Edge extends Constants {
 				// if (noTrianglesInOrbit(rightEdge, q))
 				// return rightEdge;
 			}
-			Msg.debug("findRightFrontNeighbor(): Returning candidate " + candidate.descr());
 			return candidate;
 		}
 		Msg.warning("findRightFrontNeighbor(..): List.size== " + list.size() + ". Returning null");
@@ -1177,7 +1147,6 @@ public class Edge extends Constants {
 	 * @return the new Edge incident with Vertex ben.
 	 */
 	public Edge splitTrianglesAt(Vertex nN, Vertex ben, List<Triangle> triangleList, List<Edge> edgeList, List<Vertex> vertexList) {
-		Msg.debug("Entering Edge.splitTrianglesAt(..)");
 		Edge eK1 = new Edge(leftVertex, nN);
 		Edge eK2 = new Edge(rightVertex, nN);
 
@@ -1230,12 +1199,6 @@ public class Edge extends Constants {
 		triangleList.add(t21);
 		triangleList.add(t22);
 
-		Msg.debug("...Created triangle " + t11.descr());
-		Msg.debug("...Created triangle " + t12.descr());
-		Msg.debug("...Created triangle " + t21.descr());
-		Msg.debug("...Created triangle " + t22.descr());
-
-		Msg.debug("Leaving Edge.splitTrianglesAt(..)");
 		if (eK1.hasVertex(ben)) {
 			return eK1;
 		} else if (eK2.hasVertex(ben)) {
@@ -1253,20 +1216,14 @@ public class Edge extends Constants {
 	 *         created from splitting this edge.
 	 */
 	public Edge splitTrianglesAtMyMidPoint(List<Triangle> triangleList, List<Edge> edgeList, List<Vertex> vertexList, Edge baseEdge) {
-		Msg.debug("Entering Edge.splitTrianglesAtMyMidPoint(..).");
-
 		Edge lowerEdge;
 		Vertex ben = baseEdge.commonVertex(this);
 		Vertex mid = this.midPoint();
 		vertexList.add(mid);
 		mid.color = java.awt.Color.blue;
 
-		Msg.debug("Splitting edge " + descr());
-		Msg.debug("Creating new Vertex: " + mid.descr());
-
 		lowerEdge = splitTrianglesAt(mid, ben, triangleList, edgeList, vertexList);
 
-		Msg.debug("Leaving Edge.splitTrianglesAtMyMidPoint(..).");
 		return lowerEdge;
 	}
 
@@ -1284,7 +1241,6 @@ public class Edge extends Constants {
 	 *         unsuccessful, the method returns null.
 	 */
 	public Edge nextQuadEdgeAt(Vertex n, Element startElem) {
-		Msg.debug("Entering Edge.nextQuadEdgeAt(..)");
 		Element elem;
 		Edge e;
 		int i = 3;
@@ -1294,11 +1250,9 @@ public class Edge extends Constants {
 
 		while (elem != null && !(elem instanceof Quad) && elem != startElem) {
 			e = elem.neighborEdge(n, e);
-			Msg.debug("..." + i);
 			i++;
 			elem = elem.neighbor(e);
 		}
-		Msg.debug("Leaving Edge.nextQuadEdgeAt(..)");
 		if (elem != null && elem instanceof Quad && elem != startElem) {
 			return e;
 		} else {

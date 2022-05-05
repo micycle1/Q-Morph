@@ -175,7 +175,6 @@ public class Triangle extends Element {
 	// Else return false.
 	@Override
 	public boolean invertedWhenVertexRelocated(Vertex n1, Vertex n2) {
-		Msg.debug("Entering Triangle.invertedWhenVertexRelocated(..)");
 		Vertex a, b, c;
 		MyVector ac, bc;
 		a = firstVertex;
@@ -196,7 +195,6 @@ public class Triangle extends Element {
 		ac = new MyVector(a, c);
 		bc = new MyVector(b, c);
 
-		Msg.debug("Leaving Triangle.invertedWhenVertexRelocated(..)");
 		if (ac.cross(bc) <= 0) {
 			return true;
 		} else {
@@ -603,11 +601,9 @@ public class Triangle extends Element {
 		// If different sign, or 0, they are inverted:
 		if (oldN_e_det >= 0) {
 			if (newN_e_det <= 0 || oldN_e_det == 0) {
-				Msg.debug("Triangle.inverted(..): Triangle " + descr() + " is inverted");
 				return true;
 			}
 		} else if (newN_e_det >= 0) {
-			Msg.debug("Triangle.inverted(..): Triangle " + descr() + " is inverted");
 			return true;
 		}
 		return false;
@@ -714,7 +710,6 @@ public class Triangle extends Element {
 	 * @return negative values for inverted triangles, else positive.
 	 */
 	public void updateDistortionMetric(double factor) {
-		Msg.debug("Entering Triangle.updateDistortionMetric(..)");
 		double AB = edgeList[0].len, CB = edgeList[1].len, CA = edgeList[2].len;
 		Vertex a = edgeList[2].commonVertex(edgeList[0]), b = edgeList[0].commonVertex(edgeList[1]), c = edgeList[2].commonVertex(edgeList[1]);
 		MyVector vCA = new MyVector(c, a), vCB = new MyVector(c, b);
@@ -725,7 +720,6 @@ public class Triangle extends Element {
 		} else {
 			distortionMetric = temp;
 		}
-		Msg.debug("Leaving Triangle.updateDistortionMetric(..): " + distortionMetric);
 	}
 
 	// Return the size of the largest angle

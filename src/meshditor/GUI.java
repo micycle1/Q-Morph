@@ -461,7 +461,6 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 				GeomBasics.findExtremeVertices();
 				cvas.resize(GeomBasics.leftmost.x, GeomBasics.lowermost.y, GeomBasics.rightmost.x, GeomBasics.uppermost.y, scale);
 			} else {
-				Msg.debug("Running QMorph.run(..) in step mode");
 			}
 		}
 	}
@@ -647,7 +646,6 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		/** Invoked when the mouse has been clicked on a component. */
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			Msg.debug("Entering mouseClicked(..)");
 			Edge b, l, r, t;
 			lastActionMoveVertex = false;
 			lastActionMergeVertices = false;
@@ -821,7 +819,6 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 				}
 			}
 			cvas.repaint();
-			Msg.debug("Leaving mouseClicked(..)");
 		}
 
 		/**
@@ -830,7 +827,6 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 		 */
 		@Override
 		public void mousePressed(MouseEvent e) {
-			Msg.debug("Entering mousePressed(..)");
 			double x = Math.rint(e.getX() / 10.0) * 10;
 			double y = Math.rint(e.getY() / 10.0) * 10;
 
@@ -846,15 +842,11 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 			} else {
 				movingVertex = null;
 			}
-
-			Msg.debug("Leaving mousePressed(..)");
 		}
 
 		/** Invoked when a mouse button is released (after being pressed). */
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			Msg.debug("Entering mouseReleased(..)");
-
 			Edge ei, ej, oldE;
 			Vertex n, other;
 			int ind, j, k;
@@ -887,19 +879,15 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 							if (ej.element1 != null) {
 								ej.element1.replaceEdge(ej, ei);
 								ei.connectToTriangle((Triangle) ej.element1);
-								Msg.debug("Connecting edge " + ei.descr() + " to triangle " + ej.element1.descr());
 							}
 							if (ej.element2 != null) {
 								ej.element2.replaceEdge(ej, ei);
 								ei.connectToTriangle((Triangle) ej.element2);
-								Msg.debug("Connecting edge " + ei.descr() + " to triangle " + ej.element2.descr());
 							}
 
 							if (ei.element1 != null) {
-								Msg.debug("ei.element1==" + ei.element1.descr());
 							}
 							if (ei.element2 != null) {
-								Msg.debug("ei.element2==" + ei.element2.descr());
 							}
 
 							movingVertex.edgeList.set(j, ei);
@@ -946,7 +934,6 @@ public class GUI extends Constants implements ActionListener, ItemListener {
 
 				cvas.repaint();
 			}
-			Msg.debug("Leaving mouseReleased(..)");
 		}
 
 		/** Undo the last mouse action. */
