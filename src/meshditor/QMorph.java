@@ -861,21 +861,18 @@ public class QMorph extends GeomBasics {
 
 	/**
 	 * "Virus" that removes all triangles and their edges and vertices inside of this
-	 * quad Assumes that only triangles are present, not quads, inside of q
+	 * quad. Assumes that only triangles are present, not quads, inside of q
 	 */
 	private void clearQuad(Quad q, Triangle first) {
 		Element neighbor;
-		Triangle cur;
-		ArrayList<Element> n = new ArrayList<Element>();
+		Element cur; // triangle
+		ArrayList<Element> n = new ArrayList<>();
 		Edge e;
 		int VertexInd, edgeInd, triInd;
-		Edge lEdge, rEdge;
-		double len, ang;
-		Vertex vertex;
 
 		n.add(first);
 		for (int j = 0; j < n.size(); j++) {
-			cur = (Triangle) n.get(j);
+			cur = n.get(j);
 			for (int i = 0; i < 3; i++) {
 				e = cur.edgeList[i];
 				if (!q.hasEdge(e)) {
@@ -1990,7 +1987,7 @@ public class QMorph extends GeomBasics {
 	 * @return A side edge: a reused edge OR one created in a swap/split operation
 	 */
 	private Edge defineSideEdge(Edge eF1, Vertex nK, Edge leftSide, Edge rightSide, List<Edge> list) {
-		Edge current, selected = null, closest, eF2;
+		Edge selected = null, closest, eF2;
 		Vertex noVertex = null;
 		double curAng, selAng, closestAng;
 		Element curElement, curElement2;
@@ -2046,8 +2043,7 @@ public class QMorph extends GeomBasics {
 		if (!eF2.hasVertex(noVertex)) {
 			selected = eF2;
 		} else {
-			for (Object element : list) {
-				current = (Edge) element;
+			for (Edge current : list) {
 				if (current != selected && current != eF2 && !current.hasVertex(noVertex)) {
 					selected = current;
 					break;
@@ -2065,8 +2061,7 @@ public class QMorph extends GeomBasics {
 			closest = selected;
 			closestAng = selAng;
 
-			for (Object element : list) {
-				current = (Edge) element;
+			for (Edge current : list) {
 				if (current != selected && current != eF2) {
 					curAng = Math.abs(bisected - eF1.sumAngle(curElement, nK, current));
 

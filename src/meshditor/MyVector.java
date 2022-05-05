@@ -8,6 +8,13 @@ import java.math.BigDecimal;
  */
 public class MyVector extends Constants {
 	
+	private static final BigDecimal ZERO = new BigDecimal(0.0);
+	
+	Vertex origin;
+	double x;
+	double y;
+	Edge edge;
+
 	private static double atan2Quick(final double y, final double x) {
 		final double THREE_QRTR_PI = Math.PI * 0.75;
 		final double QRTR_PI = Math.PI * 0.25;
@@ -82,8 +89,6 @@ public class MyVector extends Constants {
 		this.x = b.x - a.x;
 		this.y = b.y - a.y;
 	}
-
-	private static final BigDecimal ZERO = new BigDecimal(0.0);
 
 	@Override
 	public boolean equals(Object o) {
@@ -550,8 +555,4 @@ public class MyVector extends Constants {
 	public void printMe() {
 		System.out.println(descr());
 	}
-
-	Vertex origin;
-	double x, y;
-	Edge edge;
 }

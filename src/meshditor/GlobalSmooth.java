@@ -246,14 +246,14 @@ public class GlobalSmooth extends GeomBasics {
 
 		// Get the internal vertices from vertexList.
 		for (i = 0; i < vertexList.size(); i++) {
-			v = (Vertex) vertexList.get(i);
+			v = vertexList.get(i);
 			if (!v.boundaryVertex()) {
 				vertices.add(v);
 			}
 		}
 
 		for (i = 0; i < triangleList.size(); i++) {
-			t = (Triangle) triangleList.get(i);
+			t = triangleList.get(i);
 			t.updateDistortionMetric();
 			// Find the largest edge length in the mesh
 			curLen = t.longestEdgeLength();
@@ -318,7 +318,6 @@ public class GlobalSmooth extends GeomBasics {
 					}
 				}
 				if (niter >= 2) {
-
 					// Find minimum distortion metric for the elements adjacent Vertex v
 					elements = v.adjElements();
 					elem = elements.get(0);

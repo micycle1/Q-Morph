@@ -671,12 +671,6 @@ public class Vertex extends Constants {
 			if (nJ.boundaryVertex()) {
 				bEdge1 = nJ.anotherBoundaryEdge(null);
 				bEdge2 = nJ.anotherBoundaryEdge(bEdge1);
-				if (bEdge1 == null) {
-				} else {
-				}
-				if (bEdge2 == null) {
-				} else {
-				}
 
 				// This should be correct:
 				deltaCj = nJ.angularSmoothnessAdjustment(this, bEdge1, bEdge2, e.length());
@@ -690,8 +684,7 @@ public class Vertex extends Constants {
 		}
 		deltaI = cJLengthMulcJSum.div(cJLengthSum);
 
-		Vertex vertex = new Vertex(x + deltaI.x, y + deltaI.y);
-		return vertex;
+		return new Vertex(x + deltaI.x, y + deltaI.y);
 	}
 
 	public int nrOfFrontEdges() {
@@ -729,8 +722,8 @@ public class Vertex extends Constants {
 		MyVector vMK;
 		MyVector vML;
 
-		for (Object adjQuad : adjQuads) {
-			q = (Quad) adjQuad;
+		for (Element e : adjQuads) {
+			q = (Quad) e;
 
 			n1 = q.edgeList[base].leftVertex;
 			n2 = q.edgeList[base].rightVertex;
