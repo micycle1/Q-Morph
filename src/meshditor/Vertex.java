@@ -141,19 +141,13 @@ public class Vertex extends Constants {
 
 	/** Update all lengths of edges around this Vertex */
 	public void updateEdgeLengths() {
-		Edge e;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			e.len = e.computeLength();
 		}
 	}
 
-	public void updateState() {
-
-	}
-
 	/**
-	 * Update (almost) all angles in all elements adjacent to this Vertex. Note:
+	 * Update (almost) all angles in all elements adjacent to this Vertex. NOTE
 	 * still experimental, not tested thoroughly.
 	 */
 	public void updateAngles() {
@@ -163,7 +157,7 @@ public class Vertex extends Constants {
 		ArrayList<Element> list = new ArrayList<Element>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			if (!list.contains(e.element1)) {
 				list.add(e.element1);
 				ne = e.element1.neighborEdge(this, e);
@@ -200,7 +194,7 @@ public class Vertex extends Constants {
 	 */
 	@Deprecated
 	public void oldupdateEdgeLengthsAndAngles() {
-		Edge curEdge = (Edge) edgeList.get(0);
+		Edge curEdge = edgeList.get(0);
 		Element curElem = curEdge.element1;
 		Edge nextEdge = curElem.neighborEdge(this, curEdge);
 		Edge otherEdge;
@@ -228,7 +222,7 @@ public class Vertex extends Constants {
 			curElem = curElem.neighbor(nextEdge);
 			curEdge = nextEdge;
 			nextEdge = curElem.neighborEdge(this, curEdge);
-		} while (curElem != null && curEdge != (Edge) edgeList.get(0));
+		} while (curElem != null && curEdge != edgeList.get(0));
 	}
 
 	public double cross(Vertex n) {
@@ -247,8 +241,8 @@ public class Vertex extends Constants {
 		Element elem, start;
 		MyVector v, v0, v1;
 		Edge e;
-		ArrayList<MyVector> boundaryVectors = new ArrayList<MyVector>();
-		ArrayList<MyVector> vectors = new ArrayList<MyVector>();
+		ArrayList<MyVector> boundaryVectors = new ArrayList<>();
+		ArrayList<MyVector> vectors = new ArrayList<>();
 		double ang;
 		for (int i = 0; i < edgeList.size(); i++) {
 			e = edgeList.get(i);
@@ -269,8 +263,8 @@ public class Vertex extends Constants {
 		// Sets elem to the element that is ccw to v0 around this Vertex
 
 		if (!boundaryVectors.isEmpty()) { // this size is always 0 or 2
-			v0 = (MyVector) boundaryVectors.get(0);
-			v1 = (MyVector) boundaryVectors.get(1);
+			v0 = boundaryVectors.get(0);
+			v1 = boundaryVectors.get(1);
 
 			elem = v0.edge.element1;
 			e = elem.neighborEdge(this, v0.edge);
@@ -287,7 +281,7 @@ public class Vertex extends Constants {
 				elem = v1.edge.element1;
 			}
 		} else {
-			v0 = (MyVector) vectors.get(0);
+			v0 = vectors.get(0);
 			elem = v0.edge.element1;
 			e = elem.neighborEdge(this, v0.edge);
 			v1 = e.getVector(this);
@@ -301,8 +295,6 @@ public class Vertex extends Constants {
 				v0 = v1;
 			}
 		}
-
-		
 
 		// Sort vectors in ccw order starting with v0.
 		// Uses the fact that elem initially is the element ccw to v0 around this
@@ -335,8 +327,8 @@ public class Vertex extends Constants {
 	 * Msg.debug("b0: "+b0.descr()); Msg.debug("b1: "+b1.descr()); Element elem,
 	 * start; MyVector v, v0, v1; Edge e; ArrayList vectors= new ArrayList();
 	 * 
-	 * for (int i= 0; i< edgeList.size(); i++) { e= (Edge)edgeList.get(i); if (e!=
-	 * b0 && e!= b1) { v= e.getVector(this); v.edge= e; vectors.add(v); } }
+	 * for (int i= 0; i< edgeList.size(); i++) { e= edgeList.get(i); if (e!= b0 &&
+	 * e!= b1) { v= e.getVector(this); v.edge= e; vectors.add(v); } }
 	 * 
 	 * v0= b0.getVector(this); v0.edge= b0; v1= b1.getVector(this); v1.edge= b1;
 	 * 
@@ -368,10 +360,10 @@ public class Vertex extends Constants {
 	public List<Edge> calcCCWSortedEdgeList(Edge b0, Edge b1) {
 		MyVector v, v0, v1;
 		Edge e;
-		ArrayList<MyVector> vectors = new ArrayList<MyVector>();
+		ArrayList<MyVector> vectors = new ArrayList<>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			if (e != b0 && e != b1) {
 				v = e.getVector(this);
 				v.edge = e;
@@ -382,14 +374,14 @@ public class Vertex extends Constants {
 		// Initially put the two vectors of b0 and b1 in list.
 		// Select the most CW boundary edge to be first in list.
 
-		ArrayList<MyVector> VS = new ArrayList<MyVector>();
+		ArrayList<MyVector> VS = new ArrayList<>();
 		v0 = b0.getVector(this);
 		v0.edge = b0;
 		v1 = b1.getVector(this);
 		v1.edge = b1;
 
 		if (vectors.size() > 0) {
-			v = (MyVector) vectors.get(0);
+			v = vectors.get(0);
 		} else {
 			v = v1;
 		}
@@ -402,18 +394,16 @@ public class Vertex extends Constants {
 			VS.add(v0);
 		}
 
-		
-
 		// Sort vectors in ccw order. I will not move the vector that lies first in VS.
 		for (int i = 0; i < vectors.size(); i++) {
-			v = (MyVector) vectors.get(i);
+			v = vectors.get(i);
 
 			for (int j = 0; j < VS.size(); j++) {
-				v0 = (MyVector) VS.get(j);
+				v0 = VS.get(j);
 				if (j + 1 == VS.size()) {
-					v1 = (MyVector) VS.get(0);
+					v1 = VS.get(0);
 				} else {
-					v1 = (MyVector) VS.get(j + 1);
+					v1 = VS.get(j + 1);
 				}
 
 				if (!v.isCWto(v0) && v.isCWto(v1)) {
@@ -423,16 +413,16 @@ public class Vertex extends Constants {
 			}
 		}
 
-		ArrayList<Edge> edges = new ArrayList<Edge>(VS.size());
+		List<Edge> edges = new ArrayList<>(VS.size());
 		for (int i = 0; i < VS.size(); i++) {
-			v = (MyVector) VS.get(i);
+			v = VS.get(i);
 			edges.add(v.edge);
 		}
 		return edges;
 	}
 
 	/**
-	 * Note: *ALL* vertices in a neighboring quad is regarded as neighbors, not only
+	 * NOTE *ALL* vertices in a neighboring quad is regarded as neighbors, not only
 	 * those that are directly connected to this Vertex by edges.
 	 * 
 	 * @return a ccw sorted list of the neighboring vertices to this, but returns
@@ -446,8 +436,8 @@ public class Vertex extends Constants {
 		// First try to find two boundary edges
 		int j = 0;
 		MyVector[] b = new MyVector[2];
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge edge : edgeList) {
+			e = edge;
 			if (e.boundaryEdge()) {
 				b[j] = e.getVector(this);
 				b[j++].edge = e;
@@ -471,10 +461,11 @@ public class Vertex extends Constants {
 				elem = b[1].edge.element1;
 			}
 		} else {
-			// Failing to find any boundary edges, we
-			// select the vector of an arbitrary edge to be v0.
-			// Sets elem to the element that is ccw to v0 around this Vertex
-			e = (Edge) edgeList.get(0);
+			/*
+			 * Failing to find any boundary edges, we select the vector of an arbitrary edge
+			 * to be v0. Sets elem to the element that is ccw to v0 around this Vertex.
+			 */
+			e = edgeList.get(0);
 			v0 = e.getVector(this);
 			v0.edge = e;
 			elem = e.element1;
@@ -489,9 +480,10 @@ public class Vertex extends Constants {
 			}
 		}
 
-		// Sort vertices in ccw order starting with otherVertex of v0 edge.
-		// Uses the fact that elem initially is the element ccw to v0 around this
-		// Vertex.
+		/*
+		 * Sort vertices in ccw order starting with otherVertex of v0 edge. Uses the
+		 * fact that elem initially is the element ccw to v0 around this Vertex.
+		 */
 		Vertex[] ccwvertexList = new Vertex[edgeList.size() * 2];
 		Element start = elem;
 		Quad q;
@@ -516,11 +508,9 @@ public class Vertex extends Constants {
 	}
 
 	public double meanNeighborEdgeLength() {
-		Edge e;
 		double sumLengths = 0.0, len, j = 0;
 
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			len = e.length();
 			if (len != 0) {
 				j++;
@@ -540,7 +530,7 @@ public class Vertex extends Constants {
 		List<Element> list = new ArrayList<>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			if (!list.contains(e.element1)) {
 				list.add(e.element1);
 			}
@@ -561,7 +551,7 @@ public class Vertex extends Constants {
 		ArrayList<Element> list = new ArrayList<>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			if (e.element1 instanceof Quad && !list.contains(e.element1)) {
 				list.add(e.element1);
 			} else if (e.element2 != null && e.element2 instanceof Quad && !list.contains(e.element2)) {
@@ -582,7 +572,7 @@ public class Vertex extends Constants {
 		ArrayList<Element> list = new ArrayList<Element>();
 
 		for (int i = 0; i < edgeList.size(); i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			if (e.element1 instanceof Triangle && !list.contains(e.element1)) {
 				list.add(e.element1);
 			} else if (e.element2 != null && e.element2 instanceof Triangle && !list.contains(e.element2)) {
@@ -604,7 +594,7 @@ public class Vertex extends Constants {
 
 		int n = edgeList.size();
 		for (int i = 0; i < n; i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			nJ = e.otherVertex(this);
 			c = new MyVector(this, nJ);
 			cJSum = cJSum.plus(c);
@@ -625,7 +615,7 @@ public class Vertex extends Constants {
 
 		int n = edgeList.size();
 		for (int i = 0; i < n; i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			nJ = e.otherVertex(this);
 			c = new MyVector(this, nJ);
 			cJSum = cJSum.plus(c);
@@ -648,7 +638,7 @@ public class Vertex extends Constants {
 
 		int n = edgeList.size();
 		for (int i = 0; i < n; i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			nJ = e.otherVertex(this);
 			if (nJ != vertex) {
 				c = new MyVector(this, nJ);
@@ -675,7 +665,7 @@ public class Vertex extends Constants {
 			Msg.error("...edgeList.size()== 0");
 		}
 		for (int i = 0; i < n; i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			nJ = e.otherVertex(this);
 			c = new MyVector(this, nJ);
 			if (nJ.boundaryVertex()) {
@@ -705,10 +695,8 @@ public class Vertex extends Constants {
 	}
 
 	public int nrOfFrontEdges() {
-		Edge e;
 		int fronts = 0;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			if (e.frontEdge) {
 				fronts++;
 			}
@@ -845,20 +833,18 @@ public class Vertex extends Constants {
 		double pIAngle = pI.posAngle();
 		double pIm1p1Angle = 0;
 		if (pIAngle < pIm1Angle || pIAngle > pIp1Angle) {
-			pIm1p1Angle = PIx2 - pIp1Angle + pIm1Angle;
+			pIm1p1Angle = TWO_PI - pIp1Angle + pIm1Angle;
 		} else {
 			pIm1p1Angle = pIp1Angle - pIm1Angle;
 		}
-
-		
 
 		// Check if the sum of angles between pIp1 and pI and the angle between pIm1 and
 		// PI is greater or equal to 180 degrees. If so, I choose ld as the length of
 		// pB2.
 		if (pIm1p1Angle > Math.PI) {
 			double pB1Angle = pIm1p1Angle * 0.5 + pIp1Angle;
-			if (pB1Angle >= PIx2) {
-				pB1Angle = Math.IEEEremainder(pB1Angle, PIx2);
+			if (pB1Angle >= TWO_PI) {
+				pB1Angle = Math.IEEEremainder(pB1Angle, TWO_PI);
 			}
 			double pB1pIMax = Math.max(pB1Angle, pIAngle);
 			double pB1pIMin = Math.min(pB1Angle, pIAngle);
@@ -873,7 +859,6 @@ public class Vertex extends Constants {
 		}
 
 		MyVector line = new MyVector(nIp1, nIm1);
-		
 
 		// pB1 should be the halved angle between pIp1 and pIm1, in the direction of pI:
 		double pB1Angle = pIm1Angle + 0.5 * (pIp1Angle - pIm1Angle);
@@ -1012,9 +997,7 @@ public class Vertex extends Constants {
 
 	/** @return true if the Vertex is part of the boundary of the mesh. */
 	public boolean boundaryVertex() {
-		Edge e;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			if (e.boundaryEdge()) {
 				return true;
 			}
@@ -1026,9 +1009,7 @@ public class Vertex extends Constants {
 	 * @return true if the Vertex is part of the boundary of the mesh or a triangle.
 	 */
 	public boolean boundaryOrTriangleVertex() {
-		Edge e;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			if (e.boundaryOrTriangleEdge()) {
 				return true;
 			}
@@ -1038,9 +1019,7 @@ public class Vertex extends Constants {
 
 	/** @return true if the Vertex is truely a part of the front. */
 	public boolean frontVertex() {
-		Edge e;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			if (e.isFrontEdge()) {
 				return true;
 			}
@@ -1054,9 +1033,7 @@ public class Vertex extends Constants {
 	 * @return a front edge found in this Vertex's edgelist.
 	 */
 	public Edge anotherFrontEdge(Edge known) {
-		Edge e;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			if (e != known && e.isFrontEdge()) {
 				return e;
 			}
@@ -1070,9 +1047,7 @@ public class Vertex extends Constants {
 	 * @return a boundary edge found in this Vertex's edgelist.
 	 */
 	public Edge anotherBoundaryEdge(Edge known) {
-		Edge e;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			if (e != known && e.boundaryEdge()) {
 				return e;
 			}
@@ -1195,7 +1170,6 @@ public class Vertex extends Constants {
 	 * testing for convexity of the quad should not be necessary.
 	 */
 	public boolean inCircle(Vertex p1, Vertex p2, Vertex p3) {
-		
 
 		/*
 		 * a * b = a_1*b_1 + a_2*b_2 Scalar product a x b = (a_1*b_2 - b_1*a_2) Vector
@@ -1241,7 +1215,7 @@ public class Vertex extends Constants {
 		int ind;
 		n.setXY(this);
 		for (int i = 0; i < n.edgeList.size(); i++) {
-			e = (Edge) n.edgeList.get(i);
+			e = n.edgeList.get(i);
 			ind = edgeList.indexOf(e);
 			if (ind == -1) {
 				e.replaceVertex(n, this);
@@ -1257,7 +1231,7 @@ public class Vertex extends Constants {
 		ArrayList<Edge> list = new ArrayList<Edge>();
 		Edge e;
 		for (int i = 0; i < edgeList.size(); i++) {
-			e = (Edge) edgeList.get(i);
+			e = edgeList.get(i);
 			if (e.frontEdge) {
 				list.add(e);
 			}
@@ -1271,9 +1245,7 @@ public class Vertex extends Constants {
 	 * @return true if found, else false
 	 */
 	public boolean hasEdge(Edge e) {
-		Edge curEdge;
-		for (Object element : edgeList) {
-			curEdge = (Edge) element;
+		for (Edge curEdge : edgeList) {
 			if (e == curEdge) {
 				return true;
 			}
@@ -1302,8 +1274,8 @@ public class Vertex extends Constants {
 
 			/*
 			 * if (Math.abs(ang- PIdiv2) < Math.abs(ang- Math.PI)) return (byte)(temp+2);
-			 * else if (Math.abs(ang- Math.PI) < Math.abs(ang- PIx2)) return (byte)(temp+1);
-			 * else return temp;
+			 * else if (Math.abs(ang- Math.PI) < Math.abs(ang- TWO_PI)) return
+			 * (byte)(temp+1); else return temp;
 			 */
 		}
 	}
@@ -1336,9 +1308,9 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Return # of irregular vertices in the valence pattern (vertices whose valence!=
-	 * 4) Note that calcMyValencePattern() must be called before calling this
-	 * method.
+	 * Return # of irregular vertices in the valence pattern (vertices whose
+	 * valence!= 4) Note that calcMyValencePattern() must be called before calling
+	 * this method.
 	 */
 	public int irregNeighborVertices() {
 		int count = 0;
@@ -1539,8 +1511,8 @@ public class Vertex extends Constants {
 	}
 
 	/**
-	 * Confirm whether the vertices having the given interior angles have the correct
-	 * vertex pattern.
+	 * Confirm whether the vertices having the given interior angles have the
+	 * correct vertex pattern.
 	 * 
 	 * @param start     start index for the ang array
 	 * @param ang       an array of interior angles
@@ -1646,8 +1618,8 @@ public class Vertex extends Constants {
 	 * Note that calcMyValencePattern() must be called before calling this method.
 	 * 
 	 * @param pattern2 A valence pattern
-	 * @param bpat     a boolean pattern indicating which vertices are located on the
-	 *                 boundary
+	 * @param bpat     a boolean pattern indicating which vertices are located on
+	 *                 the boundary
 	 * @return If they match then return the true, otherwise return false.
 	 */
 	public boolean boundaryPatternMatch(byte[] pattern2, boolean[] bpat, Vertex[] ccwNeighbors) {
@@ -1693,8 +1665,8 @@ public class Vertex extends Constants {
 	 * Note that calcMyValencePattern() must be called before calling this method.
 	 * 
 	 * @param pattern2     A valence pattern
-	 * @param bpat         a boolean pattern indicating which vertices are located on
-	 *                     the boundary
+	 * @param bpat         a boolean pattern indicating which vertices are located
+	 *                     on the boundary
 	 * @param ccwNeighbors the neighbor vertices in ccw order
 	 * @return If they match then return the true, otherwise return false.
 	 */
@@ -1760,9 +1732,7 @@ public class Vertex extends Constants {
 
 	public Edge commonEdge(Vertex n) {
 		Vertex other;
-		Edge e;
-		for (Object element : edgeList) {
-			e = (Edge) element;
+		for (Edge e : edgeList) {
 			other = e.otherVertex(this);
 			if (other == n) {
 				return e;

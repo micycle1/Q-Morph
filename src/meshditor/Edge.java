@@ -8,7 +8,23 @@ import java.util.List;
  * involving edges.
  */
 public class Edge extends Constants {
+
+	public Vertex leftVertex, rightVertex; // This Edge has these two vertices
+	Element element1 = null, element2 = null; // Belongs to these Elements (Quads/Triangles)
+	Edge leftFrontNeighbor, rightFrontNeighbor;
+	int level;
+
+	boolean frontEdge = false;
+	boolean swappable = true;
+	boolean selectable = true;
+	// Edge leftSide= null, rightSide= null; // Side edges when building a quad
+	boolean leftSide = false, rightSide = false; // Indicates if frontNeighbor is
+													// to be used as side edge in quad
+	double len; // length of this edge
+	java.awt.Color color = java.awt.Color.green;
 	
+	static ArrayList<Edge>[] stateList = new ArrayList[3];
+
 	private static double atan2Quick(final double y, final double x) {
 		final double THREE_QRTR_PI = Math.PI * 0.75;
 		final double QRTR_PI = Math.PI * 0.25;
@@ -30,15 +46,16 @@ public class Edge extends Constants {
 			return (angle);
 		}
 	}
-	
+
 	private static double acos(double x) {
+//		return Math.acos(x);
 		return acosQuick(x);
 	}
-	
+
 	private static double acosQuick(double x) {
-		return atan2Quick(Math.sqrt ((1.0 + x) * (1.0 - x)), x);
-		}
-	
+		return atan2Quick(Math.sqrt((1.0 + x) * (1.0 - x)), x);
+	}
+
 	public Edge(Vertex Vertex1, Vertex Vertex2) {
 		if ((Vertex1.x < Vertex2.x) || (Vertex1.x == Vertex2.x && Vertex1.y > Vertex2.y)) {
 			leftVertex = Vertex1;
@@ -70,18 +87,29 @@ public class Edge extends Constants {
 		}
 		return false;
 	}
+	
+	@Override
+	  public int hashCode() {
+	    long bits0 = Double.doubleToLongBits(leftVertex.x);
+	    bits0 ^= Double.doubleToLongBits(leftVertex.y) * 31;
+	    int hash0 = (((int) bits0) ^ ((int) (bits0  >> 32)));
+	    
+	    long bits1 = Double.doubleToLongBits(rightVertex.x);
+	    bits1 ^= Double.doubleToLongBits(rightVertex.y) * 31;
+	    int hash1 = (((int) bits1) ^ ((int) (bits1  >> 32)));
+
+	    return hash0 ^ hash1;
+	  }
 
 	// Return a copy of the edge
 	public Edge copy() {
 		return new Edge(this);
 	}
 
-	static ArrayList[] stateList = new ArrayList[3];
-
 	public static void clearStateList() {
-		stateList[0] = new ArrayList();
-		stateList[1] = new ArrayList();
-		stateList[2] = new ArrayList();
+		stateList[0] = new ArrayList<>();
+		stateList[1] = new ArrayList<>();
+		stateList[2] = new ArrayList<>();
 	}
 
 	// Removes an Edge from the stateLists
@@ -164,7 +192,7 @@ public class Edge extends Constants {
 		if (tri != null) {
 			ang = sumAngle(tri, n, frontNeighbor);
 		} else {
-			ang = PIx2 - sumAngle(quad, n, frontNeighbor);
+			ang = TWO_PI - sumAngle(quad, n, frontNeighbor);
 		}
 
 		if (ang < PIx3div4) { // if (ang< PIdiv2+EPSILON) // Could this be better?
@@ -174,7 +202,8 @@ public class Edge extends Constants {
 		}
 	}
 
-	// Determine the state bit at both Vertices and set the left and right side Edges.
+	// Determine the state bit at both Vertices and set the left and right side
+	// Edges.
 	// If a state bit is set, then the corresponding front neighbor Edge must get
 	// Edge this as a side Edge at that Vertex. If it is not set, then it must get a
 	// null
@@ -259,7 +288,7 @@ public class Edge extends Constants {
 
 		while (curState >= 0 && selected == null) {
 			for (i = 0; i < stateList[curState].size(); i++) {
-				current = (Edge) stateList[curState].get(i);
+				current = stateList[curState].get(i);
 				if (current.selectable) {
 					selected = current;
 					break;
@@ -275,7 +304,7 @@ public class Edge extends Constants {
 		selState = selected.getState();
 
 		for (i = 0; i < stateList[selState].size(); i++) {
-			current = (Edge) stateList[selState].get(i);
+			current = stateList[selState].get(i);
 
 			if (current.selectable
 					&& (current.level < selected.level || (current.level == selected.level && current.length() < selected.length()))) {
@@ -300,10 +329,8 @@ public class Edge extends Constants {
 	}
 
 	public static void markAllSelectable() {
-		Edge e;
 		for (int i = 0; i < 3; i++) {
-			for (Object element : stateList[i]) {
-				e = (Edge) element;
+			for (Edge e : stateList[i]) {
 				e.selectable = true;
 			}
 		}
@@ -312,18 +339,15 @@ public class Edge extends Constants {
 	public static void printStateLists() {
 		if (Msg.debugMode) {
 			System.out.println("frontsInState 1-1:");
-			for (Object element : stateList[2]) {
-				Edge edge = (Edge) element;
+			for (Edge edge : stateList[2]) {
 				System.out.println("" + edge.descr() + ", (" + edge.getState() + ")");
 			}
 			System.out.println("frontsInState 0-1 and 1-0:");
-			for (Object element : stateList[1]) {
-				Edge edge = (Edge) element;
+			for (Edge edge : stateList[1]) {
 				System.out.println("" + edge.descr() + ", (" + edge.getState() + ")");
 			}
 			System.out.println("frontsInState 0-0:");
-			for (Object element : stateList[0]) {
-				Edge edge = (Edge) element;
+			for (Edge edge : stateList[0]) {
 				System.out.println("" + edge.descr() + ", (" + edge.getState() + ")");
 			}
 		}
@@ -399,12 +423,12 @@ public class Edge extends Constants {
 		Edge eI, eJ;
 
 		for (int i = 0; i < nKm1.edgeList.size(); i++) {
-			eI = (Edge) nKm1.edgeList.get(i);
+			eI = nKm1.edgeList.get(i);
 			other = eI.otherVertex(nKm1);
 
 			if (other != nKp1) {
 				for (int j = 0; j < nKp1.edgeList.size(); j++) {
-					eJ = (Edge) nKp1.edgeList.get(j);
+					eJ = nKp1.edgeList.get(j);
 
 					if (other == eJ.otherVertex(nKp1)) {
 						found = true;
@@ -453,13 +477,13 @@ public class Edge extends Constants {
 		return Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 	}
 
-	public double length(double x1, double y1, double x2, double y2) {
+	public static double length(double x1, double y1, double x2, double y2) {
 		double xdiff = x2 - x1;
 		double ydiff = y2 - y1;
 		return Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 	}
 
-	public double length(Vertex Vertex1, Vertex Vertex2) {
+	public static double length(Vertex Vertex1, Vertex Vertex2) {
 		double xdiff = Vertex2.x - Vertex1.x;
 		double ydiff = Vertex2.y - Vertex1.y;
 		return Math.sqrt(xdiff * xdiff + ydiff * ydiff);
@@ -500,8 +524,8 @@ public class Edge extends Constants {
 
 			// double cLen= Math.sqrt(x*x + y*y);
 			/*
-			 * double aLen= Math.sqrt(x*x + y*y); if (y> 0) return -acos((aLen*aLen +
-			 * x*x -y*y)/(2*aLen*Math.abs(x))); else return acos((aLen*aLen + x*x
+			 * double aLen= Math.sqrt(x*x + y*y); if (y> 0) return -acos((aLen*aLen + x*x
+			 * -y*y)/(2*aLen*Math.abs(x))); else return acos((aLen*aLen + x*x
 			 * -y*y)/(2*aLen*Math.abs(x)));
 			 */
 		}
@@ -548,7 +572,7 @@ public class Edge extends Constants {
 				curEdge = curElem.neighborEdge(n, curEdge);
 				curElem = curElem.neighbor(curEdge);
 			}
-			ang = PIx2 - iang;
+			ang = TWO_PI - iang;
 		}
 //		Msg.debug("Leaving sumAngle(..), returning " + Math.toDegrees(ang));
 		return ang;
@@ -567,8 +591,13 @@ public class Edge extends Constants {
 		return curEdge;
 	}
 
-	// Compute the internal angle between this Edge and Edge edge at Vertex n.
-	// Returns a positive value.
+	/**
+	 * Compute the internal angle between this Edge and Edge edge at Vertex n.
+	 * 
+	 * @param edge
+	 * @param n
+	 * @return a positive value.
+	 */
 	public double computePosAngle(Edge edge, Vertex n) {
 		double a, b, c;
 		if (edge == this) {
@@ -598,8 +627,8 @@ public class Edge extends Constants {
 			Msg.error("Edge::computePosAngle(..): These edges are not connected.");
 			return 0;
 		}
-		a = computeLength(); // len; // try this later...!
-		b = edge.computeLength(); // edge.len; // try this later...!
+		a = len;
+		b = edge.len;
 
 		// acos returns a value in the range [0, PI],
 		// and input *MUST BE STRICTLY* in the range [-1, 1] !!!!!!!!
@@ -614,8 +643,12 @@ public class Edge extends Constants {
 		}
 	}
 
-	// Compute the ccw directed angle between this Edge and Edge edge at Vertex n.
-	// Returns a positive value in range [0, 2*PI>.
+	/**
+	 * Computes the ccw directed angle between this Edge and Edge edge at Vertex n.
+	 * 
+	 * @param edge
+	 * @return a positive value in range [0, 2*PI]
+	 */
 	public double computeCCWAngle(Edge edge) {
 		Vertex n = commonVertex(edge);
 		double temp = computePosAngle(edge, n);
@@ -626,7 +659,7 @@ public class Edge extends Constants {
 		if (thisVector.isCWto(edgeVector)) {
 			return temp;
 		} else {
-			return PIx2 - temp;
+			return TWO_PI - temp;
 		}
 	}
 
@@ -823,9 +856,8 @@ public class Edge extends Constants {
 
 		Vertex n = this.oppositeVertex(null);
 		Vertex m = this.oppositeVertex(n);
-		Edge swappedEdge = new Edge(n, m);
-
-		return swappedEdge;
+		
+		return new Edge(n, m);
 	}
 
 	/**
@@ -837,9 +869,7 @@ public class Edge extends Constants {
 			Msg.error("Edge.swapToAndSetElementsFor(..): both elements not set");
 		}
 
-		
 		// extract the outer edges
-		ArrayList edges = new ArrayList();
 
 		Edge e1 = element1.neighborEdge(leftVertex, this);
 		Edge e2 = element1.neighborEdge(e1.otherVertex(leftVertex), e1);
@@ -981,10 +1011,10 @@ public class Edge extends Constants {
 	}
 
 	/**
-	 * Return true if the 1-orbit around this.commonVertex(e) through quad startQ from
-	 * edge this to edge e doesn't contain any triangle elements. If Vertex n lies on
-	 * the boundary, and the orbit contains a hole, the orbit simply skips the hole
-	 * and continues on the other side.
+	 * Return true if the 1-orbit around this.commonVertex(e) through quad startQ
+	 * from edge this to edge e doesn't contain any triangle elements. If Vertex n
+	 * lies on the boundary, and the orbit contains a hole, the orbit simply skips
+	 * the hole and continues on the other side.
 	 */
 	public boolean noTrianglesInOrbit(Edge e, Quad startQ) {
 		Edge curEdge = this;
@@ -1014,27 +1044,25 @@ public class Edge extends Constants {
 	}
 
 	public Edge findLeftFrontNeighbor(List<Edge> frontList) {
-		ArrayList list = new ArrayList();
-		Edge leftEdge;
+		List<Edge> list = new ArrayList<>();
 		Edge candidate = null;
 		double candAng = Double.POSITIVE_INFINITY, curAng;
 		Triangle t;
 
 		for (int j = 0; j < leftVertex.edgeList.size(); j++) {
-			leftEdge = (Edge) leftVertex.edgeList.get(j);
+			Edge leftEdge = leftVertex.edgeList.get(j);
 			if (leftEdge != this && leftEdge.isFrontEdge() /* leftEdge.frontEdge */) {
 				list.add(leftEdge);
 			}
 		}
 		if (list.size() == 1) {
-			return (Edge) list.get(0);
-		} else if (list.size() > 0) {
+			return list.get(0);
+		} else if (!list.isEmpty()) {
 
 			// Choose the front edge with the smallest angle
 			t = getTriangleElement();
 
-			for (Object element : list) {
-				leftEdge = (Edge) element;
+			for (Edge leftEdge : list) {
 				curAng = sumAngle(t, leftVertex, leftEdge);
 				if (curAng < candAng) {
 					candAng = curAng;
@@ -1051,24 +1079,22 @@ public class Edge extends Constants {
 	}
 
 	public Edge findRightFrontNeighbor(List<Edge> frontList) {
-		ArrayList list = new ArrayList();
-		Edge rightEdge;
+		List<Edge> list = new ArrayList<>();
 		Edge candidate = null;
 		double candAng = Double.POSITIVE_INFINITY, curAng;
 		Triangle t;
 
 		for (int j = 0; j < rightVertex.edgeList.size(); j++) {
-			rightEdge = (Edge) rightVertex.edgeList.get(j);
+			Edge rightEdge = rightVertex.edgeList.get(j);
 			if (rightEdge != this && rightEdge.isFrontEdge()/* frontList.contains(rightEdge) */) {
 				list.add(rightEdge);
 			}
 		}
 		if (list.size() == 1) {
-			return (Edge) list.get(0);
-		} else if (list.size() > 0) {
+			return list.get(0);
+		} else if (!list.isEmpty()) {
 			t = getTriangleElement();
-			for (Object element : list) {
-				rightEdge = (Edge) element;
+			for (Edge rightEdge : list) {
 				curAng = sumAngle(t, rightVertex, rightEdge);
 
 				if (curAng < candAng) {
@@ -1139,10 +1165,11 @@ public class Edge extends Constants {
 
 	/**
 	 * Halve this Edge by introducing a new Vertex at the midpoint, and create two
-	 * Edges from this midpoint to the each of the two opposite Vertices of Edge this:
-	 * one in element1 and one in element2. Also create two new Edges from Vertex mid
-	 * to the two Vertices of Edge this. Create four new Triangles. Update everything
-	 * (also remove this Edge from edgeList and disconnect the vertices).
+	 * Edges from this midpoint to the each of the two opposite Vertices of Edge
+	 * this: one in element1 and one in element2. Also create two new Edges from
+	 * Vertex mid to the two Vertices of Edge this. Create four new Triangles.
+	 * Update everything (also remove this Edge from edgeList and disconnect the
+	 * vertices).
 	 * 
 	 * @return the new Edge incident with Vertex ben.
 	 */
@@ -1243,14 +1270,12 @@ public class Edge extends Constants {
 	public Edge nextQuadEdgeAt(Vertex n, Element startElem) {
 		Element elem;
 		Edge e;
-		int i = 3;
 
 		e = startElem.neighborEdge(n, this);
 		elem = startElem.neighbor(e);
 
 		while (elem != null && !(elem instanceof Quad) && elem != startElem) {
 			e = elem.neighborEdge(n, e);
-			i++;
 			elem = elem.neighbor(e);
 		}
 		if (elem != null && elem instanceof Quad && elem != startElem) {
@@ -1261,8 +1286,7 @@ public class Edge extends Constants {
 	}
 
 	// Returns a neighboring element that is a quad. When applied to inner front
-	// edges,
-	// there are, of course, only one possible quad to return.
+	// edges, there are, of course, only one possible quad to return.
 	public Quad getQuadElement() {
 		if (element1 instanceof Quad) {
 			return (Quad) element1;
@@ -1274,8 +1298,7 @@ public class Edge extends Constants {
 	}
 
 	// Returns a neighboring element that is a triangle. The method should work as
-	// long
-	// as it is applied to a front edge.
+	// long as it is applied to a front edge.
 	public Triangle getTriangleElement() {
 		if (element1 instanceof Triangle) {
 			return (Triangle) element1;
@@ -1339,18 +1362,4 @@ public class Edge extends Constants {
 
 		return curEdge;
 	}
-
-	public Vertex leftVertex, rightVertex; // This Edge has these two vertices
-	Element element1 = null, element2 = null; // Belongs to these Elements (Quads/Triangles)
-	Edge leftFrontNeighbor, rightFrontNeighbor;
-	int level;
-
-	boolean frontEdge = false;
-	boolean swappable = true;
-	boolean selectable = true;
-	// Edge leftSide= null, rightSide= null; // Side edges when building a quad
-	boolean leftSide = false, rightSide = false; // Indicates if frontNeighbor is
-													// to be used as side edge in quad
-	double len; // length of this edge
-	java.awt.Color color = java.awt.Color.green;
 }

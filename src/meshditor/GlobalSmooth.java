@@ -3,25 +3,22 @@ package meshditor;
 import java.util.ArrayList;
 import java.util.List;
 
-// ==== ---- ==== ---- ==== ---- ==== ---- ==== ---- ==== ---- ==== ---- 
 /**
  * This class is an implementation of the algorithm described in the paper "An
  * approach to Combined Laplacian and Optimization-Based Smoothing for
  * Triangular, Quadrilateral and Quad-Dominant Meshes" (1998) by Cannan,
  * Tristano, and Staten.
- * 
+ * <p>
  * The meshes produced by Q-Morph are indeed highly quad-dominant, with at most
  * one single triangle, so Q-Morph should work well with this algorithm.
- * 
+ * <p>
  * Note that the boundary layer smoothing is not implemented.
  * 
  * @author Karl Erik Levik
  *
  */
-// ==== ---- ==== ---- ==== ---- ==== ---- ==== ---- ==== ---- ==== ---- 
-
 public class GlobalSmooth extends GeomBasics {
-	
+
 	public GlobalSmooth() {
 	}
 
@@ -52,7 +49,7 @@ public class GlobalSmooth extends GeomBasics {
 
 			// Update the adjacent Elements' distortion metrics
 			for (int i = 0; i < N; i++) {
-				oElem = (Element) elements.get(i);
+				oElem = elements.get(i);
 
 				sElem = oElem.elementWithExchangedVertices(n, nLPos);
 				sElem.updateDistortionMetric();
@@ -156,7 +153,6 @@ public class GlobalSmooth extends GeomBasics {
 					gY = oElem.gY;
 				}
 			}
-			
 
 			// Which yields the final gradient vector g:
 			MyVector g = new MyVector(x, gX, gY);
@@ -181,8 +177,6 @@ public class GlobalSmooth extends GeomBasics {
 			if (!flag) {
 				gamma = GAMMA; // I suppose something in the range (0, 1] so 0.8 is ok?
 			}
-
-			
 
 			// Attempt the move x= x + gamma * g:
 			xNew.setXY(x.x + gamma * gX, x.y + gamma * gY);
@@ -240,7 +234,7 @@ public class GlobalSmooth extends GeomBasics {
 
 	/** The overall smoothing algorithm from section 3 in the paper. */
 	public void run() {
-		
+
 		// Variables
 		int i, j;
 		List<Vertex> vertices = new ArrayList<>();
@@ -269,7 +263,7 @@ public class GlobalSmooth extends GeomBasics {
 		}
 
 		for (i = 0; i < elementList.size(); i++) {
-			elem = (Element) elementList.get(i);
+			elem = elementList.get(i);
 			elem.updateDistortionMetric();
 			// Find the largest edge length in the mesh
 			curLen = elem.longestEdgeLength();
@@ -302,10 +296,10 @@ public class GlobalSmooth extends GeomBasics {
 						v.setXY(v_moved);
 						v.update();
 						VertexMoved = true;
-						
+
 						// Put neighbor vertices back in list, if they are not already there
 						for (j = 0; j < v.edgeList.size(); j++) {
-							e = (Edge) v.edgeList.get(j);
+							e = v.edgeList.get(j);
 							n = e.otherVertex(v);
 							if (!n.boundaryVertex() && !vertices.contains(n)) {
 								vertices.add(n);
@@ -318,19 +312,19 @@ public class GlobalSmooth extends GeomBasics {
 						// Update the adjacent Elements' distortion metrics
 						elements = v.adjElements();
 						for (j = 0; j < elements.size(); j++) {
-							elem = (Element) elements.get(j);
+							elem = elements.get(j);
 							elem.updateDistortionMetric();
 						}
 					}
 				}
 				if (niter >= 2) {
-					
+
 					// Find minimum distortion metric for the elements adjacent Vertex v
 					elements = v.adjElements();
-					elem = (Element) elements.get(0);
+					elem = elements.get(0);
 					double minDistMetric = elem.distortionMetric;
 					for (j = 1; j < elements.size(); j++) {
-						elem = (Element) elements.get(j);
+						elem = elements.get(j);
 						if (elem.distortionMetric < minDistMetric) {
 							minDistMetric = elem.distortionMetric;
 						}
@@ -342,7 +336,7 @@ public class GlobalSmooth extends GeomBasics {
 						if (v_moved.x != oldX || v_moved.y != oldY) {
 							// Put neighbor vertices back in list, if they're not there
 							for (j = 0; j < v.edgeList.size(); j++) {
-								e = (Edge) v.edgeList.get(j);
+								e = v.edgeList.get(j);
 								n = e.otherVertex(v);
 								if (!n.boundaryVertex() && !vertices.contains(n)) {
 									vertices.add(n);
@@ -371,4 +365,4 @@ public class GlobalSmooth extends GeomBasics {
 		} while (VertexMoved && maxMoveDistance >= 1.75 * MOVETOLERANCE && niter < MAXITER);
 	}
 
-} // End of class GlobalSmooth
+}

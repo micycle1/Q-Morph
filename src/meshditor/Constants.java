@@ -24,17 +24,17 @@ public class Constants {
 
 	// Some useful constants involving PI:
 	/** PI/6 or 30 degrees */
-	public static final double PIdiv6 = java.lang.Math.PI / 6.0;
+	public static final double PIdiv6 = Math.PI / 6.0;
 	/** PI/2 or 90 degrees */
-	public static final double PIdiv2 = java.lang.Math.PI / 2.0;
+	public static final double PIdiv2 = Math.PI / 2.0;
 	/** 3*PI/4 or 135 degrees */
-	public static final double PIx3div4 = 3 * java.lang.Math.PI / 4.0;
+	public static final double PIx3div4 = 3 * Math.PI / 4.0;
 	/** 5*PI/4 or 225 degrees */
-	public static final double PIx5div4 = 5 * java.lang.Math.PI / 4.0;
+	public static final double PIx5div4 = 5 * Math.PI / 4.0;
 	/** 3*PI/2 or 270 degrees */
-	public static final double PIx3div2 = 3 * java.lang.Math.PI / 2.0;
+	public static final double PIx3div2 = 3 * Math.PI / 2.0;
 	/** 2*PI or 360 degrees */
-	public static final double PIx2 = java.lang.Math.PI * 2.0;
+	public static final double TWO_PI = Math.PI * 2.0;
 
 	// Some useful constants holding the radian values of common angles in degrees
 	/** 6 degrees in radians */
@@ -52,8 +52,8 @@ public class Constants {
 
 	// Constants for the seam, transition seam and transition split operations:
 	// Note that we must have (EPSILON1 < EPSILON2)
-	public static double EPSILON1 = java.lang.Math.PI * 0.04;
-	public static double EPSILON2 = java.lang.Math.PI * 0.09;
+	public static double EPSILON1 = Math.PI * 0.04;
+	public static double EPSILON2 = Math.PI * 0.09;
 
 	/** The minimum size of the greatest angle in a chevron. */
 	public static double CHEVRONMIN = DEG_200;
@@ -61,8 +61,8 @@ public class Constants {
 	// Constants for side edge selection (EPSILON < EPSILONLARGER)
 	public static final double sqrt3div2 = Math.sqrt(3.0) / 2.0;
 
-	public static final double EPSILON = java.lang.Math.PI / 6.0;
-	public static final double EPSILONLARGER = java.lang.Math.PI;
+	public static final double EPSILON = Math.PI / 6.0;
+	public static final double EPSILONLARGER = Math.PI;
 
 	// Constants for post smoothing
 	/** The Vertex coincidence tolerance */

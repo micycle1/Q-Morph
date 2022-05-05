@@ -1,18 +1,44 @@
 package meshditor;
 
-/*
-import Ray;
-import Constants;
-import Msg;
-*/
 import java.math.BigDecimal;
 
 /**
  * This class holds information for vectors, and has methods for dealing with
  * vector-related issues.
  */
-
 public class MyVector extends Constants {
+	
+	private static double atan2Quick(final double y, final double x) {
+		final double THREE_QRTR_PI = Math.PI * 0.75;
+		final double QRTR_PI = Math.PI * 0.25;
+
+		double r, angle;
+		final double abs_y = Math.abs(y) + 1e-10f; // kludge to prevent 0/0 condition
+
+		if (x < 0.0f) {
+			r = (x + abs_y) / (abs_y - x); // (3)
+			angle = THREE_QRTR_PI; // (4)
+		} else {
+			r = (x - abs_y) / (x + abs_y); // (1)
+			angle = QRTR_PI; // (2)
+		}
+		angle += (0.1963f * r * r - 0.9817f) * r; // (2 | 4)
+		if (y < 0.0f) {
+			return (-angle); // negate if in quad III or IV
+		} else {
+			return (angle);
+		}
+	}
+
+	private static double acos(double x) {
+//		return Math.acos(x);
+		return acosQuick(x);
+	}
+
+	private static double acosQuick(double x) {
+		return atan2Quick(Math.sqrt((1.0 + x) * (1.0 - x)), x);
+	}
+	
 	/**
 	 * @param origin the origin of the vector
 	 * @param x      the x component
@@ -57,8 +83,7 @@ public class MyVector extends Constants {
 		this.y = b.y - a.y;
 	}
 
-	private final static BigDecimal zero = new BigDecimal(0.0);
-	private final static BigDecimal one = new BigDecimal(1.0);
+	private static final BigDecimal ZERO = new BigDecimal(0.0);
 
 	@Override
 	public boolean equals(Object o) {
@@ -88,7 +113,7 @@ public class MyVector extends Constants {
 	 *         to the right, btw) in the range (-180, 180) in radians.
 	 */
 	public double angle() {
-		// Math.acos returns values in the range 0.0 through pi, avoiding neg numbers.
+		// acos returns values in the range 0.0 through pi, avoiding neg numbers.
 		// If this is CW to x-axis, then return pos acos, else return neg acos
 		if (x == 0 && y > 0) {
 			return Math.PI / 2.0;
@@ -102,9 +127,9 @@ public class MyVector extends Constants {
 			// double cLen= Math.sqrt(x*x + y*y);
 			double aLen = Math.sqrt(x * x + y * y);
 			if (y > 0) {
-				return Math.acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
+				return acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
 			} else {
-				return -Math.acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
+				return -acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
 			}
 		}
 	}
@@ -114,7 +139,7 @@ public class MyVector extends Constants {
 	 *         to the right, btw) in the range (0, 360) in radians.
 	 */
 	public double posAngle() {
-		// Math.acos returns values in the range 0.0 through pi, avoiding neg numbers.
+		// acos returns values in the range 0.0 through pi, avoiding neg numbers.
 		// If this is CW to x-axis, then return a number in the range pi through 2*pi
 		if (x == 0 && y > 0) {
 			return PIdiv2;
@@ -128,9 +153,9 @@ public class MyVector extends Constants {
 			// double cLen= Math.sqrt(x*x + y*y);
 			double aLen = Math.sqrt(x * x + y * y);
 			if (y > 0) {
-				return Math.acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
+				return acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
 			} else {
-				return PIx2 - Math.acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
+				return TWO_PI - acos((aLen * aLen + x * x - y * y) / (2 * aLen * x));
 			}
 		}
 	}
@@ -172,7 +197,7 @@ public class MyVector extends Constants {
 		double cyLen = cOrigin.y - cEnd.y;
 		double cLen = Math.sqrt(cxLen * cxLen + cyLen * cyLen);
 
-		return Math.acos((aLen * aLen + bLen * bLen - cLen * cLen) / (2 * aLen * bLen));
+		return acos((aLen * aLen + bLen * bLen - cLen * cLen) / (2 * aLen * bLen));
 	}
 
 	/**
@@ -191,12 +216,12 @@ public class MyVector extends Constants {
 		double cyLen = cOrigin.y - cEnd.y;
 		double cLen = Math.sqrt(cxLen * cxLen + cyLen * cyLen);
 
-		// Math.acos returns values in the range 0.0 through pi, avoiding neg numbers.
+		// acos returns values in the range 0.0 through pi, avoiding neg numbers.
 		// If this is CW to v, then return pos acos, else return neg acos
 		if (this.isCWto(v)) {
-			return Math.acos((aLen * aLen + bLen * bLen - cLen * cLen) / (2 * aLen * bLen));
+			return acos((aLen * aLen + bLen * bLen - cLen * cLen) / (2 * aLen * bLen));
 		} else {
-			return -Math.acos((aLen * aLen + bLen * bLen - cLen * cLen) / (2 * aLen * bLen));
+			return -acos((aLen * aLen + bLen * bLen - cLen * cLen) / (2 * aLen * bLen));
 		}
 	}
 
@@ -240,11 +265,11 @@ public class MyVector extends Constants {
 		return aLen * bLen * temp;
 	}
 
-	/** Return true if the cross product is greater than zero */
+	/** Return true if the cross product is greater than ZERO */
 	public boolean newcross(MyVector v) {
 		BigDecimal d0x = new BigDecimal(x), d0y = new BigDecimal(y), d1x = new BigDecimal(v.x), d1y = new BigDecimal(v.y);
 		BigDecimal d0Xd1 = d0x.multiply(d1y).subtract(d1x.multiply(d0y));
-		if (d0Xd1.compareTo(zero) == 1) {
+		if (d0Xd1.compareTo(ZERO) == 1) {
 			return true;
 		} else {
 			return false;
@@ -262,7 +287,7 @@ public class MyVector extends Constants {
 	}
 
 	/**
-	 * Methods to assist stupid Math.acos(..). Tested ok (simple test) Vectors with
+	 * Methods to assist stupid acos(..). Tested ok (simple test). Vectors with
 	 * equal slopes *ARE* considered to be cw to each other.
 	 * 
 	 * @param v another vector
@@ -355,7 +380,7 @@ public class MyVector extends Constants {
 		}
 	}
 
-	// Note: java.awt.geom.Line2D has an intersects method.. but no intersectsAt
+	// NOTE java.awt.geom.Line2D has an intersects method.. but no intersectsAt
 	// method
 	// Stupid!!!! So I had to make this... blood, sweat and tears, my friend...
 	// Method derived from Intersection of Linear and Circular Components in 2D
@@ -495,7 +520,7 @@ public class MyVector extends Constants {
 	 * 
 	 * BigDecimal d0x= new BigDecimal(d0.x), d0y= new BigDecimal(d0.y), d1x= new
 	 * BigDecimal(d1.x), d1y= new BigDecimal(d1.y); BigDecimal d0Xd1=
-	 * d0x.multiply(d1y).subtract(d1x.multiply(d0y)); if (d0Xd1.compareTo(zero)== 0)
+	 * d0x.multiply(d1y).subtract(d1x.multiply(d0y)); if (d0Xd1.compareTo(ZERO)== 0)
 	 * { // Non-intersecting and parallel OR intersect in an interval
 	 * Msg.debug(this.descr()+" doesn't intersect in inner point of "+d1.descr()
 	 * +" (1)"); return false; } else { BigDecimal deltax= new BigDecimal(delta.x),
@@ -509,7 +534,7 @@ public class MyVector extends Constants {
 	 * Msg.debug("innerpointIntersects(..): s: "+s.toString());
 	 * Msg.debug("innerpointIntersects(..): t: "+t.toString());
 	 * 
-	 * if (t.compareTo(zero)<=0 || t.compareTo(one)>=0 || s.compareTo(zero)<=0 ||
+	 * if (t.compareTo(ZERO)<=0 || t.compareTo(one)>=0 || s.compareTo(ZERO)<=0 ||
 	 * s.compareTo(one)>=0) {
 	 * Msg.debug(this.descr()+" doesn't innerintersect "+d1.descr()+" (2)"); return
 	 * false; // Intersects not at an Edge point (but possibly an interval) } else
